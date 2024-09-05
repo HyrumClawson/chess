@@ -27,7 +27,7 @@ public class ChessBoardTests {
                 "ChessPiece returned by getPiece had the wrong piece type");
         Assertions.assertEquals(piece.getTeamColor(), foundPiece.getTeamColor(),
                 "ChessPiece returned by getPiece had the wrong team color");
-    }
+   }
 
 
     @Test
