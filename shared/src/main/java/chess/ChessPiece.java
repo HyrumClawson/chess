@@ -9,6 +9,8 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessPiece {
+
+
     ChessGame.TeamColor pieceColor;
     PieceType type;
 
@@ -55,6 +57,7 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+       // return new ArrayList<ChessMove>();
         throw new RuntimeException("Not implemented");
     }
 }

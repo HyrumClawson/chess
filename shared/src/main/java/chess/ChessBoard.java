@@ -10,7 +10,11 @@ import java.util.Map;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    Map<ChessPosition, ChessPiece> ChessPiecePositions = new HashMap<>();
+
+    private ChessPiece[][] squares = new ChessPiece[8][8];
+
+
+//    Map<ChessPosition, ChessPiece> ChessPiecePositions = new HashMap<>();
     ChessPosition position;
     ChessPiece piece;
 
@@ -29,9 +33,11 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
+        squares[position.getRow()][position.getColumn()] = piece;
+
         this.position = position;
         this.piece = piece;
-        ChessPiecePositions.put(position,piece);
+//        ChessPiecePositions.put(position,piece);
 
        // throw new RuntimeException("Not implemented");
     }
@@ -44,13 +50,14 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        for(Map.Entry<ChessPosition,ChessPiece> entry : ChessPiecePositions.entrySet()){
-            if(entry.getKey() == position){
-                return entry.getValue();
-            }
-        }
+        return squares[position.getRow()][position.getColumn()];
+//        for(Map.Entry<ChessPosition,ChessPiece> entry : ChessPiecePositions.entrySet()){
+//            if(entry.getKey() == position){
+//                return entry.getValue();
+//            }
+//        }
 
-        return null;
+        //return null;
         //throw new RuntimeException("Not implemented");
     }
 

@@ -36,3 +36,5 @@ public class ChessMove {
         throw new RuntimeException("Not implemented");
     }
 }
+
+
