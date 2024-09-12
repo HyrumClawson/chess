@@ -35,8 +35,8 @@ public class ChessBoard {
     public void addPiece(ChessPosition position, ChessPiece piece) {
         squares[position.getRow()][position.getColumn()] = piece;
 
-        this.position = position;
-        this.piece = piece;
+//        this.position = position;
+//        this.piece = piece;
 //        ChessPiecePositions.put(position,piece);
 
        // throw new RuntimeException("Not implemented");
