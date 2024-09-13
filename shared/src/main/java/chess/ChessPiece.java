@@ -93,7 +93,8 @@ public class ChessPiece {
             case KNIGHT:
                 return new ArrayList<>();
             case ROOK:
-                return new ArrayList<>();
+                RookMoves rookmoves = new RookMoves();
+                return rookmoves.GetAllMoves(board, myPosition);
             case PAWN:
                 return new ArrayList<>();
 
