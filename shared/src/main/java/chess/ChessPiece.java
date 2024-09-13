@@ -92,7 +92,8 @@ public class ChessPiece {
                 BishopMoves newMoves = new BishopMoves();
                 return newMoves.GetAllMoves(board, myPosition);
             case KNIGHT:
-                return new ArrayList<>();
+                KnightMoves knightmoves = new KnightMoves();
+                return knightmoves.GetAllMoves(board, myPosition);
             case ROOK:
                 RookMoves rookmoves = new RookMoves();
                 return rookmoves.GetAllMoves(board, myPosition);
