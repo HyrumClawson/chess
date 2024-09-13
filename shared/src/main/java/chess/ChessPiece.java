@@ -83,7 +83,8 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         switch(board.getPiece(myPosition).getPieceType()){
             case KING :
-                return new ArrayList<>();
+                KingMoves kingmoves = new KingMoves();
+                return kingmoves.GetAllMoves(board,myPosition);
             case QUEEN:
                 QueenMoves queenmoves = new QueenMoves();
                 return queenmoves.GetAllMoves(board,myPosition);
