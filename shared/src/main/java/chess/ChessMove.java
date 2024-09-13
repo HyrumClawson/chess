@@ -17,7 +17,11 @@ public class ChessMove {
                      ChessPiece.PieceType promotionPiece) {
         this.startPosition = startPosition;
         this.endPosition = endPosition;
-        this.promotionPiece = promotionPiece;
+        this.promotionPiece = getPromotionPiece();
+        /**
+         * I'm hoping that calling getPromotionPiece will return the correct value
+         * We'll test it with the queen moves and see
+         */
 
     }
 

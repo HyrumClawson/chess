@@ -85,7 +85,8 @@ public class ChessPiece {
             case KING :
                 return new ArrayList<>();
             case QUEEN:
-                return new ArrayList<>();
+                QueenMoves queenmoves = new QueenMoves();
+                return queenmoves.GetAllMoves(board,myPosition);
             case BISHOP:
                 BishopMoves newMoves = new BishopMoves();
                 return newMoves.GetAllMoves(board, myPosition);

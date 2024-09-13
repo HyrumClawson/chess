@@ -96,7 +96,6 @@ public class BishopMoves implements PieceMoveCalculator{
       return startPosition;
     }
     return startPosition;
-
   }
 
   ChessPosition DL (ChessBoard board, ChessPosition startPosition){
