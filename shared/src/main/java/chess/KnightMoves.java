@@ -12,9 +12,6 @@ public class KnightMoves implements PieceMoveCalculator{
 
   private ChessPiece.PieceType Knight;
 
-  private String Direction;
-
-
   int newRow;
   int newCol;
 

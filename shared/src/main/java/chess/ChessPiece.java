@@ -98,7 +98,8 @@ public class ChessPiece {
                 RookMoves rookmoves = new RookMoves();
                 return rookmoves.GetAllMoves(board, myPosition);
             case PAWN:
-                return new ArrayList<>();
+                PawnMoves pawnmoves = new PawnMoves();
+                return pawnmoves.GetAllMoves(board, myPosition);
 
         }
         ArrayList<ChessMove> testing = new ArrayList<ChessMove>();
