@@ -104,7 +104,7 @@ public class ChessGame {
             boolean isValid=CheckMoveValidity(move);
             if (isValid) {
                 //function that changes the board.
-                UpdateBoard(move);
+                UpdateBoard(move, gameBoard);
                 if(gameBoard.getPiece(move.getEndPosition()).pieceColor == TeamColor.WHITE){
                     teamTurn.push(TeamColor.BLACK);
                 }
@@ -193,8 +193,18 @@ public class ChessGame {
 
     boolean CheckMoveValidity(ChessMove move) {
         boolean isValid=false;
+        ArrayList<ChessPosition> kingPosition =gameBoard.getPosition
+                (gameBoard.getPiece(move.getStartPosition()).pieceColor, ChessPiece.PieceType.KING);
+        if(!kingPosition.isEmpty() &&
+                isInCheck(gameBoard.getPiece(move.getStartPosition()).pieceColor)){
+            ChessBoard dummyBoard = gameBoard;
+            UpdateBoard(move, dummyBoard);
+            if(isInCheck(dummyBoard.getPiece(move.getEndPosition()).pieceColor)){
+                isValid = false;
+                return isValid;
+            }
+        }
         ChessPiece thePiece=gameBoard.getPiece(move.getStartPosition());
-        // technically it's not all the valid moves... there will be extras unfortunately
         Collection<ChessMove> ValidMoves=thePiece.pieceMoves(gameBoard, move.getStartPosition());
         for (ChessMove thing : ValidMoves) {
             if (thing.getEndPosition().getRow() == move.getEndPosition().getRow()
@@ -207,19 +217,17 @@ public class ChessGame {
         return isValid;
     }
 
-    public void UpdateBoard(ChessMove move){
-        if(gameBoard.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.PAWN
+    public void UpdateBoard(ChessMove move, ChessBoard board){
+        if(board.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.PAWN
         && ( move.getEndPosition().getRow() == 8 || move.getEndPosition().getRow() == 1  )){
-            ChessPiece piece = new ChessPiece(gameBoard.getPiece(move.getStartPosition()).getTeamColor(),
+            ChessPiece piece = new ChessPiece(board.getPiece(move.getStartPosition()).getTeamColor(),
                        move.getPromotionPiece());
-            gameBoard.addPiece(move.getEndPosition(), piece);
+            board.addPiece(move.getEndPosition(), piece);
         }
         else{
-            gameBoard.addPiece(move.getEndPosition(), gameBoard.getPiece(move.getStartPosition()));
+            board.addPiece(move.getEndPosition(), board.getPiece(move.getStartPosition()));
         }
-
-        gameBoard.addPiece(move.getStartPosition(), null);
-
+        board.addPiece(move.getStartPosition(), null);
     }
 
     ArrayList<ChessMove> GetOpposingTeamMoves(ChessGame.TeamColor teamColor) {
@@ -239,13 +247,6 @@ public class ChessGame {
                 }
             }
         }
-//        for(ChessPiece[] row : gameBoard.getSquares()){
-//            for(ChessPiece piece : row){
-//                if(piece.getTeamColor() != teamColor && piece != null){
-//                    moves.add(piece.pieceMoves(gameBoard, ))
-//                }
-//            }
-//        }
         return moves;
     }
 
