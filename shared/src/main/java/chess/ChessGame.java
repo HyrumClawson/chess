@@ -12,7 +12,7 @@ import java.util.*;
  * signature of the existing methods.
  */
 public class ChessGame {
-    private ChessBoard gameBoard=new ChessBoard();
+    private ChessBoard gameBoard = new ChessBoard();
     Stack<ChessGame.TeamColor> teamTurn=new Stack<>();
 
     public ChessGame() {
@@ -78,8 +78,58 @@ public class ChessGame {
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         if (gameBoard.getPiece(startPosition) == null) {
             return null;
-        } else {
-            return gameBoard.getPiece(startPosition).pieceMoves(gameBoard, startPosition);
+        }
+        else {
+            //I have a lot to add to this section
+            //ChessBoard dummyBoard = gameBoard;
+            ChessGame.TeamColor color = gameBoard.getPiece(startPosition).pieceColor;
+            ArrayList<ChessMove> validMoves = new ArrayList<>();
+            Collection<ChessMove> potentialMoves = gameBoard.getPiece(startPosition).pieceMoves(gameBoard, startPosition);
+
+            if(isInCheck(color)){
+                //might need to change it to getTEamColor above
+                for(ChessMove move : potentialMoves){
+                    ChessPiece potentialPiece = gameBoard.getPiece(move.getEndPosition());
+                    UpdateBoard(move, gameBoard);
+                    if(!isInCheck(color)){
+                        validMoves.add(move);
+                        ChessMove undoMove = new ChessMove(move.getEndPosition(),move.getStartPosition(), move.getPromotionPiece());
+                        UpdateBoard(undoMove, gameBoard);
+                        gameBoard.addPiece(move.getEndPosition(), potentialPiece);
+                        // I see what is happening. My undo move doesn't take into account
+                        // the times when a piece of another team is offed. Therefore it just
+                        //leaves that space null. Thus making
+
+
+                        // need to find a way to reset the board to the initial
+                        //before the move
+                    }
+                    else{
+                        ChessMove undoMove = new ChessMove(move.getEndPosition(),move.getStartPosition(), move.getPromotionPiece());
+                        UpdateBoard(undoMove, gameBoard);
+                        //need to find a way to reset the board here as well
+                    }
+                }
+            }
+            else{
+                for(ChessMove move : potentialMoves){
+                    ChessPiece potentialPiece = gameBoard.getPiece(move.getEndPosition());
+                    UpdateBoard(move, gameBoard);
+                    if(!isInCheck(color)){
+                        validMoves.add(move);
+                        ChessMove undoMove = new ChessMove(move.getEndPosition(),move.getStartPosition(), move.getPromotionPiece());
+                        UpdateBoard(undoMove, gameBoard);
+                        gameBoard.addPiece(move.getEndPosition(), potentialPiece);
+                    }
+                    else{
+                        ChessMove undoMove = new ChessMove(move.getEndPosition(),move.getStartPosition(), move.getPromotionPiece());
+                        UpdateBoard(undoMove, gameBoard);
+                    }
+                }
+
+            }
+
+            return validMoves;
         }
     }
 
@@ -127,9 +177,8 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        ArrayList<ChessMove> opposingTeamMoves = new ArrayList<>();
-        //function to get opposing team moves
-        opposingTeamMoves = GetOpposingTeamMoves(teamColor);
+        ArrayList<ChessMove> opposingTeamMoves;
+        opposingTeamMoves = GetOpposingTeamMoves(teamColor, gameBoard);
         ChessPosition kingPosition = gameBoard.getPosition(teamColor, ChessPiece.PieceType.KING).getFirst();
         return IsKingInCheck(opposingTeamMoves, kingPosition);
         //throw new RuntimeException("Not implemented");
@@ -143,7 +192,7 @@ public class ChessGame {
      */
     public boolean isInCheckmate(TeamColor teamColor) {
         ArrayList<ChessMove> opposingTeamMoves = new ArrayList<>();
-        opposingTeamMoves = GetOpposingTeamMoves(teamColor);
+        opposingTeamMoves = GetOpposingTeamMoves(teamColor, gameBoard);
 
         if(isInCheck(teamColor)){
             ChessPosition kingPosition = gameBoard.getPosition(teamColor, ChessPiece.PieceType.KING).getFirst();
@@ -178,7 +227,6 @@ public class ChessGame {
      */
     public void setBoard(ChessBoard board) {
         gameBoard=board;
-        //throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -230,7 +278,7 @@ public class ChessGame {
         board.addPiece(move.getStartPosition(), null);
     }
 
-    ArrayList<ChessMove> GetOpposingTeamMoves(ChessGame.TeamColor teamColor) {
+    ArrayList<ChessMove> GetOpposingTeamMoves(ChessGame.TeamColor teamColor, ChessBoard board) {
         ArrayList<ChessMove> moves = new ArrayList<>();
         for (int i=0; i < gameBoard.getSquares().length; i++) {
             for (int j=0; j < gameBoard.getSquares().length; j++) {
@@ -257,6 +305,7 @@ public class ChessGame {
             if( row == kingPosition.getRow() && col == kingPosition.getColumn()){
                 return true;
             }
+
         }
         return false;
     }
@@ -280,6 +329,16 @@ public class ChessGame {
         }
 
         return canMove;
+    }
+
+
+    public boolean isInCheckTest(TeamColor teamColor, ChessBoard board) {
+        ArrayList<ChessMove> opposingTeamMoves;
+        //function to get opposing team moves
+        opposingTeamMoves = GetOpposingTeamMoves(teamColor, board);
+        ChessPosition kingPosition = board.getPosition(teamColor, ChessPiece.PieceType.KING).getFirst();
+        return IsKingInCheck(opposingTeamMoves, kingPosition);
+        //throw new RuntimeException("Not implemented");
     }
 
 }
