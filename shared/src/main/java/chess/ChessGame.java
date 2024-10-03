@@ -198,10 +198,7 @@ public class ChessGame {
         else{
             opposingColor = TeamColor.WHITE;
         }
-        ArrayList<ChessMove> opposingTeamMoves = new ArrayList<>();
-        opposingTeamMoves = GetOpposingTeamMoves(teamColor, gameBoard);
         if(isInCheck(teamColor)){
-            ChessPosition kingPosition = gameBoard.getPosition(teamColor, ChessPiece.PieceType.KING).getFirst();
             Collection<ChessMove> kingTeamMoves = GetOpposingTeamMoves(opposingColor, gameBoard);
             ArrayList<ChessMove> kingTeam = new ArrayList<>();
             kingTeam.addAll(kingTeamMoves);
@@ -220,7 +217,6 @@ public class ChessGame {
                 gameBoard.addPiece(teamMove.getEndPosition(), potentialPiece);
             }
             return isInCheckEverywhere;
-           // return !CheckMovesAgainstMoves( opposingTeamMoves,  kings);
         }
         else{
             return false;
@@ -236,10 +232,43 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        ArrayList<ChessMove> opposingTeamMoves = GetOpposingTeamMoves(teamColor, gameBoard);
-        return false;
+        TeamColor opposingColor;
+        if(TeamColor.WHITE == teamColor){
+            opposingColor = TeamColor.BLACK;
+        }
+        else{
+            opposingColor = TeamColor.WHITE;
+        }
+        if(isInCheckmate(teamColor)){
+            return false;
+        }
+        else{
+            Collection<ChessMove> kingTeamMoves = GetOpposingTeamMoves(opposingColor, gameBoard);
+            ArrayList<ChessMove> kingTeam = new ArrayList<>();
+            kingTeam.addAll(kingTeamMoves);
+            boolean isInCheckEverywhere = false;
+            for (ChessMove teamMove : kingTeam){
+                ChessPiece potentialPiece = gameBoard.getPiece(teamMove.getEndPosition());
+                UpdateBoard(teamMove, gameBoard);
+                if(!isInCheck(teamColor)){
+                    return false;
+                }
+                else{
+                    isInCheckEverywhere = true;
+                }
+                ChessMove undoMove = new ChessMove(teamMove.getEndPosition(),teamMove.getStartPosition(), teamMove.getPromotionPiece());
+                UpdateBoard(undoMove, gameBoard);
+                gameBoard.addPiece(teamMove.getEndPosition(), potentialPiece);
+            }
+            return isInCheckEverywhere;
+        }
+
+        // essentially if every move of the team's piece results in isInCheck being true that
+        // team is in checkmate.
         //throw new RuntimeException("Not implemented");
     }
+
+
 
     /**
      * Sets this game's chessboard with a given board
