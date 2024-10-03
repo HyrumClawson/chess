@@ -81,54 +81,10 @@ public class ChessGame {
         }
         else {
             //I have a lot to add to this section
-            //ChessBoard dummyBoard = gameBoard;
             ChessGame.TeamColor color = gameBoard.getPiece(startPosition).pieceColor;
             ArrayList<ChessMove> validMoves = new ArrayList<>();
             Collection<ChessMove> potentialMoves = gameBoard.getPiece(startPosition).pieceMoves(gameBoard, startPosition);
-
-            if(isInCheck(color)){
-                //might need to change it to getTEamColor above
-                for(ChessMove move : potentialMoves){
-                    ChessPiece potentialPiece = gameBoard.getPiece(move.getEndPosition());
-                    UpdateBoard(move, gameBoard);
-                    if(!isInCheck(color)){
-                        validMoves.add(move);
-                        ChessMove undoMove = new ChessMove(move.getEndPosition(),move.getStartPosition(), move.getPromotionPiece());
-                        UpdateBoard(undoMove, gameBoard);
-                        gameBoard.addPiece(move.getEndPosition(), potentialPiece);
-                        // I see what is happening. My undo move doesn't take into account
-                        // the times when a piece of another team is offed. Therefore it just
-                        //leaves that space null. Thus making
-
-
-                        // need to find a way to reset the board to the initial
-                        //before the move
-                    }
-                    else{
-                        ChessMove undoMove = new ChessMove(move.getEndPosition(),move.getStartPosition(), move.getPromotionPiece());
-                        UpdateBoard(undoMove, gameBoard);
-                        //need to find a way to reset the board here as well
-                    }
-                }
-            }
-            else{
-                for(ChessMove move : potentialMoves){
-                    ChessPiece potentialPiece = gameBoard.getPiece(move.getEndPosition());
-                    UpdateBoard(move, gameBoard);
-                    if(!isInCheck(color)){
-                        validMoves.add(move);
-                        ChessMove undoMove = new ChessMove(move.getEndPosition(),move.getStartPosition(), move.getPromotionPiece());
-                        UpdateBoard(undoMove, gameBoard);
-                        gameBoard.addPiece(move.getEndPosition(), potentialPiece);
-                    }
-                    else{
-                        ChessMove undoMove = new ChessMove(move.getEndPosition(),move.getStartPosition(), move.getPromotionPiece());
-                        UpdateBoard(undoMove, gameBoard);
-                    }
-                }
-
-            }
-
+            validMoves = KingIsInCheckMoves(potentialMoves, validMoves, color);
             return validMoves;
         }
     }
@@ -153,7 +109,6 @@ public class ChessGame {
             }
             boolean isValid=CheckMoveValidity(move);
             if (isValid) {
-                //function that changes the board.
                 UpdateBoard(move, gameBoard);
                 if(gameBoard.getPiece(move.getEndPosition()).pieceColor == TeamColor.WHITE){
                     teamTurn.push(TeamColor.BLACK);
@@ -166,8 +121,6 @@ public class ChessGame {
                 throw new InvalidMoveException();
             }
         }
-
-
     }
 
     /**
@@ -181,7 +134,6 @@ public class ChessGame {
         opposingTeamMoves = GetOpposingTeamMoves(teamColor, gameBoard);
         ChessPosition kingPosition = gameBoard.getPosition(teamColor, ChessPiece.PieceType.KING).getFirst();
         return IsKingInCheck(opposingTeamMoves, kingPosition);
-        //throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -191,13 +143,7 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        TeamColor opposingColor;
-        if(TeamColor.WHITE == teamColor){
-            opposingColor = TeamColor.BLACK;
-        }
-        else{
-            opposingColor = TeamColor.WHITE;
-        }
+        TeamColor opposingColor = GetOpposingColor(teamColor);
         if(isInCheck(teamColor)){
             return IsInCheckMateOrStalemate(teamColor, opposingColor);
         }
@@ -215,23 +161,15 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        TeamColor opposingColor;
-        if(TeamColor.WHITE == teamColor){
-            opposingColor = TeamColor.BLACK;
-        }
-        else{
-            opposingColor = TeamColor.WHITE;
-        }
+        TeamColor opposingColor = GetOpposingColor(teamColor);
         if(isInCheckmate(teamColor)){
             return false;
         }
         else{
             return IsInCheckMateOrStalemate(teamColor, opposingColor);
         }
-
         // essentially if every move of the team's piece results in isInCheck being true that
         // team is in checkmate.
-        //throw new RuntimeException("Not implemented");
     }
 
 
@@ -320,7 +258,6 @@ public class ChessGame {
             if( row == kingPosition.getRow() && col == kingPosition.getColumn()){
                 return true;
             }
-
         }
         return false;
     }
@@ -339,12 +276,45 @@ public class ChessGame {
             else{
                 isInCheckEverywhere = true;
             }
-            
             ChessMove undoMove = new ChessMove(teamMove.getEndPosition(),teamMove.getStartPosition(), teamMove.getPromotionPiece());
             UpdateBoard(undoMove, gameBoard);
             gameBoard.addPiece(teamMove.getEndPosition(), potentialPiece);
         }
         return isInCheckEverywhere;
+    }
+
+    TeamColor GetOpposingColor(TeamColor teamColor){
+        TeamColor opposingColor;
+        if(TeamColor.WHITE == teamColor){
+            opposingColor = TeamColor.BLACK;
+        }
+        else{
+            opposingColor = TeamColor.WHITE;
+        }
+        return opposingColor;
+    }
+
+    ArrayList<ChessMove> KingIsInCheckMoves(Collection<ChessMove> potentialMoves, ArrayList<ChessMove> validMoves, ChessGame.TeamColor color){
+        for(ChessMove move : potentialMoves){
+            ChessPiece potentialPiece = gameBoard.getPiece(move.getEndPosition());
+            UpdateBoard(move, gameBoard);
+            if(!isInCheck(color)){
+                validMoves.add(move);
+                ChessMove undoMove = new ChessMove(move.getEndPosition(),move.getStartPosition(), move.getPromotionPiece());
+                UpdateBoard(undoMove, gameBoard);
+                gameBoard.addPiece(move.getEndPosition(), potentialPiece);
+                // I see what is happening. My undo move doesn't take into account
+                // the times when a piece of another team is offed. it just
+                //leaves that space null. Thus making
+                // need to find a way to reset the board to the initial
+                //before the move
+            }
+            else{
+                ChessMove undoMove = new ChessMove(move.getEndPosition(),move.getStartPosition(), move.getPromotionPiece());
+                UpdateBoard(undoMove, gameBoard);
+            }
+        }
+        return validMoves;
     }
 
 }
