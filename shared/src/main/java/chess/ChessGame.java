@@ -199,24 +199,7 @@ public class ChessGame {
             opposingColor = TeamColor.WHITE;
         }
         if(isInCheck(teamColor)){
-            Collection<ChessMove> kingTeamMoves = GetOpposingTeamMoves(opposingColor, gameBoard);
-            ArrayList<ChessMove> kingTeam = new ArrayList<>();
-            kingTeam.addAll(kingTeamMoves);
-            boolean isInCheckEverywhere = false;
-            for (ChessMove teamMove : kingTeam){
-                ChessPiece potentialPiece = gameBoard.getPiece(teamMove.getEndPosition());
-                UpdateBoard(teamMove, gameBoard);
-                if(!isInCheck(teamColor)){
-                    return false;
-                }
-                else{
-                    isInCheckEverywhere = true;
-                }
-                ChessMove undoMove = new ChessMove(teamMove.getEndPosition(),teamMove.getStartPosition(), teamMove.getPromotionPiece());
-                UpdateBoard(undoMove, gameBoard);
-                gameBoard.addPiece(teamMove.getEndPosition(), potentialPiece);
-            }
-            return isInCheckEverywhere;
+            return IsInCheckMateOrStalemate(teamColor, opposingColor);
         }
         else{
             return false;
@@ -243,24 +226,7 @@ public class ChessGame {
             return false;
         }
         else{
-            Collection<ChessMove> kingTeamMoves = GetOpposingTeamMoves(opposingColor, gameBoard);
-            ArrayList<ChessMove> kingTeam = new ArrayList<>();
-            kingTeam.addAll(kingTeamMoves);
-            boolean isInCheckEverywhere = false;
-            for (ChessMove teamMove : kingTeam){
-                ChessPiece potentialPiece = gameBoard.getPiece(teamMove.getEndPosition());
-                UpdateBoard(teamMove, gameBoard);
-                if(!isInCheck(teamColor)){
-                    return false;
-                }
-                else{
-                    isInCheckEverywhere = true;
-                }
-                ChessMove undoMove = new ChessMove(teamMove.getEndPosition(),teamMove.getStartPosition(), teamMove.getPromotionPiece());
-                UpdateBoard(undoMove, gameBoard);
-                gameBoard.addPiece(teamMove.getEndPosition(), potentialPiece);
-            }
-            return isInCheckEverywhere;
+            return IsInCheckMateOrStalemate(teamColor, opposingColor);
         }
 
         // essentially if every move of the team's piece results in isInCheck being true that
@@ -338,7 +304,6 @@ public class ChessGame {
                         Collection<ChessMove> pieceMoves = gameBoard.getSquares()[i][j].pieceMoves(gameBoard, start);
                         moves.addAll(pieceMoves);
                     }
-
                 }
                 else{
                     //don't do anything
@@ -360,33 +325,26 @@ public class ChessGame {
         return false;
     }
 
-    public boolean CheckMovesAgainstMoves(ArrayList<ChessMove> opposingTeamMoves, ArrayList<ChessMove> kings){
-        boolean canMove = true;
-        for(ChessMove king : kings){
-            if(!opposingTeamMoves.contains(king)){
-                return true;
+    public boolean IsInCheckMateOrStalemate(TeamColor teamColor, TeamColor opposingColor){
+        Collection<ChessMove> kingTeamMoves = GetOpposingTeamMoves(opposingColor, gameBoard);
+        ArrayList<ChessMove> kingTeam = new ArrayList<>();
+        kingTeam.addAll(kingTeamMoves);
+        boolean isInCheckEverywhere = false;
+        for (ChessMove teamMove : kingTeam){
+            ChessPiece potentialPiece = gameBoard.getPiece(teamMove.getEndPosition());
+            UpdateBoard(teamMove, gameBoard);
+            if(!isInCheck(teamColor)){
+                return false;
             }
             else{
-                canMove = false;
+                isInCheckEverywhere = true;
             }
+            
+            ChessMove undoMove = new ChessMove(teamMove.getEndPosition(),teamMove.getStartPosition(), teamMove.getPromotionPiece());
+            UpdateBoard(undoMove, gameBoard);
+            gameBoard.addPiece(teamMove.getEndPosition(), potentialPiece);
         }
-
-        // essentially got to add the cases where the king captures a piece, but
-        // other teams pieces are there to capture the king. need my good old undo
-        // gameboard bit.
-
-
-        return canMove;
-    }
-
-
-    public boolean isInCheckTest(TeamColor teamColor, ChessBoard board) {
-        ArrayList<ChessMove> opposingTeamMoves;
-        //function to get opposing team moves
-        opposingTeamMoves = GetOpposingTeamMoves(teamColor, board);
-        ChessPosition kingPosition = board.getPosition(teamColor, ChessPiece.PieceType.KING).getFirst();
-        return IsKingInCheck(opposingTeamMoves, kingPosition);
-        //throw new RuntimeException("Not implemented");
+        return isInCheckEverywhere;
     }
 
 }
