@@ -191,16 +191,36 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
+        TeamColor opposingColor;
+        if(TeamColor.WHITE == teamColor){
+            opposingColor = TeamColor.BLACK;
+        }
+        else{
+            opposingColor = TeamColor.WHITE;
+        }
         ArrayList<ChessMove> opposingTeamMoves = new ArrayList<>();
         opposingTeamMoves = GetOpposingTeamMoves(teamColor, gameBoard);
-
         if(isInCheck(teamColor)){
             ChessPosition kingPosition = gameBoard.getPosition(teamColor, ChessPiece.PieceType.KING).getFirst();
-            Collection<ChessMove> kingMoves = gameBoard.getPiece(kingPosition).pieceMoves(gameBoard,kingPosition);
-            ArrayList<ChessMove> kings = new ArrayList<>();
-            kings.addAll(kingMoves);
-            return CheckMovesAgainstMoves( opposingTeamMoves,  kings);
-//            return true;
+            Collection<ChessMove> kingTeamMoves = GetOpposingTeamMoves(opposingColor, gameBoard);
+            ArrayList<ChessMove> kingTeam = new ArrayList<>();
+            kingTeam.addAll(kingTeamMoves);
+            boolean isInCheckEverywhere = false;
+            for (ChessMove teamMove : kingTeam){
+                ChessPiece potentialPiece = gameBoard.getPiece(teamMove.getEndPosition());
+                UpdateBoard(teamMove, gameBoard);
+                if(!isInCheck(teamColor)){
+                    return false;
+                }
+                else{
+                    isInCheckEverywhere = true;
+                }
+                ChessMove undoMove = new ChessMove(teamMove.getEndPosition(),teamMove.getStartPosition(), teamMove.getPromotionPiece());
+                UpdateBoard(undoMove, gameBoard);
+                gameBoard.addPiece(teamMove.getEndPosition(), potentialPiece);
+            }
+            return isInCheckEverywhere;
+           // return !CheckMovesAgainstMoves( opposingTeamMoves,  kings);
         }
         else{
             return false;
@@ -216,6 +236,7 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
+        ArrayList<ChessMove> opposingTeamMoves = GetOpposingTeamMoves(teamColor, gameBoard);
         return false;
         //throw new RuntimeException("Not implemented");
     }
@@ -313,20 +334,18 @@ public class ChessGame {
     public boolean CheckMovesAgainstMoves(ArrayList<ChessMove> opposingTeamMoves, ArrayList<ChessMove> kings){
         boolean canMove = true;
         for(ChessMove king : kings){
-            for(ChessMove oppose: opposingTeamMoves){
-                int kRow = king.getEndPosition().getRow();
-                int kCol = king.getEndPosition().getColumn();
-                int oRow = oppose.getEndPosition().getRow();
-                int oCol = oppose.getEndPosition().getColumn();
-                if(kRow == oRow && kCol == oCol){
-                    canMove = false;
-                }
-                else{
-                    canMove = true;
-                    break;
-                }
+            if(!opposingTeamMoves.contains(king)){
+                return true;
+            }
+            else{
+                canMove = false;
             }
         }
+
+        // essentially got to add the cases where the king captures a piece, but
+        // other teams pieces are there to capture the king. need my good old undo
+        // gameboard bit.
+
 
         return canMove;
     }
