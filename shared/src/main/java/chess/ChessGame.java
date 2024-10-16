@@ -107,9 +107,12 @@ public class ChessGame {
             if(teamTurn.peek() != gameBoard.getPiece(move.getStartPosition()).pieceColor){
                 throw new InvalidMoveException();
             }
+            //Collection<ChessMove> goodMoves = validMoves(move.getStartPosition());
+            //goodMoves.contains(move);
             boolean isValid=CheckMoveValidity(move);
             if (isValid) {
                 UpdateBoard(move, gameBoard);
+                //UpdateTeamTurn(move);
                 if(gameBoard.getPiece(move.getEndPosition()).pieceColor == TeamColor.WHITE){
                     teamTurn.push(TeamColor.BLACK);
                 }
