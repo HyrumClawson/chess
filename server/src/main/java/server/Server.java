@@ -3,10 +3,16 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import netscape.javascript.JSObject;
-import service.ClearDataBase;
+import service.*;
+import service.Service;
 import spark.*;
 
 public class Server {
+    AuthService authService = new AuthService();
+    GameService gameService = new GameService();
+    UserService userService = new UserService();
+    private service.Service service1 = new service.Service(authService, gameService, userService);
+
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -14,7 +20,7 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-        spark.Spark.post("/user", (request, response) -> "Hello World");
+        spark.Spark.post("/user",this::registrationHandler);
         spark.Spark.post("/session", (request, response)-> "Hello World");
         spark.Spark.delete("/session", (request, response)-> "Hello World");
         spark.Spark.get("/game", (request,response)-> "Hello World");
@@ -39,14 +45,15 @@ public class Server {
      * @return
      * @throws DataAccessException
      */
-    private Object deleteDBHandler(Request req, Response res) throws DataAccessException {
-        var deleteReq = new Gson().fromJson(req.body(), Object.class);
-        ClearDataBase service = new ClearDataBase();
-        deleteReq = service.clearDataBase();
+    public Object deleteDBHandler(Request req, Response res) throws DataAccessException {
+        service1.clearDataBase();
+        res.status(200);
+        return "{}";
+    }
 
-        var object = new Gson().fromJson(req.body(), Object.class);
+    public Object registrationHandler(Request req, Response res){
+        return null;
 
-        return new Gson().toJson(deleteReq);
     }
 
 
