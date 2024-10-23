@@ -1,7 +1,8 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.DataAccessException;
+import dataaccess.*;
+import model.UserData;
 import netscape.javascript.JSObject;
 import service.*;
 import service.Service;
@@ -11,7 +12,13 @@ public class Server {
     AuthService authService = new AuthService();
     GameService gameService = new GameService();
     UserService userService = new UserService();
-    private service.Service service1 = new service.Service(authService, gameService, userService);
+    AuthDAO AuthData = new MemoryAuthDAO();
+    GameDAO GameData = new MemoryGameDAO();
+    UserDAO UserData = new MemoryUserDAO();
+
+
+
+
 
 
     public int run(int desiredPort) {
@@ -20,6 +27,7 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
+
         spark.Spark.post("/user",this::registrationHandler);
         spark.Spark.post("/session", (request, response)-> "Hello World");
         spark.Spark.delete("/session", (request, response)-> "Hello World");
@@ -40,19 +48,79 @@ public class Server {
     /**
      * eventually take all these things and put them in a separate class maybe? Got to
      * figure out the syntax to do that.
-     * @param req
-     * @param res
-     * @return
-     * @throws DataAccessException
      */
-    public Object deleteDBHandler(Request req, Response res) throws DataAccessException {
-        service1.clearDataBase();
-        res.status(200);
-        return "{}";
+    public Object deleteDBHandler(Request req, Response res) {
+        try{
+            authService.clearAllAuthData(AuthData);
+            gameService.clearAllGameData(GameData);
+            userService.clearAllUserData(UserData);
+            res.status(200);
+            return "";
+
+        }
+        catch (Exception e) {
+            Error newError = new Error(500,"Something went wonky");
+            res.status(newError.statusCode());
+            res.body(new Gson().toJson(newError));
+            return (new Gson().toJson(newError));
+        }
+
+
     }
 
     public Object registrationHandler(Request req, Response res){
-        return null;
+//        try{
+            var newUser = new Gson().fromJson(req.body(), model.UserData.class);
+            try{
+                if(newUser.username() ==null || newUser.email() == null || newUser.password() == null ){
+                    throw new Exception();
+                }
+
+            }
+            catch(Exception e){
+                Error newError = new Error(400,"Error: bad request");
+                res.status(newError.statusCode());
+                res.body(new Gson().toJson(newError));
+                return (new Gson().toJson(newError));
+
+            }
+
+            Error userReturnValue = userService.registerUser(UserData, newUser);
+
+            try{
+                if(userReturnValue != null){
+                    throw new Exception();
+                }
+
+
+            }
+            catch(Exception e){
+                res.status(userReturnValue.statusCode());
+                res.body(new Gson().toJson(userReturnValue));
+                return (new Gson().toJson(userReturnValue));
+            }
+
+
+            var newAuth = authService.AddAuthData(AuthData, newUser);
+            res.status(200);
+            res.body(new Gson().toJson(newAuth));
+            return (new Gson().toJson(newAuth));
+//        }
+//        catch(Exception e){
+//            res.status(400);
+//            Error newError = new Error("Error: bad request");
+//            res.body(new Gson().toJson(newError));
+//            return (new Gson().toJson(newError));
+//
+//
+//        }
+//        catch(Exception e){
+//            return "";
+//        }
+//        catch(Exception e){
+//            return "";
+//        }
+
 
     }
 

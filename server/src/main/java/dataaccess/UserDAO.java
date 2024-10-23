@@ -1,5 +1,8 @@
 package dataaccess;
 
 public interface UserDAO {
-  void deleteAllUsers() throws DataAccessException;
+  void deleteAllUsers();
+  void addUser(model.UserData newUser);
+
+  Object getUser(model.UserData user);
 }

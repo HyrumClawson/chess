@@ -1,5 +1,6 @@
 package dataaccess;
 
 public interface AuthDAO {
-  public void deleteAllAuth() throws DataAccessException;
+  public void deleteAllAuth();
+  Object addnewAuth(model.UserData user);
 }
