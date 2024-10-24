@@ -1,6 +1,9 @@
 package service;
 
 import dataaccess.DataAccessException;
+import dataaccess.MemoryUserDAO;
+import dataaccess.UserDAO;
+import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -17,6 +20,9 @@ public class DeleteDBTests {
   AuthService a = new AuthService();
   GameService g = new GameService();
   UserService u = new UserService();
+
+  UserDAO userDataAccess = new MemoryUserDAO();
+
   private final service.Service service = new service.Service(a,g,u);
 
 
@@ -30,6 +36,19 @@ public class DeleteDBTests {
 
     }
   }
+
+//  @Test
+//  public void PositiveRegisterTest(){
+//    model.UserData newUser = new UserData("Hyrum", "53628384", "hc@mail");
+//    assertEquals(null,  u.registerUser(userDataAccess, newUser ));
+//    //u.registerUser(userDataAccess, newUser );
+//  }
+//  public void AlreadyTakenRegisterTest(){
+//    model.UserData newUser = new UserData("Hyrum", "53628384", "hc@mail");
+//    u.registerUser(userDataAccess, newUser );
+//    assertEquals(403, u.registerUser(userDataAccess, newUser).statusCode());
+//    assertEquals("Already taken", u.registerUser(userDataAccess, newUser).message());
+//  }
 
 
 }

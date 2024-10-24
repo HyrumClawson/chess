@@ -1,5 +1,5 @@
 package server;
 
-public record Error(int statusCode, String message) {
+public record Error(String message) {
 
 }

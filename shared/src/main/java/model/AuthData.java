@@ -1,5 +1,14 @@
 package model;
 
-record AuthData(String authToken, String username) {
+public record AuthData(String username, String authToken) {
 
+  @Override
+  public String username() {
+    return username;
+  }
+
+  @Override
+  public String authToken() {
+    return authToken;
+  }
 }
