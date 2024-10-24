@@ -22,10 +22,12 @@ public class MemoryAuthDAO implements AuthDAO{
 
     return newAuthData;
   }
-
   public void deleteSingleAuth(String authToken){
     MapOfauthData.remove(authToken);
+  }
 
+  public boolean checkMapForAuth(String authToken){
+    return MapOfauthData.containsKey(authToken);
   }
 
 

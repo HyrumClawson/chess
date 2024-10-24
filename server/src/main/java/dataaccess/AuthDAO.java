@@ -5,4 +5,6 @@ public interface AuthDAO {
   Object addnewAuth(model.UserData user);
 
   void deleteSingleAuth(String authToken);
+
+  boolean checkMapForAuth(String authToken);
 }

@@ -8,6 +8,8 @@ import service.*;
 import service.Service;
 import spark.*;
 
+import java.util.Set;
+
 public class Server {
     AuthService authService = new AuthService();
     GameService gameService = new GameService();
@@ -117,8 +119,14 @@ public class Server {
 
     }
     public Object logoutHandler(Request req, Response res) throws ResponseException{
-        var authToken = new Gson().fromJson(req.body(), String.class);
+        Set<String> headerSet = req.headers();
+        String authToken = "";
+        for (String headerName : headerSet) {
+            authToken = headerName;
+        }
         authService.logoutAuth(AuthData, authToken);
+        res.status(200);
+        return "";
 
         //return an empty like the clear
     }

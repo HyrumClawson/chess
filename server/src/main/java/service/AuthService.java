@@ -5,6 +5,8 @@ import dataaccess.DataAccessException;
 import server.ResponseException;
 
 public class AuthService {
+
+
   public void clearAllAuthData(AuthDAO AuthData) {
     try {
       AuthData.deleteAllAuth();
@@ -18,7 +20,7 @@ public class AuthService {
   }
 
   public void logoutAuth(AuthDAO authAccess, String authToken) throws ResponseException {
-    if(!isAuthDataThere(authToken)){
+    if(!isAuthDataThere(authAccess, authToken)){
       throw new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
     }
     else{
@@ -27,8 +29,8 @@ public class AuthService {
 
   }
 
-  public boolean isAuthDataThere(String authToken){
-
+  public boolean isAuthDataThere(AuthDAO authAccess, String authToken){
+    return authAccess.checkMapForAuth(authToken);
   }
 
 
