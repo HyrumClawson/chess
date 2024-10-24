@@ -30,5 +30,8 @@ public class MemoryAuthDAO implements AuthDAO{
     return MapOfauthData.containsKey(authToken);
   }
 
+  public String getUsername(String authToken){
+    return MapOfauthData.get(authToken);
+  }
 
 }

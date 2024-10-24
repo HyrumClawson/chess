@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.*;
 import model.GameData;
+import model.JoinGame;
 import model.ListingGameData;
 import model.UserData;
 import netscape.javascript.JSObject;
@@ -39,7 +40,7 @@ public class Server {
         spark.Spark.delete("/session", this::logoutHandler);
         spark.Spark.get("/game", this::listGames);
         spark.Spark.post("/game", this::createGame); //this is one gets called in the tests for login
-        spark.Spark.put("/game", (request, response) -> "Hello World");
+        spark.Spark.put("/game", this::joinGame);
         spark.Spark.delete("/db", this::deleteDBHandler);
         Spark.exception(ResponseException.class, this::exceptionHandler);
 
@@ -155,6 +156,17 @@ public class Server {
         res.status(200);
         res.body(new Gson().toJson(gameIDObject));
         return new Gson().toJson(gameIDObject);
+
+    }
+
+    public Object joinGame(Request req, Response res) throws ResponseException{
+        String authToken = getAuthFromHeader(req);
+        String username = authService.getUserNameByToken(AuthData, authToken);
+        model.JoinGame infoToJoin = new Gson().fromJson(req.body(), JoinGame.class);
+        authService.isAuthDataThere(AuthData, authToken);
+        gameService.joinGame(GameData, infoToJoin, username);
+        res.status(200);
+        return "";
 
     }
 

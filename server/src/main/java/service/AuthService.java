@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
+import model.AuthData;
 import server.ResponseException;
 
 public class AuthService {
@@ -34,10 +35,15 @@ public class AuthService {
     } else {
       return authAccess.checkMapForAuth(authToken);
     }
+  }
+
+    public String getUserNameByToken(AuthDAO authAccess, String authToken){
+      return authAccess.getUsername(authToken);
+    }
 
 
 //  public void CheckAuth(AuthDAO authData, String authToken) {
 //    if
 //  }
   }
-}
+

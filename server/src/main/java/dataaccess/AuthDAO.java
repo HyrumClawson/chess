@@ -7,4 +7,5 @@ public interface AuthDAO {
   void deleteSingleAuth(String authToken);
 
   boolean checkMapForAuth(String authToken);
+  String getUsername(String authToken);
 }

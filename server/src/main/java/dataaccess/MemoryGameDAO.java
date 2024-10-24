@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import chess.ChessGame;
 import model.GameData;
+import model.JoinGame;
 import model.ListingGameData;
 
 import java.util.Random;
@@ -59,5 +60,76 @@ public class MemoryGameDAO implements GameDAO{
     listOfGames.add(gameToBeAdded);
     return newGameID;
   }
+
+  public boolean GameIDExists(JoinGame infoToJoin){
+    for(GameData game : listOfGames){
+      if(game.gameID() == infoToJoin.gameID()){
+        return true;
+      }
+    }
+    return false;
+  }
+  public boolean playerTaken(JoinGame infoToJoin){
+    //WHITE/BLACK
+    boolean wantsWhite;
+    if("WHITE".equals(infoToJoin.playerColor())){
+      wantsWhite = true;
+    }
+    else{
+      wantsWhite = false;
+    }
+
+    for(GameData game: listOfGames){
+      if(game.gameID() == infoToJoin.gameID()){
+        if(game.whiteUsername() != null && wantsWhite){
+          return true;
+        }
+        else if(game.blackUsername() != null && !wantsWhite){
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  public void addPlayerToGame(JoinGame infoToJoin, String username){
+    boolean isWhite;
+    if("WHITE".equals(infoToJoin.playerColor())){
+      isWhite = true;
+    }
+    else{
+      isWhite = false;
+    }
+
+    for(int i = 0; i < listOfGames.size(); i++){
+      if(listOfGames.get(i).gameID() == infoToJoin.gameID()){
+
+      }
+    }
+
+    int i = 0;
+    for(GameData game : listOfGames){
+      if(game.gameID() == infoToJoin.gameID()){
+        if(isWhite){
+          GameData changedGame = new GameData(game.gameID(), username,
+                  game.blackUsername(), game.gameName(), game.game());
+          listOfGames.remove(i);
+          listOfGames.add(i, changedGame);
+          //game.whiteUsername(username);
+        }
+        else{
+          GameData changedGame = new GameData(game.gameID(), game.whiteUsername(),
+                  username, game.gameName(), game.game());
+          listOfGames.remove(i);
+          listOfGames.add(i, changedGame);
+          //set black username with username.
+        }
+      }
+      i++;
+    }
+  }
+
+
+
 
 }

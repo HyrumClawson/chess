@@ -3,6 +3,7 @@ package service;
 import dataaccess.DataAccessException;
 import dataaccess.GameDAO;
 import model.GameData;
+import model.JoinGame;
 import model.ListingGameData;
 import server.ResponseException;
 
@@ -26,4 +27,25 @@ public class GameService {
       return gameDataAccess.addGame(newGame);
     }
   }
+  public void joinGame(GameDAO gameDataAccess, JoinGame infoToJoin, String username) throws ResponseException{
+    if(infoToJoin.playerColor() == null){
+      throw new ResponseException(ResponseException.ExceptionType.BADREQUEST);
+    }
+    // also have to check if gameID exists in the gamedata
+    else if(!gameDataAccess.GameIDExists(infoToJoin)){
+      throw new ResponseException(ResponseException.ExceptionType.BADREQUEST);
+    }
+    else{
+      if(gameDataAccess.playerTaken(infoToJoin)){
+        throw new ResponseException(ResponseException.ExceptionType.TAKEN);
+      }
+      gameDataAccess.addPlayerToGame(infoToJoin, username);
+
+    }
+
+  }
+
+
+
+
 }
