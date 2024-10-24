@@ -12,7 +12,7 @@ public class MemoryAuthDAO implements AuthDAO{
   public void deleteAllAuth(){
     MapOfauthData.clear();
   }
-  public Object addnewAuth(model.UserData user){
+  public AuthData addnewAuth(model.UserData user){
     // here create an authToken with the given code in the specs
     // Then create a new model.AuthData object and add that to the map.
     // then return the new object you just created.

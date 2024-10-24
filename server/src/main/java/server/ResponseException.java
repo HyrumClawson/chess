@@ -1,7 +1,7 @@
 package server;
 
 public class ResponseException extends Exception{
-  Enum typeOfException;
+  public Enum typeOfException;
   String message;
 
   public enum ExceptionType {
@@ -11,7 +11,11 @@ public class ResponseException extends Exception{
 
   }
 
+
   public ResponseException(Enum type){
+
     this.typeOfException = type;
   }
+
+
 }
