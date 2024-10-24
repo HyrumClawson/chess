@@ -12,16 +12,6 @@ public class ChessBoard {
 
   private ChessPiece[][] squares=new ChessPiece[9][9];
 
-
-//    Map<ChessPosition, ChessPiece> ChessPiecePositions = new HashMap<>();
-  // ChessPosition position;
-  //ChessPiece piece;
-
-  /**
-   * note
-   * This could be the wrong place to put these two fields ^^^^
-   */
-
   public ChessBoard() {
 
   }
@@ -46,14 +36,6 @@ public class ChessBoard {
    */
   public ChessPiece getPiece(ChessPosition position) {
     return squares[position.getRow()][position.getColumn()];
-//        for(Map.Entry<ChessPosition,ChessPiece> entry : ChessPiecePositions.entrySet()){
-//            if(entry.getKey() == position){
-//                return entry.getValue();
-//            }
-//        }
-
-    //return null;
-    //throw new RuntimeException("Not implemented");
   }
 
   public ArrayList<ChessPosition> getPosition(ChessGame.TeamColor color, ChessPiece.PieceType type){
@@ -79,25 +61,15 @@ public class ChessBoard {
    * (How the game of chess normally starts)
    */
   public void resetBoard() {
-    for (int i=0; i < squares.length; i++) {
-      for (int j=0; j < squares.length; j++) {
-        squares[i][j]=null;
-      }
-    }
-    ChessPiece[][] startBoard=MakeStartBoard();
-
+    ChessPiece[][] startBoard=makeStartBoard();
     for (int i=0; i < squares.length; i++) {
       for (int j=0; j < squares.length; j++) {
         squares[i][j]=startBoard[i][j];
-
       }
     }
-
-    //throw new RuntimeException("Not implemented");
-    // ChessBoard resetBoard = newChess
   }
 
-  ChessPiece[][] MakeStartBoard() {
+  ChessPiece[][] makeStartBoard() {
     ChessPiece whiteRook=new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
     ChessPiece whiteKnight=new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
     ChessPiece whiteBishop=new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
@@ -131,8 +103,8 @@ public class ChessBoard {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
+    if (this == o) {return true;}
+    if (o == null || getClass() != o.getClass()) {return false;}
     ChessBoard that=(ChessBoard) o;
     return Arrays.deepEquals(squares, that.squares);
   }

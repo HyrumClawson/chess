@@ -49,8 +49,8 @@ public class ChessGame {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {return true;}
+        if (o == null || getClass() != o.getClass()) {return false;}
         ChessGame chessGame=(ChessGame) o;
         return Objects.equals(gameBoard, chessGame.gameBoard);
     }
@@ -84,7 +84,7 @@ public class ChessGame {
             ChessGame.TeamColor color = gameBoard.getPiece(startPosition).pieceColor;
             ArrayList<ChessMove> validMoves = new ArrayList<>();
             Collection<ChessMove> potentialMoves = gameBoard.getPiece(startPosition).pieceMoves(gameBoard, startPosition);
-            validMoves = KingIsInCheckMoves(potentialMoves, validMoves, color);
+            validMoves = kingIsInCheckMoves(potentialMoves, validMoves, color);
             return validMoves;
         }
     }
@@ -109,9 +109,9 @@ public class ChessGame {
             }
             //Collection<ChessMove> goodMoves = validMoves(move.getStartPosition());
             //goodMoves.contains(move);
-            boolean isValid=CheckMoveValidity(move);
+            boolean isValid=checkMoveValidity(move);
             if (isValid) {
-                UpdateBoard(move, gameBoard);
+                updateBoard(move, gameBoard);
                 //UpdateTeamTurn(move);
                 if(gameBoard.getPiece(move.getEndPosition()).pieceColor == TeamColor.WHITE){
                     teamTurn.push(TeamColor.BLACK);
@@ -134,9 +134,9 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         ArrayList<ChessMove> opposingTeamMoves;
-        opposingTeamMoves = GetOpposingTeamMoves(teamColor, gameBoard);
+        opposingTeamMoves = getOpposingTeamMoves(teamColor, gameBoard);
         ChessPosition kingPosition = gameBoard.getPosition(teamColor, ChessPiece.PieceType.KING).getFirst();
-        return IsKingInCheck(opposingTeamMoves, kingPosition);
+        return isKingInCheck(opposingTeamMoves, kingPosition);
     }
 
     /**
@@ -146,9 +146,9 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        TeamColor opposingColor = GetOpposingColor(teamColor);
+        TeamColor opposingColor = getOpposingColor(teamColor);
         if(isInCheck(teamColor)){
-            return IsInCheckMateOrStalemate(teamColor, opposingColor);
+            return isInCheckMateOrStalemate(teamColor, opposingColor);
         }
         else{
             return false;
@@ -164,12 +164,12 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        TeamColor opposingColor = GetOpposingColor(teamColor);
+        TeamColor opposingColor = getOpposingColor(teamColor);
         if(isInCheckmate(teamColor)){
             return false;
         }
         else{
-            return IsInCheckMateOrStalemate(teamColor, opposingColor);
+            return isInCheckMateOrStalemate(teamColor, opposingColor);
         }
         // essentially if every move of the team's piece results in isInCheck being true that
         // team is in checkmate.
@@ -196,22 +196,22 @@ public class ChessGame {
     }
 
 
-    boolean CheckMoveValidity(ChessMove move) {
+    boolean checkMoveValidity(ChessMove move) {
         boolean isValid=false;
         ArrayList<ChessPosition> kingPosition =gameBoard.getPosition
                 (gameBoard.getPiece(move.getStartPosition()).pieceColor, ChessPiece.PieceType.KING);
         if(!kingPosition.isEmpty() &&
                 isInCheck(gameBoard.getPiece(move.getStartPosition()).pieceColor)){
             ChessBoard dummyBoard = gameBoard;
-            UpdateBoard(move, dummyBoard);
+            updateBoard(move, dummyBoard);
             if(isInCheck(dummyBoard.getPiece(move.getEndPosition()).pieceColor)){
                 isValid = false;
                 return isValid;
             }
         }
         ChessPiece thePiece=gameBoard.getPiece(move.getStartPosition());
-        Collection<ChessMove> ValidMoves=thePiece.pieceMoves(gameBoard, move.getStartPosition());
-        for (ChessMove thing : ValidMoves) {
+        Collection<ChessMove> validMoves=thePiece.pieceMoves(gameBoard, move.getStartPosition());
+        for (ChessMove thing : validMoves) {
             if (thing.getEndPosition().getRow() == move.getEndPosition().getRow()
             && thing.getEndPosition().getColumn() == move.getEndPosition().getColumn() ) {
                 isValid=true;
@@ -222,7 +222,7 @@ public class ChessGame {
         return isValid;
     }
 
-    public void UpdateBoard(ChessMove move, ChessBoard board){
+    public void updateBoard(ChessMove move, ChessBoard board){
         if(board.getPiece(move.getStartPosition()).getPieceType() == ChessPiece.PieceType.PAWN
         && ( move.getEndPosition().getRow() == 8 || move.getEndPosition().getRow() == 1  )){
             ChessPiece piece = new ChessPiece(board.getPiece(move.getStartPosition()).getTeamColor(),
@@ -235,7 +235,7 @@ public class ChessGame {
         board.addPiece(move.getStartPosition(), null);
     }
 
-    ArrayList<ChessMove> GetOpposingTeamMoves(ChessGame.TeamColor teamColor, ChessBoard board) {
+    ArrayList<ChessMove> getOpposingTeamMoves(ChessGame.TeamColor teamColor, ChessBoard board) {
         ArrayList<ChessMove> moves = new ArrayList<>();
         for (int i=0; i < gameBoard.getSquares().length; i++) {
             for (int j=0; j < gameBoard.getSquares().length; j++) {
@@ -254,7 +254,7 @@ public class ChessGame {
         return moves;
     }
 
-    public boolean IsKingInCheck( ArrayList<ChessMove> opposingTeamMoves, ChessPosition kingPosition){
+    public boolean isKingInCheck( ArrayList<ChessMove> opposingTeamMoves, ChessPosition kingPosition){
         for(ChessMove opposeMove : opposingTeamMoves){
             int row = opposeMove.getEndPosition().getRow();
             int col = opposeMove.getEndPosition().getColumn();
@@ -265,14 +265,14 @@ public class ChessGame {
         return false;
     }
 
-    public boolean IsInCheckMateOrStalemate(TeamColor teamColor, TeamColor opposingColor){
-        Collection<ChessMove> kingTeamMoves = GetOpposingTeamMoves(opposingColor, gameBoard);
+    public boolean isInCheckMateOrStalemate(TeamColor teamColor, TeamColor opposingColor){
+        Collection<ChessMove> kingTeamMoves = getOpposingTeamMoves(opposingColor, gameBoard);
         ArrayList<ChessMove> kingTeam = new ArrayList<>();
         kingTeam.addAll(kingTeamMoves);
         boolean isInCheckEverywhere = false;
         for (ChessMove teamMove : kingTeam){
             ChessPiece potentialPiece = gameBoard.getPiece(teamMove.getEndPosition());
-            UpdateBoard(teamMove, gameBoard);
+            updateBoard(teamMove, gameBoard);
             if(!isInCheck(teamColor)){
                 return false;
             }
@@ -280,13 +280,13 @@ public class ChessGame {
                 isInCheckEverywhere = true;
             }
             ChessMove undoMove = new ChessMove(teamMove.getEndPosition(),teamMove.getStartPosition(), teamMove.getPromotionPiece());
-            UpdateBoard(undoMove, gameBoard);
+            updateBoard(undoMove, gameBoard);
             gameBoard.addPiece(teamMove.getEndPosition(), potentialPiece);
         }
         return isInCheckEverywhere;
     }
 
-    TeamColor GetOpposingColor(TeamColor teamColor){
+    TeamColor getOpposingColor(TeamColor teamColor){
         TeamColor opposingColor;
         if(TeamColor.WHITE == teamColor){
             opposingColor = TeamColor.BLACK;
@@ -297,14 +297,14 @@ public class ChessGame {
         return opposingColor;
     }
 
-    ArrayList<ChessMove> KingIsInCheckMoves(Collection<ChessMove> potentialMoves, ArrayList<ChessMove> validMoves, ChessGame.TeamColor color){
+    ArrayList<ChessMove> kingIsInCheckMoves(Collection<ChessMove> potentialMoves, ArrayList<ChessMove> validMoves, ChessGame.TeamColor color){
         for(ChessMove move : potentialMoves){
             ChessPiece potentialPiece = gameBoard.getPiece(move.getEndPosition());
-            UpdateBoard(move, gameBoard);
+            updateBoard(move, gameBoard);
             if(!isInCheck(color)){
                 validMoves.add(move);
                 ChessMove undoMove = new ChessMove(move.getEndPosition(),move.getStartPosition(), move.getPromotionPiece());
-                UpdateBoard(undoMove, gameBoard);
+                updateBoard(undoMove, gameBoard);
                 gameBoard.addPiece(move.getEndPosition(), potentialPiece);
                 // I see what is happening. My undo move doesn't take into account
                 // the times when a piece of another team is offed. it just
@@ -314,7 +314,7 @@ public class ChessGame {
             }
             else{
                 ChessMove undoMove = new ChessMove(move.getEndPosition(),move.getStartPosition(), move.getPromotionPiece());
-                UpdateBoard(undoMove, gameBoard);
+                updateBoard(undoMove, gameBoard);
             }
         }
         return validMoves;

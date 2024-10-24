@@ -3,118 +3,55 @@ package chess;
 import java.util.ArrayList;
 
 public class RookMoves implements PieceMoveCalculator{
-  private ArrayList<ChessMove> ListOfMoves = new ArrayList<>();
-
+  private ArrayList<ChessMove> listOfMoves = new ArrayList<>();
   private ChessGame.TeamColor color;
 
-  private ChessPosition originalPosition;
+  RookMoves(){}
 
-  private ChessPiece.PieceType rook;
+  ArrayList<ChessMove> GetAllMoves(ChessBoard board, ChessPosition originalPosition){
+    color = board.getPiece(originalPosition).getTeamColor();
+    int[][] increments = {
+            {1,0},
+            {-1, 0},
+            {0, -1},
+            {0,1},
+    };
 
-  private String Direction;
+    for(int[] increment : increments){
+      FindMoves(board, originalPosition, increment);
+    }
 
-  public RookMoves() {}
-
-
-  ArrayList<ChessMove> GetAllMoves(ChessBoard board, ChessPosition position){
-    rook = board.getPiece(position).getPieceType();
-    color = board.getPiece(position).getTeamColor();
-    originalPosition = position;
-    Up(board, position);
-    Left(board, position);
-    Right(board, position);
-    Down(board, position);
-
-
-    return ListOfMoves;
+    return listOfMoves;
   }
-
-  ChessPosition Up (ChessBoard board, ChessPosition startPosition){
-    Direction = "Up";
-    int newRow;
-    int newCol;
-    if(startPosition.getRow() < 8){
-      newRow = startPosition.getRow() + 1;
-      newCol = startPosition.getColumn();
-      return RepeatedCode(board, startPosition, newRow, newCol, Direction);
-    }
-    else{
-      return startPosition;
-    }
-  }
-
-  ChessPosition Down (ChessBoard board, ChessPosition startPosition){
-    Direction = "Down";
-    int newRow;
-    int newCol;
-    if(startPosition.getRow() > 1){
-      newRow = startPosition.getRow() - 1;
-      newCol = startPosition.getColumn();
-      return RepeatedCode(board, startPosition, newRow, newCol, Direction);
-    }
-    else{
-      return startPosition;
-    }
-  }
-
-  ChessPosition Left (ChessBoard board, ChessPosition startPosition){
-    String Direction = "Left";
-    int newRow;
-    int newCol;
-    if(startPosition.getColumn() > 1){
-      newRow = startPosition.getRow();
-      newCol = startPosition.getColumn() - 1;
-      return RepeatedCode(board, startPosition, newRow, newCol, Direction);
-    }
-    else{
-      return startPosition;
-    }
-    //return startPosition;
-  }
-
-
-
-  ChessPosition Right (ChessBoard board, ChessPosition startPosition){
-    Direction = "Right";
-    int newRow;
-    int newCol;
-    if(startPosition.getColumn() < 8){
-      newRow = startPosition.getRow();
-      newCol = startPosition.getColumn() + 1;
-      return RepeatedCode(board, startPosition, newRow, newCol, Direction);
-    }
-    else{
-      return startPosition;
-    }
-  }
-
-  ChessPosition RepeatedCode(ChessBoard board, ChessPosition startPosition, int row, int col, String Direction){
-    ChessPosition newMovePosition = new ChessPosition(row,col);
-    ChessMove newChessMove = new ChessMove(originalPosition, newMovePosition, null);
-    if(board.getPiece(newMovePosition) != null){
-      if(board.getPiece(newMovePosition).getTeamColor() == color){
-        return startPosition;
+  void FindMoves(ChessBoard board, ChessPosition originalPosition, int[] increment){
+    boolean goodToMove = true;
+    int row;
+    int col;
+    row = originalPosition.getRow() + increment[0];
+    col = originalPosition.getColumn() + increment[1];
+    while(goodToMove){
+      ChessPosition newPosition = new ChessPosition(row, col);
+      ChessMove newMove = new ChessMove(originalPosition, newPosition, null);
+      row = newPosition.getRow() + increment[0];
+      col =newPosition.getColumn() + increment[1];
+      if(newPosition.getRow() > 0 && newPosition.getRow() < 9 && newPosition.getColumn() > 0 &&
+              newPosition.getColumn() < 9){
+        if(board.getPiece(newPosition) != null){
+          if(color != board.getPiece(newPosition).getTeamColor()){
+            listOfMoves.add(newMove);
+            goodToMove = false;
+          }
+          else{
+            goodToMove = false;
+          }
+        }
+        else{
+          listOfMoves.add(newMove);
+        }
       }
       else{
-        ListOfMoves.add(newChessMove);
-        return startPosition;
+        goodToMove = false;
       }
     }
-    else{
-      ListOfMoves.add(newChessMove);
-      switch (Direction){
-        case "Up":
-          return Up(board, newMovePosition);
-        case "Down":
-          return  Down(board, newMovePosition);
-        case "Left":
-          return Left(board, newMovePosition);
-        case "Right":
-          return Right(board, newMovePosition);
-      }
-    }
-    return startPosition;
   }
-
-
 }
