@@ -47,7 +47,7 @@ public class Server {
 
 
         //This line initializes the server and can be removed once you have a functioning endpoint 
-        Spark.init();
+//        Spark.init();
 
         Spark.awaitInitialization();
         return Spark.port();
@@ -125,8 +125,6 @@ public class Server {
     }
     public Object logoutHandler(Request req, Response res) throws ResponseException{
         String authToken = getAuthFromHeader(req);
-        System.out.println("sent it");
-        System.out.println(authToken);
         authService.logoutAuth(AuthData, authToken);
         res.status(200);
         return "";
@@ -171,28 +169,6 @@ public class Server {
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public String getAuthFromHeader(Request req){
         String authToken = "";
         for (String headerName : req.headers()) {
@@ -204,17 +180,6 @@ public class Server {
     }
 
 
-
-
-     //Spark.post("/pet", this::addPet);
-/**
-    private Object addPet(Request req, Response res) throws ResponseException {
-        var pet = new Gson().fromJson(req.body(), Pet.class);
-        pet = service.addPet(pet);
-        webSocketHandler.makeNoise(pet.name(), pet.sound());
-        return new Gson().toJson(pet);
-    }
- **/
 
 
     public void stop() {

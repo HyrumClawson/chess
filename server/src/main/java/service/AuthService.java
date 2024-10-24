@@ -41,9 +41,5 @@ public class AuthService {
       return authAccess.getUsername(authToken);
     }
 
-
-//  public void CheckAuth(AuthDAO authData, String authToken) {
-//    if
-//  }
   }
 

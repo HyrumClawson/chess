@@ -11,13 +11,10 @@ import java.util.Random;
 import java.util.UUID;
 
 public class MemoryGameDAO implements GameDAO{
-  final private HashMap<String, String[]> MapOfGames = new HashMap<>();
 //  private model.GameData[] listOfGames = new model.GameData[0];
   private ArrayList<model.GameData> listOfGames = new ArrayList<>();
   public void deleteAllGames(){
-    // I don't know which data structure would be better.
     listOfGames.clear();
-
   }
   public ArrayList<ListingGameData> getListOfGames(){
     ArrayList<ListingGameData> listOfChangedGames = new ArrayList<>();

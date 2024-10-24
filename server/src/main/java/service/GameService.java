@@ -10,7 +10,6 @@ import server.ResponseException;
 import java.util.ArrayList;
 
 public class GameService {
-  //dataaccess.GameDAO gameDataAccess = new dataaccess.MemoryGameDAO();
   public void clearAllGameData(GameDAO GameData) {
     GameData.deleteAllGames();
   }
@@ -44,8 +43,5 @@ public class GameService {
     }
 
   }
-
-
-
 
 }
