@@ -2,6 +2,8 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
+import model.GameData;
+import model.ListingGameData;
 import model.UserData;
 import netscape.javascript.JSObject;
 import service.*;
@@ -36,7 +38,7 @@ public class Server {
         spark.Spark.post("/session", this::loginHandler);
         spark.Spark.delete("/session", this::logoutHandler);
         spark.Spark.get("/game", this::listGames);
-        spark.Spark.post("/game", (request, response) -> "Hell World" ); //this is one gets called in the tests for login
+        spark.Spark.post("/game", this::createGame); //this is one gets called in the tests for login
         spark.Spark.put("/game", (request, response) -> "Hello World");
         spark.Spark.delete("/db", this::deleteDBHandler);
         Spark.exception(ResponseException.class, this::exceptionHandler);
@@ -134,10 +136,26 @@ public class Server {
     public Object listGames(Request req, Response res) throws ResponseException{
         String authToken = getAuthFromHeader(req);
         authService.isAuthDataThere(AuthData, authToken);
-        model.GameData[] list = gameService.listAllGames(GameData);
+        ArrayList<ListingGameData> list = gameService.listAllGames(GameData);
+        //created the object that holds the list.
+        GamesList listObject = new GamesList(list);
         res.status(200);
-        res.body(new Gson().toJson(list));
-        return (new Gson().toJson(list));
+        res.body(new Gson().toJson(listObject));
+        return (new Gson().toJson(listObject));
+    }
+
+    public Object createGame(Request req, Response res) throws ResponseException{
+        String authToken = getAuthFromHeader(req);
+        model.GameData newGame = new Gson().fromJson(req.body(), model.GameData.class);
+        //I'm waffling back and forth on whether I should I have it check for a bad
+        //request first or after the authorization. Maybe change it later.
+        authService.isAuthDataThere(AuthData, authToken);
+        int gameId = gameService.createNewGame(GameData, newGame);
+        GameID gameIDObject = new GameID(gameId);
+        res.status(200);
+        res.body(new Gson().toJson(gameIDObject));
+        return new Gson().toJson(gameIDObject);
+
     }
 
 
