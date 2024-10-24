@@ -9,6 +9,7 @@ import server.ResponseException;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ServiceTests {
   AuthService a = new AuthService();
@@ -27,6 +28,7 @@ public class ServiceTests {
   public void PositiveDeleteTest() {
     try {
       service.clearDataBase();
+      assertEquals(0, service.gameServiceObject.listAllGames(gameDataAccess).size());
     }
     catch(DataAccessException e){
 
@@ -38,6 +40,8 @@ public class ServiceTests {
     model.UserData newUser = new model.UserData("Hyrum", "53628384", "hc@mail");
     try {
       u.registerUser(userDataAccess, newUser);
+      UserData userFromDB = userDataAccess.getUser(newUser);
+      assertEquals(newUser.username(), userFromDB.username());
     } catch (ResponseException e) {
       throw new RuntimeException(e);
     }
@@ -61,7 +65,9 @@ public class ServiceTests {
     model.UserData loginUser = new UserData("Hyrum", "53628384", "hc@mail");
     try {
       u.registerUser(userDataAccess, loginUser);
+      AuthData newAuth = a.AddAuthData(authDataAccess, loginUser);
       u.loginUser(userDataAccess, loginUser);
+      assertEquals(authDataAccess.getUsername(newAuth.authToken()), loginUser.username());
     } catch (ResponseException e) {
       throw new RuntimeException(e);
     }
@@ -87,6 +93,7 @@ public class ServiceTests {
       u.loginUser(userDataAccess, loginUser);
       AuthData newAuth = a.AddAuthData(authDataAccess, loginUser);
       a.logoutAuth(authDataAccess, newAuth.authToken());
+      assertEquals(false, authDataAccess.checkMapForAuth(newAuth.authToken()));
     } catch (ResponseException e) {
       throw new RuntimeException(e);
     }
@@ -117,10 +124,25 @@ public class ServiceTests {
   }
 
   @Test
+  public void unAuthorizedListGames(){
+    try {
+      a.isAuthDataThere(authDataAccess, "not a token");
+      g.listAllGames(gameDataAccess);
+    } catch (ResponseException e) {
+      assertEquals(ResponseException.ExceptionType.UNAUTHORIZED,
+              e.typeOfException, "Threw a un response exception");
+    }
+
+  }
+
+  @Test
   public void positiveCreateGame(){
     model.GameData game = new GameData(123, null,
             "black", "funtimes", new ChessGame());
     gameDataAccess.addGame(game);
+    int gameID = gameDataAccess.getListOfGames().get(0).gameID();
+    JoinGame info = new JoinGame("BLACK", gameID);
+    assertTrue( gameDataAccess.GameIDExists(info));
   }
 
   @Test
@@ -141,8 +163,11 @@ public class ServiceTests {
     model.GameData game = new GameData(123, null,
             "black", "funtimes", new ChessGame());
     gameDataAccess.addGame(game);
-    JoinGame info = new JoinGame("WHITE", 123);
+    int gameID = gameDataAccess.getListOfGames().get(0).gameID();
+    JoinGame info = new JoinGame("WHITE", gameID);
     gameDataAccess.addPlayerToGame(info, "newguy");
+    ListingGameData gameWeAdded = gameDataAccess.getListOfGames().get(0);
+    assertEquals("newguy", gameWeAdded.whiteUsername());
   }
 
   @Test

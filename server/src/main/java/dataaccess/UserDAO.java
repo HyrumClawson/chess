@@ -1,8 +1,10 @@
 package dataaccess;
 
+import model.UserData;
+
 public interface UserDAO {
   void deleteAllUsers();
   void addUser(model.UserData newUser);
 
-  Object getUser(model.UserData user);
+  UserData getUser(model.UserData user);
 }
