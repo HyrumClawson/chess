@@ -30,7 +30,7 @@ public class Server {
 
         spark.Spark.post("/user",this::registrationHandler);
         spark.Spark.post("/session", this::loginHandler);
-        spark.Spark.delete("/session", (request, response)-> "Hello World");
+        spark.Spark.delete("/session", this::logoutHandler);
         spark.Spark.get("/game", (request,response)-> "H World");
         spark.Spark.post("/game", (request, response) -> "Hell World" ); //this is one gets called in the tests for login
         spark.Spark.put("/game", (request, response) -> "Hello World");
@@ -115,6 +115,12 @@ public class Server {
         res.body(new Gson().toJson(newAuth));
         return (new Gson().toJson(newAuth));
 
+    }
+    public Object logoutHandler(Request req, Response res) throws ResponseException{
+        var authToken = new Gson().fromJson(req.body(), String.class);
+        authService.logoutAuth(AuthData, authToken);
+
+        //return an empty like the clear
     }
 
 

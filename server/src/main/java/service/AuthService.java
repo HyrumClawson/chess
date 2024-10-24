@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
+import server.ResponseException;
 
 public class AuthService {
   public void clearAllAuthData(AuthDAO AuthData) {
@@ -14,6 +15,20 @@ public class AuthService {
   }
   public Object AddAuthData(AuthDAO authDB, model.UserData user){
     return authDB.addnewAuth(user);
+  }
+
+  public void logoutAuth(AuthDAO authAccess, String authToken) throws ResponseException {
+    if(!isAuthDataThere(authToken)){
+      throw new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
+    }
+    else{
+      authAccess.deleteSingleAuth(authToken);
+    }
+
+  }
+
+  public boolean isAuthDataThere(String authToken){
+
   }
 
 
