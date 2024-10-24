@@ -8,6 +8,8 @@ import service.*;
 import service.Service;
 import spark.*;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Set;
 
 public class Server {
@@ -33,7 +35,7 @@ public class Server {
         spark.Spark.post("/user",this::registrationHandler);
         spark.Spark.post("/session", this::loginHandler);
         spark.Spark.delete("/session", this::logoutHandler);
-        spark.Spark.get("/game", (request,response)-> "H World");
+        spark.Spark.get("/game", this::listGames);
         spark.Spark.post("/game", (request, response) -> "Hell World" ); //this is one gets called in the tests for login
         spark.Spark.put("/game", (request, response) -> "Hello World");
         spark.Spark.delete("/db", this::deleteDBHandler);
@@ -119,16 +121,53 @@ public class Server {
 
     }
     public Object logoutHandler(Request req, Response res) throws ResponseException{
-        Set<String> headerSet = req.headers();
-        String authToken = "";
-        for (String headerName : headerSet) {
-            authToken = headerName;
-        }
+        String authToken = getAuthFromHeader(req);
+        System.out.println("sent it");
+        System.out.println(authToken);
         authService.logoutAuth(AuthData, authToken);
         res.status(200);
         return "";
 
         //return an empty like the clear
+    }
+
+    public Object listGames(Request req, Response res) throws ResponseException{
+        String authToken = getAuthFromHeader(req);
+        authService.isAuthDataThere(AuthData, authToken);
+        return null;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public String getAuthFromHeader(Request req){
+        String authToken = "";
+        for (String headerName : req.headers()) {
+            if(headerName.equals("Authorization")){
+                authToken = req.headers(headerName);
+            }
+        }
+        return authToken;
     }
 
 
