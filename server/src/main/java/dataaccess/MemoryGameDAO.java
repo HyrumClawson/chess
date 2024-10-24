@@ -30,23 +30,23 @@ public class MemoryGameDAO implements GameDAO{
     Random rand = new Random();
     int newGameID = rand.nextInt(100000); //might be a bit of an overkill
 
-    boolean IDAlreadyExists = false;
+    boolean idAlreadyExists = false;
     for (GameData game : listOfGames){
       if(newGameID == (game.gameID())){
-        IDAlreadyExists = true;
+        idAlreadyExists = true;
         break;
       }
     }
 
-    while (IDAlreadyExists){
+    while (idAlreadyExists){
       newGameID =rand.nextInt(1000000);
       for (GameData game : listOfGames){
         if(newGameID != (game.gameID())){
-          IDAlreadyExists = true;
+          idAlreadyExists = true;
           break;
         }
         else {
-          IDAlreadyExists = false;
+          idAlreadyExists = false;
         }
       }
     }
@@ -58,7 +58,7 @@ public class MemoryGameDAO implements GameDAO{
     return newGameID;
   }
 
-  public boolean GameIDExists(JoinGame infoToJoin){
+  public boolean gameIdExists(JoinGame infoToJoin){
     for(GameData game : listOfGames){
       if(game.gameID() == infoToJoin.gameID()){
         return true;

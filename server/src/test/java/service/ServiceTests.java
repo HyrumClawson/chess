@@ -25,7 +25,7 @@ public class ServiceTests {
 
 
   @Test
-  public void PositiveDeleteTest() {
+  public void positiveDeleteTest() {
     try {
       service.clearDataBase();
       assertEquals(0, service.gameServiceObject.listAllGames(gameDataAccess).size());
@@ -36,7 +36,7 @@ public class ServiceTests {
   }
 
   @Test
-  public void PositiveRegisterTest(){
+  public void positiveRegisterTest(){
     model.UserData newUser = new model.UserData("Hyrum", "53628384", "hc@mail");
     try {
       u.registerUser(userDataAccess, newUser);
@@ -48,7 +48,7 @@ public class ServiceTests {
   }
 
   @Test
-  public void AlreadyTakenRegisterTest(){
+  public void alreadyTakenRegisterTest(){
     model.UserData newUser = new UserData("Hyrum", "53628384", "hc@mail");
     try {
       u.registerUser(userDataAccess, newUser );
@@ -60,12 +60,12 @@ public class ServiceTests {
 
 
   @Test
-  public void PositiveLoginTest(){
+  public void positiveLoginTest(){
 
     model.UserData loginUser = new UserData("Hyrum", "53628384", "hc@mail");
     try {
       u.registerUser(userDataAccess, loginUser);
-      AuthData newAuth = a.AddAuthData(authDataAccess, loginUser);
+      AuthData newAuth = a.addAuthData(authDataAccess, loginUser);
       u.loginUser(userDataAccess, loginUser);
       assertEquals(authDataAccess.getUsername(newAuth.authToken()), loginUser.username());
     } catch (ResponseException e) {
@@ -74,7 +74,7 @@ public class ServiceTests {
   }
 
   @Test
-  public void UnauthorizedLoginTest(){
+  public void unauthorizedLoginTest(){
     model.UserData loginUser = new UserData("Hyrum", "53628384", "hc@mail");
     try {
       u.loginUser(userDataAccess, loginUser);
@@ -91,7 +91,7 @@ public class ServiceTests {
     try {
       u.registerUser(userDataAccess, loginUser);
       u.loginUser(userDataAccess, loginUser);
-      AuthData newAuth = a.AddAuthData(authDataAccess, loginUser);
+      AuthData newAuth = a.addAuthData(authDataAccess, loginUser);
       a.logoutAuth(authDataAccess, newAuth.authToken());
       assertEquals(false, authDataAccess.checkMapForAuth(newAuth.authToken()));
     } catch (ResponseException e) {
@@ -105,7 +105,7 @@ public class ServiceTests {
     try {
       u.registerUser(userDataAccess, loginUser);
       u.loginUser(userDataAccess, loginUser);
-      AuthData newAuth = a.AddAuthData(authDataAccess, loginUser);
+      AuthData newAuth = a.addAuthData(authDataAccess, loginUser);
       a.logoutAuth(authDataAccess, "notthetoken");
     }
     catch (ResponseException e) {
@@ -142,7 +142,7 @@ public class ServiceTests {
     gameDataAccess.addGame(game);
     int gameID = gameDataAccess.getListOfGames().get(0).gameID();
     JoinGame info = new JoinGame("BLACK", gameID);
-    assertTrue( gameDataAccess.GameIDExists(info));
+    assertTrue( gameDataAccess.gameIdExists(info));
   }
 
   @Test
@@ -159,7 +159,7 @@ public class ServiceTests {
   }
 
   @Test
-  public void PositiveJoinGame(){
+  public void positiveJoinGame(){
     model.GameData game = new GameData(123, null,
             "black", "funtimes", new ChessGame());
     gameDataAccess.addGame(game);

@@ -7,7 +7,7 @@ public class BishopMoves implements PieceMoveCalculator{
 
   BishopMoves(){}
 
-  ArrayList<ChessMove> GetAllMoves(ChessBoard board, ChessPosition originalPosition){
+  ArrayList<ChessMove> getAllMoves(ChessBoard board, ChessPosition originalPosition){
     color = board.getPiece(originalPosition).getTeamColor();
     int[][] increments = {
             {1, -1},

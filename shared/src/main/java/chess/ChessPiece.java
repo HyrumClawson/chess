@@ -84,22 +84,22 @@ public class ChessPiece {
         switch(board.getPiece(myPosition).getPieceType()){
             case KING :
                 KingMoves kingmoves = new KingMoves();
-                return kingmoves.GetAllMoves(board,myPosition);
+                return kingmoves.getAllMoves(board,myPosition);
             case QUEEN:
                 QueenMoves queenmoves = new QueenMoves();
-                return queenmoves.GetAllMoves(board,myPosition);
+                return queenmoves.getAllMoves(board,myPosition);
             case BISHOP:
                 BishopMoves newMoves = new BishopMoves();
-                return newMoves.GetAllMoves(board, myPosition);
+                return newMoves.getAllMoves(board, myPosition);
             case KNIGHT:
                 KnightMoves knightmoves = new KnightMoves();
-                return knightmoves.GetAllMoves(board, myPosition);
+                return knightmoves.getAllMoves(board, myPosition);
             case ROOK:
                 RookMoves rookmoves = new RookMoves();
                 return rookmoves.getAllMoves(board, myPosition);
             case PAWN:
                 PawnMoves pawnmoves = new PawnMoves();
-                return pawnmoves.GetAllMoves(board, myPosition);
+                return pawnmoves.getAllMoves(board, myPosition);
 
         }
         ArrayList<ChessMove> testing = new ArrayList<ChessMove>();

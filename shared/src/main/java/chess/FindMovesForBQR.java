@@ -8,12 +8,12 @@ public class FindMovesForBQR {
   ArrayList<ChessMove> getListOfMoves(ChessBoard board, ChessPosition originalPosition,
                                       int[][] increments, ChessGame.TeamColor color){
     for(int[] increment : increments){
-      FindMoves(board, originalPosition, increment, color);
+      findMoves(board, originalPosition, increment, color);
     }
     return listOfMoves;
 
   }
-  public void FindMoves(ChessBoard board, ChessPosition originalPosition, int[] increment,
+  public void findMoves(ChessBoard board, ChessPosition originalPosition, int[] increment,
                         ChessGame.TeamColor color){
     boolean goodToMove = true;
     int row;

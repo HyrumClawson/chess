@@ -8,15 +8,15 @@ import server.ResponseException;
 public class AuthService {
 
 
-  public void clearAllAuthData(AuthDAO AuthData) {
+  public void clearAllAuthData(AuthDAO authData) {
     try {
-      AuthData.deleteAllAuth();
+      authData.deleteAllAuth();
     } catch (Exception e) {
       // do something here I guess. Throw it further up.
     }
   }
 
-  public AuthData AddAuthData(AuthDAO authDB, model.UserData user) {
+  public AuthData addAuthData(AuthDAO authDB, model.UserData user) {
 
     return authDB.addnewAuth(user);
   }

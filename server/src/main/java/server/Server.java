@@ -19,9 +19,9 @@ public class Server {
     AuthService authService = new AuthService();
     GameService gameService = new GameService();
     UserService userService = new UserService();
-    AuthDAO AuthData = new MemoryAuthDAO();
-    GameDAO GameData = new MemoryGameDAO();
-    UserDAO UserData = new MemoryUserDAO();
+    AuthDAO authData = new MemoryAuthDAO();
+    GameDAO gameData = new MemoryGameDAO();
+    UserDAO userData = new MemoryUserDAO();
 
 
 
@@ -88,9 +88,9 @@ public class Server {
 
     public Object deleteDBHandler(Request req, Response res) {
         try{
-            authService.clearAllAuthData(AuthData);
-            gameService.clearAllGameData(GameData);
-            userService.clearAllUserData(UserData);
+            authService.clearAllAuthData(authData);
+            gameService.clearAllGameData(gameData);
+            userService.clearAllUserData(userData);
             res.status(200);
             return "";
 
@@ -107,8 +107,8 @@ public class Server {
 
     public Object registrationHandler(Request req, Response res) throws ResponseException/**ExceptionAlreadyTaken, BadRequest**/{
         var newUser=new Gson().fromJson(req.body(), model.UserData.class);
-        userService.registerUser(UserData, newUser);
-        var newAuth=authService.AddAuthData(AuthData, newUser);
+        userService.registerUser(userData, newUser);
+        var newAuth=authService.addAuthData(authData, newUser);
         res.status(200);
         res.body(new Gson().toJson(newAuth));
         return (new Gson().toJson(newAuth));
@@ -116,8 +116,8 @@ public class Server {
 
     public Object loginHandler(Request req, Response res) throws ResponseException {
         var userLogin = new Gson().fromJson(req.body(), model.UserData.class);
-        userService.loginUser(UserData, userLogin);
-        var newAuth = authService.AddAuthData(AuthData, userLogin);
+        userService.loginUser(userData, userLogin);
+        var newAuth = authService.addAuthData(authData, userLogin);
         res.status(200);
         res.body(new Gson().toJson(newAuth));
         return (new Gson().toJson(newAuth));
@@ -125,7 +125,7 @@ public class Server {
     }
     public Object logoutHandler(Request req, Response res) throws ResponseException{
         String authToken = getAuthFromHeader(req);
-        authService.logoutAuth(AuthData, authToken);
+        authService.logoutAuth(authData, authToken);
         res.status(200);
         return "";
 
@@ -134,8 +134,8 @@ public class Server {
 
     public Object listGames(Request req, Response res) throws ResponseException{
         String authToken = getAuthFromHeader(req);
-        authService.isAuthDataThere(AuthData, authToken);
-        ArrayList<ListingGameData> list = gameService.listAllGames(GameData);
+        authService.isAuthDataThere(authData, authToken);
+        ArrayList<ListingGameData> list = gameService.listAllGames(gameData);
         //created the object that holds the list.
         GamesList listObject = new GamesList(list);
         res.status(200);
@@ -148,8 +148,8 @@ public class Server {
         model.GameData newGame = new Gson().fromJson(req.body(), model.GameData.class);
         //I'm waffling back and forth on whether I should I have it check for a bad
         //request first or after the authorization. Maybe change it later.
-        authService.isAuthDataThere(AuthData, authToken);
-        int gameId = gameService.createNewGame(GameData, newGame);
+        authService.isAuthDataThere(authData, authToken);
+        int gameId = gameService.createNewGame(gameData, newGame);
         GameID gameIDObject = new GameID(gameId);
         res.status(200);
         res.body(new Gson().toJson(gameIDObject));
@@ -159,10 +159,10 @@ public class Server {
 
     public Object joinGame(Request req, Response res) throws ResponseException{
         String authToken = getAuthFromHeader(req);
-        String username = authService.getUserNameByToken(AuthData, authToken);
+        String username = authService.getUserNameByToken(authData, authToken);
         model.JoinGame infoToJoin = new Gson().fromJson(req.body(), JoinGame.class);
-        authService.isAuthDataThere(AuthData, authToken);
-        gameService.joinGame(GameData, infoToJoin, username);
+        authService.isAuthDataThere(authData, authToken);
+        gameService.joinGame(gameData, infoToJoin, username);
         res.status(200);
         return "";
 

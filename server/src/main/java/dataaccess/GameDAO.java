@@ -13,7 +13,7 @@ public interface GameDAO {
 
   int addGame(GameData newGame);
 
-  boolean GameIDExists(JoinGame infoToJoin);
+  boolean gameIdExists(JoinGame infoToJoin);
 
   boolean playerTaken(JoinGame infoToJoin);
 

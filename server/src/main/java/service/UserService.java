@@ -9,8 +9,8 @@ import server.ResponseException;
 
 public class UserService {
 
-  public void clearAllUserData(UserDAO UserData) {
-    UserData.deleteAllUsers();
+  public void clearAllUserData(UserDAO userData) {
+    userData.deleteAllUsers();
   }
   public void registerUser(UserDAO userData, model.UserData newUser) throws ResponseException /**BadRequest, AlreadyTaken**/ {
     if(newUser.username() == null || newUser.email() == null || newUser.password() == null) {

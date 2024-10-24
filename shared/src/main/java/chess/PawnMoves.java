@@ -8,7 +8,7 @@ public class PawnMoves implements PieceMoveCalculator{
 
   PawnMoves(){}
 
-  ArrayList<ChessMove> GetAllMoves(ChessBoard board, ChessPosition originalPosition){
+  ArrayList<ChessMove> getAllMoves(ChessBoard board, ChessPosition originalPosition){
     color = board.getPiece(originalPosition).getTeamColor();
     int[][] whiteIncrements = {
             {1,0},
@@ -33,7 +33,7 @@ public class PawnMoves implements PieceMoveCalculator{
       }
       //add special case code
       for(int[] increment : whiteIncrements){
-        FindMoves(board, originalPosition, increment);
+        findMoves(board, originalPosition, increment);
       }
     }
     else{
@@ -48,14 +48,14 @@ public class PawnMoves implements PieceMoveCalculator{
         }
       }
       for(int[] increment : blackIncrements){
-        FindMoves(board, originalPosition, increment);
+        findMoves(board, originalPosition, increment);
       }
 
     }
     return listOfMoves;
   }
 
-  void FindMoves(ChessBoard board, ChessPosition originalPosition, int[] increment){
+  void findMoves(ChessBoard board, ChessPosition originalPosition, int[] increment){
     boolean goodToMove = true;
     int row;
     int col;
@@ -72,7 +72,7 @@ public class PawnMoves implements PieceMoveCalculator{
         if(color != board.getPiece(newPosition).getTeamColor()){
           if(newPosition.getColumn() != originalPosition.getColumn()){
             if(newPosition.getRow() == 1 || newPosition.getRow() == 8){
-              GetPromotionMoves(originalPosition, newPosition);
+              getPromotionMoves(originalPosition, newPosition);
             }
             else{
               listOfMoves.add(newMove);
@@ -88,7 +88,7 @@ public class PawnMoves implements PieceMoveCalculator{
       else{
         if(originalPosition.getColumn() == newPosition.getColumn()){
           if(newPosition.getRow() == 1 || newPosition.getRow() == 8){
-            GetPromotionMoves(originalPosition, newPosition);
+            getPromotionMoves(originalPosition, newPosition);
           }
           else{
             listOfMoves.add(newMove);
@@ -104,17 +104,17 @@ public class PawnMoves implements PieceMoveCalculator{
 
   }
 
-  void GetPromotionMoves(ChessPosition originalPosition, ChessPosition newPosition){
-    ChessMove Rook = new ChessMove(originalPosition, newPosition, ChessPiece.PieceType.ROOK);
-    ChessMove Knight = new ChessMove(originalPosition, newPosition, ChessPiece.PieceType.KNIGHT);
-    ChessMove Queen = new ChessMove(originalPosition, newPosition, ChessPiece.PieceType.QUEEN);
-    ChessMove Bishop = new ChessMove(originalPosition, newPosition, ChessPiece.PieceType.BISHOP);
+  void getPromotionMoves(ChessPosition originalPosition, ChessPosition newPosition){
+    ChessMove rook = new ChessMove(originalPosition, newPosition, ChessPiece.PieceType.ROOK);
+    ChessMove knight = new ChessMove(originalPosition, newPosition, ChessPiece.PieceType.KNIGHT);
+    ChessMove queen = new ChessMove(originalPosition, newPosition, ChessPiece.PieceType.QUEEN);
+    ChessMove bishop = new ChessMove(originalPosition, newPosition, ChessPiece.PieceType.BISHOP);
     ArrayList<ChessMove> promotionMoves = new ArrayList<>();
 
-    promotionMoves.add(Rook);
-    promotionMoves.add(Knight);
-    promotionMoves.add(Queen);
-    promotionMoves.add(Bishop);
+    promotionMoves.add(rook);
+    promotionMoves.add(knight);
+    promotionMoves.add(queen);
+    promotionMoves.add(bishop);
 
     listOfMoves.addAll(promotionMoves);
   }

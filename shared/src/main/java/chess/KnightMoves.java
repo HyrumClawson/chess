@@ -8,7 +8,7 @@ public class KnightMoves implements PieceMoveCalculator{
 
   KnightMoves(){}
 
-  ArrayList<ChessMove> GetAllMoves(ChessBoard board, ChessPosition originalPosition){
+  ArrayList<ChessMove> getAllMoves(ChessBoard board, ChessPosition originalPosition){
     color = board.getPiece(originalPosition).getTeamColor();
     int[][] increments = {
             {2,1},
@@ -22,12 +22,12 @@ public class KnightMoves implements PieceMoveCalculator{
     };
 
     for(int[] increment : increments){
-      FindMoves(board, originalPosition, increment);
+      findMoves(board, originalPosition, increment);
     }
 
     return listOfMoves;
   }
-  void FindMoves(ChessBoard board, ChessPosition originalPosition, int[] increment){
+  void findMoves(ChessBoard board, ChessPosition originalPosition, int[] increment){
     int row;
     int col;
     row = originalPosition.getRow() + increment[0];

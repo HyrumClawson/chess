@@ -10,8 +10,8 @@ import server.ResponseException;
 import java.util.ArrayList;
 
 public class GameService {
-  public void clearAllGameData(GameDAO GameData) {
-    GameData.deleteAllGames();
+  public void clearAllGameData(GameDAO gameData) {
+    gameData.deleteAllGames();
   }
 
   public ArrayList<ListingGameData> listAllGames(GameDAO gameDataAccess) {
@@ -31,7 +31,7 @@ public class GameService {
       throw new ResponseException(ResponseException.ExceptionType.BADREQUEST);
     }
     // also have to check if gameID exists in the gamedata
-    else if(!gameDataAccess.GameIDExists(infoToJoin)){
+    else if(!gameDataAccess.gameIdExists(infoToJoin)){
       throw new ResponseException(ResponseException.ExceptionType.BADREQUEST);
     }
     else{
