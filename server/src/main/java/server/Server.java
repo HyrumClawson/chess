@@ -134,7 +134,10 @@ public class Server {
     public Object listGames(Request req, Response res) throws ResponseException{
         String authToken = getAuthFromHeader(req);
         authService.isAuthDataThere(AuthData, authToken);
-        return null;
+        model.GameData[] list = gameService.listAllGames(GameData);
+        res.status(200);
+        res.body(new Gson().toJson(list));
+        return (new Gson().toJson(list));
     }
 
 

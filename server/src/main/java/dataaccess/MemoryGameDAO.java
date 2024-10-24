@@ -4,11 +4,14 @@ import model.GameData;
 
 public class MemoryGameDAO implements GameDAO{
   final private HashMap<String, String[]> MapOfGames = new HashMap<>();
-  private String[][] listOfGames =new String[0][0];
+  private model.GameData[] listOfGames =new model.GameData[0];
   public void deleteAllGames(){
     // I don't know which data structure would be better.
-    listOfGames = new String[0][0];
+    listOfGames = new model.GameData[0];
     MapOfGames.clear();
+  }
+  public GameData[] getListOfGames(){
+    return listOfGames;
   }
 
 }
