@@ -26,13 +26,11 @@ public class ServiceTests {
 
   @Test
   public void positiveDeleteTest() {
-    try {
-      service.clearDataBase();
-      assertEquals(0, service.gameServiceObject.listAllGames(gameDataAccess).size());
-    }
-    catch(DataAccessException e){
+      g.clearAllGameData(gameDataAccess);
+      a.clearAllAuthData(authDataAccess);
+      u.clearAllUserData(userDataAccess);
 
-    }
+      assertEquals(0, g.listAllGames(gameDataAccess).size());
   }
 
   @Test

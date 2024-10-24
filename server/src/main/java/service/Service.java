@@ -13,11 +13,4 @@ public class Service {
     this.gameServiceObject = gameServiceObject;
     this.userServiceObject = userServiceObject;
   }
-  public void clearDataBase() throws DataAccessException {
-//    authServiceObject.clearAllAuthData();
-//    gameServiceObject.clearAllGameData();
-//    userServiceObject.clearAllUserData();
-    //authServiceObject.
-  }
-
 }
