@@ -96,7 +96,7 @@ public class ChessPiece {
                 return knightmoves.GetAllMoves(board, myPosition);
             case ROOK:
                 RookMoves rookmoves = new RookMoves();
-                return rookmoves.GetAllMoves(board, myPosition);
+                return rookmoves.getAllMoves(board, myPosition);
             case PAWN:
                 PawnMoves pawnmoves = new PawnMoves();
                 return pawnmoves.GetAllMoves(board, myPosition);
