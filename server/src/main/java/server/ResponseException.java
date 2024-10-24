@@ -7,6 +7,7 @@ public class ResponseException extends Exception{
   public enum ExceptionType {
    TAKEN,
     BADREQUEST,
+    UNAUTHORIZED,
 
   }
 

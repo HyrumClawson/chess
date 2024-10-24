@@ -14,10 +14,11 @@ public class MemoryUserDAO implements UserDAO{
     //first we check to see if there's already userdata associated with username
 
   }
-  public Object getUser(model.UserData user){
+  public UserData getUser(model.UserData user){
     for(UserData e : listOfUsers){
       if(e.username().equals(user.username())){
-        return e.username();
+        return e;
+        //return e.username();
         // it's somewhere here where we would throw an error, because the username
         //is already taken. And then we'd add info to it and throw it up to a higher
         //level to add more stuff and eventually catch it as

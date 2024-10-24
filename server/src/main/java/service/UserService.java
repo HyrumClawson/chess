@@ -28,7 +28,22 @@ public class UserService {
 
   }
 
-  public Object findUser(UserDAO userData, model.UserData user){
-    return userData.getUser(user);
+  public void loginUser(UserDAO userAccess, model.UserData userLogin) throws ResponseException {
+    model.UserData userFromDB = findUser(userAccess, userLogin);
+    if(userFromDB == null){
+      throw new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
+    }
+    else if (!userFromDB.password().equals(userLogin.password()) ) {
+      throw new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
+
+    }
+    else{
+      // do nothing I guess.
+    }
+
+  }
+
+  public UserData findUser(UserDAO userData, model.UserData user){
+    return (UserData) userData.getUser(user);
   }
 }
