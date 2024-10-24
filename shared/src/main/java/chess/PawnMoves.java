@@ -69,20 +69,14 @@ public class PawnMoves implements PieceMoveCalculator{
             newPosition.getColumn() < 9
       && (newPosition.getRow() != 1 || newPosition.getRow() != 8) ){
       if(board.getPiece(newPosition) != null ){
-        if(color != board.getPiece(newPosition).getTeamColor()){
-          if(newPosition.getColumn() != originalPosition.getColumn()){
-            if(newPosition.getRow() == 1 || newPosition.getRow() == 8){
-              getPromotionMoves(originalPosition, newPosition);
-            }
-            else{
-              listOfMoves.add(newMove);
-            }
-
+        if(color != board.getPiece(newPosition).getTeamColor() &&
+                newPosition.getColumn() != originalPosition.getColumn()){
+          if(newPosition.getRow() == 1 || newPosition.getRow() == 8){
+            getPromotionMoves(originalPosition, newPosition);
           }
-          goodToMove = false;
-        }
-        else{
-          goodToMove = false;
+          else{
+            listOfMoves.add(newMove);
+          }
         }
       }
       else{
