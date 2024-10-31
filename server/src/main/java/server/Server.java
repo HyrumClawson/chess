@@ -105,7 +105,7 @@ public class Server {
 
         }
         catch (Exception e) {
-            Error newError = new Error("Something went wonky");
+            Error newError = new Error(e.getMessage());
             res.status(500);
             res.body(new Gson().toJson(newError));
             return (new Gson().toJson(newError));

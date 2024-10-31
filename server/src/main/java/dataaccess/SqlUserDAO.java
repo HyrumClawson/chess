@@ -3,9 +3,11 @@ package dataaccess;
 import model.UserData;
 import server.ResponseException;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
 public class SqlUserDAO implements UserDAO{
+  Connection conn;
 
   public SqlUserDAO()  {
     try {
@@ -16,8 +18,18 @@ public class SqlUserDAO implements UserDAO{
     }
   }
   @Override
-  public void deleteAllUsers() {
-
+  public void deleteAllUsers() throws Exception{
+    //might just need to make a new var conn here... we'll see.
+    try( var conn = DatabaseManager.getConnection()) {
+      try (var preparedStatement=conn.prepareStatement("TRUNCATE TABLE userData")) {
+        preparedStatement.executeUpdate();
+      }
+    }
+    catch(SQLException ex){
+      ResponseException r = new ResponseException(ResponseException.ExceptionType.OTHER);
+      r.setMessage(ex.getMessage());
+      throw r;
+    }
   }
 
   @Override
@@ -27,6 +39,7 @@ public class SqlUserDAO implements UserDAO{
       if(newUser.username().matches("[a-zA-Z]+") ){
         var statement = "INSERT INTO userData (username, password, email)" +
                 "VALUES(?,?,?)";
+        
         try(var preparedStatement = conn.prepareStatement(statement)){
           preparedStatement.setString(1, newUser.username());
           preparedStatement.setString(2, newUser.password());
@@ -73,7 +86,8 @@ public class SqlUserDAO implements UserDAO{
 
   private void configureDatabase() throws ResponseException, DataAccessException {
     DatabaseManager.createDatabase();
-    try (var conn = DatabaseManager.getConnection()) {
+    try ( var conn = DatabaseManager.getConnection()) {
+      this.conn = conn;
       for (var statement : createStatements) {
         try (var preparedStatement = conn.prepareStatement(statement)) {
           preparedStatement.executeUpdate();
