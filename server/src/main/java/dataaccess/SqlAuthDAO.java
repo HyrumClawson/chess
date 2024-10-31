@@ -49,13 +49,12 @@ public class SqlAuthDAO implements AuthDAO{
           //this is the table for the petshop
           //create one for my game data.
           //Then just go through and  have
+          ////              `id` int NOT NULL AUTO_INCREMENT,
           """
             CREATE TABLE IF NOT EXISTS  authData (
-              `id` int NOT NULL AUTO_INCREMENT,
-              `username` varchar(256) NOT NULL,
-              `authToken` varchar(256),
-              PRIMARY KEY (`authToken`),
-              INDEX(authToken)
+              username VARCHAR(256) NOT NULL,
+              authToken VARCHAR(256) NOT NULL,
+              PRIMARY KEY (authToken)
               )\s
             """
   };

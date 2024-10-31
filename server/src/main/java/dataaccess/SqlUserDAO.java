@@ -31,6 +31,7 @@ public class SqlUserDAO implements UserDAO{
           preparedStatement.setString(1, newUser.username());
           preparedStatement.setString(2, newUser.password());
           preparedStatement.setString(3, newUser.email());
+          preparedStatement.executeUpdate();
         }
       }
 
@@ -56,14 +57,13 @@ public class SqlUserDAO implements UserDAO{
           //this is the table for the petshop
           //create one for my game data.
           //Then just go through and  have
+          //              `id` int NOT NULL AUTO_INCREMENT,
           """
             CREATE TABLE IF NOT EXISTS  userData (
-              `id` int NOT NULL AUTO_INCREMENT,
               `username` varchar(256) NOT NULL,
               `password` varchar(256) NOT NULL, 
               `email` varchar(256) NOT NULL, 
-              PRIMARY KEY (`username`),
-
+              PRIMARY KEY (`username`)
               )\s
             """
   };
