@@ -10,4 +10,6 @@ public interface AuthDAO {
 
   boolean checkMapForAuth(String authToken);
   String getUsername(String authToken);
+
+
 }

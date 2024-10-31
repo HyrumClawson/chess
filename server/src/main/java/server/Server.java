@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
+import dataaccess.DatabaseManager;
 import model.GameData;
 import model.JoinGame;
 import model.ListingGameData;
@@ -19,19 +20,27 @@ public class Server {
     AuthService authService = new AuthService();
     GameService gameService = new GameService();
     UserService userService = new UserService();
-    AuthDAO authData = new MemoryAuthDAO();
-    GameDAO gameData = new MemoryGameDAO();
-    UserDAO userData = new MemoryUserDAO();
+    AuthDAO authData = new SqlAuthDAO();//MemoryAuthDAO();
+    GameDAO gameData = new SqlGameDAO();//MemoryGameDAO();
+    UserDAO userData = new SqlUserDAO();//MemoryUserDAO();
 
-
-
-
+//    public Server(){
+//        configureDatabase();
+//    }
+//
+//    private void configureDatabase() {
+//        DatabaseManager.createDatabase();
+//    }
 
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+
+
+
+        //put database connection here?
 
         // Register your endpoints and handle exceptions here.
 
@@ -79,8 +88,8 @@ public class Server {
                 break;
             default:
                 res.status(500);
-                error = new Error("Error: unexpected");
-                res.body(new Gson().toJson("Error: unexpected"));
+                error = new Error(ex.message);
+                res.body(new Gson().toJson(error));
         }
 
     }

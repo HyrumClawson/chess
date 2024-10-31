@@ -17,7 +17,12 @@ public class UserService {
       throw new ResponseException(ResponseException.ExceptionType.BADREQUEST);
     }
     if(null == findUser(userData, newUser)){
-      userData.addUser(newUser);
+      try {
+        userData.addUser(newUser);
+      }
+      catch (Exception e) {
+        throw new RuntimeException(e);
+      }
 
     }
     else{

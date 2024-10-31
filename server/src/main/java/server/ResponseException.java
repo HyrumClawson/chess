@@ -9,12 +9,18 @@ public class ResponseException extends Exception{
     BADREQUEST,
     UNAUTHORIZED,
 
+    OTHER,
+
   }
 
 
   public ResponseException(Enum type){
 
     this.typeOfException = type;
+  }
+
+  public void setMessage(String Message){
+    message = Message;
   }
 
 

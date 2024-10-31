@@ -4,9 +4,9 @@ import dataaccess.AuthDAO;
 import dataaccess.DataAccessException;
 import model.AuthData;
 import server.ResponseException;
+import dataaccess.DatabaseManager;
 
 public class AuthService {
-
 
   public void clearAllAuthData(AuthDAO authData) {
     try {
@@ -41,6 +41,7 @@ public class AuthService {
     public String getUserNameByToken(AuthDAO authAccess, String authToken){
       return authAccess.getUsername(authToken);
     }
+
 
   }
 

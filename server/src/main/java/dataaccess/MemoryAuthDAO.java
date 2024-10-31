@@ -7,6 +7,7 @@ import java.util.UUID;
  * authdata = string: authtoken, string username
  */
 public class MemoryAuthDAO implements AuthDAO{
+
   final private HashMap<String, String> mapOfAuthData = new HashMap<>();
 
   public void deleteAllAuth(){
@@ -33,5 +34,7 @@ public class MemoryAuthDAO implements AuthDAO{
   public String getUsername(String authToken){
     return mapOfAuthData.get(authToken);
   }
+
+
 
 }
