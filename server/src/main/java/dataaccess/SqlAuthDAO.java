@@ -6,6 +6,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import server.ResponseException;
 
 import java.sql.SQLException;
+import java.util.UUID;
 
 public class SqlAuthDAO implements AuthDAO{
 
@@ -28,16 +29,17 @@ public class SqlAuthDAO implements AuthDAO{
   public AuthData addnewAuth(UserData user) {
     try (var conn=DatabaseManager.getConnection()) {
       //might need to add some more specifications to this:
-      if (newUser.username().matches("[a-zA-Z]+")) {
         var statement="INSERT INTO authData (username, authToken)" +
-                "VALUES(?,?,?)";
+                "VALUES(?,?)";
         try (var preparedStatement=conn.prepareStatement(statement)) {
-          preparedStatement.setString(1, newUser.username());
-          preparedStatement.setString(2, hashedPassword);
-          preparedStatement.setString(3, newUser.email());
+          String authtoken = UUID.randomUUID().toString();
+          preparedStatement.setString(1, user.username());
+          preparedStatement.setString(2, authtoken);
           preparedStatement.executeUpdate();
+          return new AuthData(user.username(), authtoken);
         }
-      }
+    }
+    catch(SQLException | DataAccessException ex){
       return null;
     }
   }

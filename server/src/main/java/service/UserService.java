@@ -45,16 +45,20 @@ public class UserService {
   }
 
   public void loginUser(UserDAO userAccess, model.UserData userLogin) throws ResponseException {
-    model.UserData userFromDB = findUser(userAccess, userLogin);
-    if(userFromDB == null){
+    model.UserData userFromDB;
+    try{
+      userFromDB = userAccess.getUser(userLogin);
+    }
+    catch(Exception ex){
       throw new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
     }
-    else if (!userFromDB.password().equals(userLogin.password()) ) {
+    //    if(userFromDB == null){
+    //      throw new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
+    //    }
+    //    else
+    if (!userFromDB.password().equals(userLogin.password()) ) {
       throw new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
 
-    }
-    else{
-      // do nothing I guess.
     }
 
   }

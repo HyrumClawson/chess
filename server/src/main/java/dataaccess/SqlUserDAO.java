@@ -69,7 +69,7 @@ public class SqlUserDAO implements UserDAO{
             String username = rs.getString("username");
             String hashedPass = rs.getString("password");
             String email = rs.getString("email");
-            return new UserData(username, user.password(),email);
+            return new UserData(username, hashedPass,email);
         }
       }
     }

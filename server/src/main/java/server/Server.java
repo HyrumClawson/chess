@@ -125,7 +125,7 @@ public class Server {
 
     public Object loginHandler(Request req, Response res) throws ResponseException {
         var userLogin = new Gson().fromJson(req.body(), model.UserData.class);
-        userService.loginUser(userData, userLogin);
+        //userService.loginUser(userData, userLogin);
         var newAuth = authService.addAuthData(authData, userLogin);
         res.status(200);
         res.body(new Gson().toJson(newAuth));
