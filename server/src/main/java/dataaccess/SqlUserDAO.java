@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import server.ResponseException;
 
 import java.sql.Connection;
@@ -39,10 +40,10 @@ public class SqlUserDAO implements UserDAO{
       if(newUser.username().matches("[a-zA-Z]+") ){
         var statement = "INSERT INTO userData (username, password, email)" +
                 "VALUES(?,?,?)";
-        
+        String hashedPassword = BCrypt.hashpw(newUser.password(), BCrypt.gensalt());
         try(var preparedStatement = conn.prepareStatement(statement)){
           preparedStatement.setString(1, newUser.username());
-          preparedStatement.setString(2, newUser.password());
+          preparedStatement.setString(2, hashedPassword);
           preparedStatement.setString(3, newUser.email());
           preparedStatement.executeUpdate();
         }
@@ -59,8 +60,19 @@ public class SqlUserDAO implements UserDAO{
   }
 
   @Override
-  public UserData getUser(UserData user) {
-    return null;
+  public UserData getUser(UserData user) throws Exception {
+    try(var conn = DatabaseManager.getConnection()){
+      try( var preparedStatement = conn.prepareStatement("SELECT " +
+              "username, password, email FROM userData WHERE username=?")){
+        preparedStatement.setString(1, user.username());
+        try(var rs = preparedStatement.executeQuery()){
+            String username = rs.getString("username");
+            String hashedPass = rs.getString("password");
+            String email = rs.getString("email");
+            return new UserData(username, user.password(),email);
+        }
+      }
+    }
   }
 
 

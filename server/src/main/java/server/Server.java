@@ -95,21 +95,21 @@ public class Server {
     }
 
 
-    public Object deleteDBHandler(Request req, Response res) {
-        try{
+    public Object deleteDBHandler(Request req, Response res) throws ResponseException{
+//        try{
             authService.clearAllAuthData(authData);
             gameService.clearAllGameData(gameData);
             userService.clearAllUserData(userData);
             res.status(200);
             return "";
 
-        }
-        catch (Exception e) {
-            Error newError = new Error(e.getMessage());
-            res.status(500);
-            res.body(new Gson().toJson(newError));
-            return (new Gson().toJson(newError));
-        }
+//        }
+//        catch (Exception e) {
+//            Error newError = new Error(e.getMessage());
+//            res.status(500);
+//            res.body(new Gson().toJson(newError));
+//            return (new Gson().toJson(newError));
+//        }
 
 
     }

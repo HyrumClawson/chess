@@ -22,24 +22,33 @@ public class AuthService {
   }
 
   public void logoutAuth(AuthDAO authAccess, String authToken) throws ResponseException {
-    if (!isAuthDataThere(authAccess, authToken)) {
-      throw new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
-    } else {
+    try{
       authAccess.deleteSingleAuth(authToken);
     }
+    catch(Exception ex){
+      throw new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
+    }
+
+//    if (!isAuthDataThere(authAccess, authToken)) {
+//      throw new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
+//    } else {
+//      authAccess.deleteSingleAuth(authToken);
+//    }
 
   }
 
   public boolean isAuthDataThere(AuthDAO authAccess, String authToken) throws ResponseException {
-    if (!authAccess.checkMapForAuth(authToken)) {
+    //!authAccess.checkMapForAuth(authToken)
+    if (null == authAccess.getAuth(authToken)) {
       throw new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
     } else {
-      return authAccess.checkMapForAuth(authToken);
+      //I feel like this should work, but
+      return true;
     }
   }
 
     public String getUserNameByToken(AuthDAO authAccess, String authToken){
-      return authAccess.getUsername(authToken);
+      return authAccess.getAuth(authToken).username();
     }
 
 

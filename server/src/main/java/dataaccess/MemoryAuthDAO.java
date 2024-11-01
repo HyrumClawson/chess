@@ -26,13 +26,17 @@ public class MemoryAuthDAO implements AuthDAO{
   public void deleteSingleAuth(String authToken){
     mapOfAuthData.remove(authToken);
   }
+//
+//  public boolean checkMapForAuth(String authToken){
+//    return mapOfAuthData.containsKey(authToken);
+//  }
+//
+//  public String getUsername(String authToken){
+//    return mapOfAuthData.get(authToken);
+//  }
 
-  public boolean checkMapForAuth(String authToken){
-    return mapOfAuthData.containsKey(authToken);
-  }
-
-  public String getUsername(String authToken){
-    return mapOfAuthData.get(authToken);
+  public AuthData getAuth(String authToken){
+    return null;
   }
 
 

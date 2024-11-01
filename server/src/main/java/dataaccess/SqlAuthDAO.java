@@ -2,6 +2,7 @@ package dataaccess;
 
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import server.ResponseException;
 
 import java.sql.SQLException;
@@ -18,30 +19,78 @@ public class SqlAuthDAO implements AuthDAO{
   }
 
   @Override
-  public void deleteAllAuth() {
-
+  public void deleteAllAuth() throws Exception{
+    //might not work cause of the extra thing could have a branch if needed.
+    deleteFunction("TRUNCATE TABLE authData", null);
   }
 
   @Override
   public AuthData addnewAuth(UserData user) {
-    return null;
+    try (var conn=DatabaseManager.getConnection()) {
+      //might need to add some more specifications to this:
+      if (newUser.username().matches("[a-zA-Z]+")) {
+        var statement="INSERT INTO authData (username, authToken)" +
+                "VALUES(?,?,?)";
+        try (var preparedStatement=conn.prepareStatement(statement)) {
+          preparedStatement.setString(1, newUser.username());
+          preparedStatement.setString(2, hashedPassword);
+          preparedStatement.setString(3, newUser.email());
+          preparedStatement.executeUpdate();
+        }
+      }
+      return null;
+    }
   }
 
   @Override
-  public void deleteSingleAuth(String authToken) {
+  public void deleteSingleAuth(String authToken) throws Exception{
+    deleteFunction("DELETE FROM pet WHERE id=?", authToken);
 
   }
 
-  @Override
-  //this could be simplified with just a simple getauth and handle it in the service
-  public boolean checkMapForAuth(String authToken) {
-    return false;
+  public AuthData getAuth(String authToken){
+    try(var conn = DatabaseManager.getConnection()){
+      try( var preparedStatement = conn.prepareStatement("SELECT " +
+              "username, authToken FROM authData WHERE authToken=?")){
+        preparedStatement.setString(1, authToken);
+        try(var rs = preparedStatement.executeQuery()){
+          String username = rs.getString("username");
+          String dbAuthToken = rs.getString("password");
+          return new AuthData(username, dbAuthToken);
+        }
+      }
+    }
+    catch (SQLException | DataAccessException ex){
+      return null;
+    }
   }
 
-  @Override
-  //this could be
-  public String getUsername(String authToken) {
-    return null;
+
+
+//  @Override
+//  //this could be simplified with just a simple getauth and handle it in the service
+//  public boolean checkMapForAuth(String authToken) {
+//    return false;
+//  }
+//
+//  @Override
+//  //this could be simplified with just getauth function. Handle it in the service.
+//  public String getUsername(String authToken) {
+//    return null;
+//  }
+
+  private void deleteFunction(String statement, String authToken) throws Exception{
+    try( var conn = DatabaseManager.getConnection()) {
+      try (var preparedStatement=conn.prepareStatement(statement)) {
+        preparedStatement.setString(1, authToken);
+        preparedStatement.executeUpdate();
+      }
+    }
+    catch(SQLException ex){
+      ResponseException r = new ResponseException(ResponseException.ExceptionType.OTHER);
+      r.setMessage(ex.getMessage());
+      throw r;
+    }
   }
 
 
