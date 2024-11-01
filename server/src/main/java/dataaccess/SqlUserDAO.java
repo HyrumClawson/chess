@@ -34,7 +34,7 @@ public class SqlUserDAO implements UserDAO{
   }
 
   @Override
-  public void addUser(UserData newUser) throws Exception{
+  public void addUser(UserData newUser) throws ResponseException, DataAccessException{
     try (var conn = DatabaseManager.getConnection()) {
       //might need to add some more specifications to this:
       if(newUser.username().matches("[a-zA-Z]+") ){
@@ -61,15 +61,19 @@ public class SqlUserDAO implements UserDAO{
 
   @Override
   public UserData getUser(UserData user) throws Exception {
+    UserData userFromDb = new UserData("","", "");
     try(var conn = DatabaseManager.getConnection()){
       try( var preparedStatement = conn.prepareStatement("SELECT " +
               "username, password, email FROM userData WHERE username=?")){
         preparedStatement.setString(1, user.username());
         try(var rs = preparedStatement.executeQuery()){
-            String username = rs.getString("username");
-            String hashedPass = rs.getString("password");
-            String email = rs.getString("email");
-            return new UserData(username, hashedPass,email);
+          while(rs.next()) {
+            String username=rs.getString("username");
+            String hashedPass=rs.getString("password");
+            String email=rs.getString("email");
+            userFromDb = new UserData(username, hashedPass, email);
+          }
+          return userFromDb;
         }
       }
     }

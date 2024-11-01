@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import server.Error;
 import server.ResponseException;
 
@@ -56,9 +57,9 @@ public class UserService {
     //      throw new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
     //    }
     //    else
-    if (!userFromDB.password().equals(userLogin.password()) ) {
+    //String hashedUserLoginPassword = BCrypt.hashpw(userLogin.password(), BCrypt.gensalt());
+    if ( !BCrypt.checkpw(userLogin.password(), userFromDB.password()) ){
       throw new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
-
     }
 
   }

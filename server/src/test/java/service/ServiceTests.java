@@ -16,8 +16,8 @@ public class ServiceTests {
   GameService g = new GameService();
   UserService u = new UserService();
 
-  UserDAO userDataAccess = new MemoryUserDAO();
-  AuthDAO authDataAccess = new MemoryAuthDAO();
+  UserDAO userDataAccess = new SqlUserDAO();
+  AuthDAO authDataAccess = new SqlAuthDAO();
   GameDAO gameDataAccess = new MemoryGameDAO();
 
   private final service.Service service = new service.Service(a,g,u);
@@ -65,26 +65,44 @@ public class ServiceTests {
 
   @Test
   public void positiveLoginTest(){
+    try{
+      u.clearAllUserData(userDataAccess);
+    }
+    catch(Exception e){
+      throw new RuntimeException();
+    }
 
-    model.UserData loginUser = new UserData("Hyrum", "53628384", "hc@mail");
+    model.UserData loginUser = new UserData("HyrumCla", "538434254", "hclaws@mail");
     try {
       u.registerUser(userDataAccess, loginUser);
-      AuthData newAuth = a.addAuthData(authDataAccess, loginUser);
+
       u.loginUser(userDataAccess, loginUser);
-      //assertEquals(authDataAccess.getUsername(newAuth.authToken()), loginUser.username());
-    } catch (ResponseException e) {
+      AuthData newAuth = authDataAccess.addnewAuth(loginUser);
+      String authToken =newAuth.authToken();
+      String userNamefromDb = authDataAccess.getAuth(authToken).username();
+      assertEquals(newAuth.username(), loginUser.username());
+    }
+    catch (ResponseException e) {
       throw new RuntimeException(e);
     }
+
+
   }
 
   @Test
   public void unauthorizedLoginTest(){
-    model.UserData loginUser = new UserData("Hyrum", "53628384", "hc@mail");
+    model.UserData loginUser = new UserData("Hy", "53684", "hc@mail");
+    try{
+      userDataAccess.addUser(new UserData("Hy", "53628384", "hc@mail"));
+    }
+    catch(Exception e){
+      throw new RuntimeException();
+    }
     try {
       u.loginUser(userDataAccess, loginUser);
     } catch (ResponseException e) {
       assertEquals(ResponseException.ExceptionType.UNAUTHORIZED,
-              e.typeOfException, "Threw a Taken response exception");
+              e.typeOfException, "Threw an unauthorized");
     }
   }
 
