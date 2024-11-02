@@ -35,14 +35,6 @@ public class UserService {
       catch (Exception e) {
         throw new ResponseException(ResponseException.ExceptionType.TAKEN);
       }
-
-//    }
-//    else{
-//      throw new ResponseException(ResponseException.ExceptionType.TAKEN);
-//    }
-
-
-
   }
 
   public void loginUser(UserDAO userAccess, model.UserData userLogin) throws ResponseException {
@@ -53,12 +45,10 @@ public class UserService {
     catch(Exception ex){
       throw new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
     }
-    //    if(userFromDB == null){
-    //      throw new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
-    //    }
-    //    else
-    //String hashedUserLoginPassword = BCrypt.hashpw(userLogin.password(), BCrypt.gensalt());
-    if ( !BCrypt.checkpw(userLogin.password(), userFromDB.password()) ){
+    if("".equals(userFromDB.password())){
+      throw new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
+    }
+    if (!BCrypt.checkpw(userLogin.password(), userFromDB.password()) ){
       throw new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
     }
 

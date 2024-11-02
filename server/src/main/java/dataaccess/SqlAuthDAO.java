@@ -5,6 +5,7 @@ import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 import server.ResponseException;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -20,9 +21,19 @@ public class SqlAuthDAO implements AuthDAO{
   }
 
   @Override
-  public void deleteAllAuth() throws Exception{
+  public void deleteAllAuth() throws ResponseException{
     //might not work cause of the extra thing could have a branch if needed.
-    deleteFunction("TRUNCATE TABLE authData", null);
+    String statement = "TRUNCATE TABLE authData";
+    try( var conn = DatabaseManager.getConnection()) {
+      try (var preparedStatement=conn.prepareStatement(statement)) {
+        preparedStatement.executeUpdate();
+      }
+    }
+    catch(SQLException |DataAccessException ex){
+      ResponseException r = new ResponseException(ResponseException.ExceptionType.OTHER);
+      r.setMessage(ex.getMessage());
+      throw r;
+    }
   }
 
   @Override
@@ -45,8 +56,26 @@ public class SqlAuthDAO implements AuthDAO{
   }
 
   @Override
-  public void deleteSingleAuth(String authToken) throws Exception{
-    deleteFunction("DELETE FROM pet WHERE id=?", authToken);
+  public void deleteSingleAuth(String authToken) throws ResponseException{
+    String statement = "DELETE FROM authData WHERE authToken=?";
+    int resultSet;
+    try( var conn = DatabaseManager.getConnection()) {
+      try (var preparedStatement=conn.prepareStatement(statement)) {
+        preparedStatement.setString(1, authToken);
+        resultSet = preparedStatement.executeUpdate();
+
+      }
+    }
+    // just seeing if this works to make it better. Come back and change if not
+    catch(SQLException | DataAccessException ex){
+      ResponseException r = new ResponseException(ResponseException.ExceptionType.OTHER);
+      r.setMessage(ex.getMessage());
+      throw r;
+    }
+    //might need to change this a bit.
+    if(resultSet == 0){
+      throw new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
+    }
 
   }
 
@@ -60,8 +89,13 @@ public class SqlAuthDAO implements AuthDAO{
           while(rs.next()){
             username = rs.getString("username");
           }
-          return new AuthData(username, authToken);
-        }
+          if(username == ""){
+            return null;
+          }
+          else {
+            return new AuthData(username, authToken);
+          }
+          }
       }
     }
     catch (SQLException | DataAccessException ex){
@@ -99,10 +133,6 @@ public class SqlAuthDAO implements AuthDAO{
 
 
   private final String[] createStatements = {
-          //this is the table for the petshop
-          //create one for my game data.
-          //Then just go through and  have
-          ////              `id` int NOT NULL AUTO_INCREMENT,
           """
             CREATE TABLE IF NOT EXISTS  authData (
               username VARCHAR(256) NOT NULL,
@@ -122,7 +152,7 @@ public class SqlAuthDAO implements AuthDAO{
       }
     } catch (SQLException ex) {
       //just for now.
-      ResponseException r = new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
+      ResponseException r = new ResponseException(ResponseException.ExceptionType.OTHER);
       r.setMessage("Unable to configure database: %s" + ex.getMessage());
       throw r;
       //throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));

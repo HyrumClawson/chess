@@ -3,13 +3,13 @@ package service;
 import chess.ChessGame;
 import dataaccess.*;
 import model.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import server.ResponseException;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ServiceTests {
   AuthService a = new AuthService();
@@ -18,11 +18,21 @@ public class ServiceTests {
 
   UserDAO userDataAccess = new SqlUserDAO();
   AuthDAO authDataAccess = new SqlAuthDAO();
-  GameDAO gameDataAccess = new MemoryGameDAO();
+  GameDAO gameDataAccess = new SqlGameDAO();
 
   private final service.Service service = new service.Service(a,g,u);
 
-
+  @BeforeEach
+  public void setup(){
+    try{
+      authDataAccess.deleteAllAuth();
+      gameDataAccess.deleteAllGames();
+      userDataAccess.deleteAllUsers();
+    }
+    catch(Exception e){
+      throw new RuntimeException();
+    }
+  }
 
   @Test
   public void positiveDeleteTest() {
@@ -91,6 +101,12 @@ public class ServiceTests {
 
   @Test
   public void unauthorizedLoginTest(){
+    try{
+      userDataAccess.deleteAllUsers();
+    }
+    catch (Exception e){
+      throw new RuntimeException();
+    }
     model.UserData loginUser = new UserData("Hy", "53684", "hc@mail");
     try{
       userDataAccess.addUser(new UserData("Hy", "53628384", "hc@mail"));
@@ -109,13 +125,19 @@ public class ServiceTests {
 
   @Test
   public void postiveLogoutTest(){
+    try{
+      userDataAccess.deleteAllUsers();
+    }
+    catch(Exception e){
+      throw new RuntimeException();
+    }
     model.UserData loginUser = new UserData("Hyrum", "53628384", "hc@mail");
     try {
       u.registerUser(userDataAccess, loginUser);
       u.loginUser(userDataAccess, loginUser);
       AuthData newAuth = a.addAuthData(authDataAccess, loginUser);
       a.logoutAuth(authDataAccess, newAuth.authToken());
-     // assertEquals(false, authDataAccess.checkMapForAuth(newAuth.authToken()));
+      assertNull( authDataAccess.getAuth(newAuth.authToken()));
     } catch (ResponseException e) {
       throw new RuntimeException(e);
     }
