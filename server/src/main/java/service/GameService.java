@@ -47,10 +47,24 @@ public class GameService {
     }
 
   }
-
+//could prolly simplify the if statements.
   private boolean playerTaken(JoinGame infoToJoin, GameData game){
-
-    return true;
+    if(infoToJoin.playerColor().equals("WHITE")){
+      if(game.whiteUsername()== null){
+        return false;
+      }
+      else{
+        return true;
+      }
+    }
+    else{
+      if(game.blackUsername() == null){
+        return false;
+      }
+      else{
+        return true;
+      }
+    }
   }
 
 

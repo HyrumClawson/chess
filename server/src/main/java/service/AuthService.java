@@ -46,8 +46,14 @@ public class AuthService {
     }
   }
 
-    public String getUserNameByToken(AuthDAO authAccess, String authToken){
-      return authAccess.getAuth(authToken).username();
+    public String getUserNameByToken(AuthDAO authAccess, String authToken) throws ResponseException {
+      AuthData auth = authAccess.getAuth(authToken);
+      if (auth == null) {
+        throw new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
+      }
+      else {
+        return auth.username();
+      }
     }
 
 
