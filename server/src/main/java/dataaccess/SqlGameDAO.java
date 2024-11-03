@@ -8,6 +8,7 @@ import model.JoinGame;
 import model.ListingGameData;
 import server.ResponseException;
 
+import java.sql.Array;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -39,13 +40,46 @@ public class SqlGameDAO implements GameDAO {
 
 
   @Override
-  public void deleteAllGames() {
+  public void deleteAllGames() throws ResponseException{
+    String statement = "TRUNCATE TABLE gameData";
+    try( var conn = DatabaseManager.getConnection()) {
+      try (var preparedStatement=conn.prepareStatement(statement)) {
+        preparedStatement.executeUpdate();
+      }
+    }
+    catch(SQLException |DataAccessException ex){
+      ResponseException r = new ResponseException(ResponseException.ExceptionType.OTHER);
+      r.setMessage(ex.getMessage());
+      throw r;
+    }
 
   }
 
   @Override
   public ArrayList<ListingGameData> getListOfGames() {
-    return null;
+    ArrayList<ListingGameData> listToReturn = new ArrayList<>();
+    try(var conn = DatabaseManager.getConnection()){
+      try( var preparedStatement =
+                   conn.prepareStatement("SELECT gameID, whiteUsername," +
+                           "blackUsername, gameName, gameItself" +
+                           " FROM gameData")){
+        try(var rs = preparedStatement.executeQuery()){
+          while(rs.next()){
+            int gameID = rs.getInt("gameID");
+            String white = rs.getString("whiteUsername");
+            String black = rs.getString("blackUsername");
+            String gameName = rs.getString("gameName");
+           // String jsonGameString = rs.getString("gameItself");
+           // ChessGame gameItselfObject = new Gson().fromJson(jsonGameString, ChessGame.class);
+            listToReturn.add(new ListingGameData(gameID, white, black, gameName));
+          }
+          return listToReturn;
+        }
+      }
+    }
+    catch (SQLException | DataAccessException ex){
+      return null;
+    }
   }
 
   @Override

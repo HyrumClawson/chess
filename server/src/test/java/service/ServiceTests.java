@@ -160,6 +160,7 @@ public class ServiceTests {
 
   @Test
   public void positiveListGames(){
+
     model.GameData game = new GameData(123, "white",
             "black", "funtimes", new ChessGame());
     /** come back and uncomment and fix this in a bit*/

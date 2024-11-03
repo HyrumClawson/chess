@@ -8,7 +8,7 @@ import server.ResponseException;
 import java.util.ArrayList;
 
 public interface GameDAO {
-  void deleteAllGames();
+  void deleteAllGames() throws ResponseException;
 
   ArrayList<ListingGameData> getListOfGames();
 

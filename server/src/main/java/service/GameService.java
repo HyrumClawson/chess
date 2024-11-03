@@ -10,7 +10,7 @@ import server.ResponseException;
 import java.util.ArrayList;
 
 public class GameService {
-  public void clearAllGameData(GameDAO gameData) {
+  public void clearAllGameData(GameDAO gameData) throws ResponseException {
     gameData.deleteAllGames();
   }
 
