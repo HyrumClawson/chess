@@ -160,13 +160,17 @@ public class ServiceTests {
 
   @Test
   public void positiveListGames(){
-
     model.GameData game = new GameData(123, "white",
             "black", "funtimes", new ChessGame());
     /** come back and uncomment and fix this in a bit*/
-//    gameDataAccess.addGame(game);
-//    ArrayList<ListingGameData> list = gameDataAccess.getListOfGames();
-//    assertEquals(1, list.size());
+    try {
+      gameDataAccess.addGame(game);
+      ArrayList<ListingGameData> list=gameDataAccess.getListOfGames();
+      assertEquals(1, list.size());
+    }
+    catch(Exception e){
+      throw new RuntimeException();
+    }
   }
 
   @Test
@@ -183,13 +187,18 @@ public class ServiceTests {
 
   @Test
   public void positiveCreateGame(){
-    model.GameData game = new GameData(123, null,
+    model.GameData game = new GameData(0, null,
             "black", "funtimes", new ChessGame());
     /** come back later and fix all this */
-//    gameDataAccess.addGame(game);
-//    int gameID = gameDataAccess.getListOfGames().get(0).gameID();
-//    JoinGame info = new JoinGame("BLACK", gameID);
-//    assertTrue( gameDataAccess.gameIdExists(info));
+    try {
+      gameDataAccess.addGame(game);
+      int gameID=gameDataAccess.getListOfGames().get(0).gameID();
+      JoinGame info=new JoinGame("BLACK", gameID);
+      assertNotEquals(null, gameDataAccess.getGame(info));
+    }
+    catch(Exception e){
+      throw new RuntimeException();
+    }
   }
 
   @Test
@@ -210,12 +219,17 @@ public class ServiceTests {
     model.GameData game = new GameData(123, null,
             "black", "funtimes", new ChessGame());
     /** okay come back and fix this in a bit*/
-//    gameDataAccess.addGame(game);
-//    int gameID = gameDataAccess.getListOfGames().get(0).gameID();
-//    JoinGame info = new JoinGame("WHITE", gameID);
-//    gameDataAccess.addPlayerToGame(info, "newguy");
-//    ListingGameData gameWeAdded = gameDataAccess.getListOfGames().get(0);
-//    assertEquals("newguy", gameWeAdded.whiteUsername());
+    try {
+      gameDataAccess.addGame(game);
+      int gameID=gameDataAccess.getListOfGames().get(0).gameID();
+      JoinGame info=new JoinGame("WHITE", gameID);
+      gameDataAccess.updateGame(info, "newguy", "whiteUsername");
+      ListingGameData gameWeAdded=gameDataAccess.getListOfGames().get(0);
+      assertEquals("newguy", gameWeAdded.whiteUsername());
+    }
+    catch(Exception e){
+      throw new RuntimeException();
+    }
   }
 
   @Test
@@ -227,7 +241,8 @@ public class ServiceTests {
       int gameID = gameDataAccess.getListOfGames().get(0).gameID();
       JoinGame info = new JoinGame("BLACK", gameID);
       g.joinGame(gameDataAccess, info, "myName" );
-    } catch (ResponseException e) {
+    }
+    catch (ResponseException e) {
         assertEquals(ResponseException.ExceptionType.TAKEN, e.typeOfException,
                 "Threw a taken error");
     }

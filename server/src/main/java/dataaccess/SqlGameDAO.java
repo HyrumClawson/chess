@@ -1,6 +1,6 @@
 package dataaccess;
 
-import chess.ChessGame;
+import chess.*;
 import com.google.gson.Gson;
 import model.AuthData;
 import model.GameData;
@@ -132,6 +132,8 @@ public class SqlGameDAO implements GameDAO {
             String gameName = rs.getString("gameName");
             String jsonGameString = rs.getString("gameItself");
             ChessGame gameItselfObject = new Gson().fromJson(jsonGameString, ChessGame.class);
+//            gameItselfObject.updateBoard(new ChessMove(new ChessPosition(2,1)
+//            , new ChessPosition(2,3), ChessPiece.PieceType.ROOK), new ChessBoard());
             game = new GameData(gameID, white, black, gameName, gameItselfObject);
           }
           if(game.gameID() == 0){
