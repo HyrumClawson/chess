@@ -3,6 +3,7 @@ package dataaccess;
 import model.GameData;
 import model.JoinGame;
 import model.ListingGameData;
+import server.ResponseException;
 
 import java.util.ArrayList;
 
@@ -11,11 +12,15 @@ public interface GameDAO {
 
   ArrayList<ListingGameData> getListOfGames();
 
-  int addGame(GameData newGame);
+  int addGame(GameData newGame) throws ResponseException;
 
-  boolean gameIdExists(JoinGame infoToJoin);
+  GameData getGame(JoinGame infoToJoin);
 
-  boolean playerTaken(JoinGame infoToJoin);
+  void updateGame(JoinGame infoToJoin, String username, String team) throws ResponseException;
 
-  void addPlayerToGame(JoinGame infoToJoin, String username);
+//  boolean gameIdExists(JoinGame infoToJoin);
+//
+//  boolean playerTaken(JoinGame infoToJoin);
+//
+//  void addPlayerToGame(JoinGame infoToJoin, String username);
 }

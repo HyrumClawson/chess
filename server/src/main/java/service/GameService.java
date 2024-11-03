@@ -27,21 +27,47 @@ public class GameService {
     }
   }
   public void joinGame(GameDAO gameDataAccess, JoinGame infoToJoin, String username) throws ResponseException{
+    GameData game = gameDataAccess.getGame(infoToJoin);
     if(infoToJoin.playerColor() == null){
       throw new ResponseException(ResponseException.ExceptionType.BADREQUEST);
     }
     // also have to check if gameID exists in the gamedata
-    else if(!gameDataAccess.gameIdExists(infoToJoin)){
+    //!gameDataAccess.gameIdExists(infoToJoin)
+    else if(null == gameDataAccess.getGame(infoToJoin)){
       throw new ResponseException(ResponseException.ExceptionType.BADREQUEST);
     }
+    //gameDataAccess.playerTaken(infoToJoin)
     else{
-      if(gameDataAccess.playerTaken(infoToJoin)){
+      if(playerTaken(infoToJoin, game)){
         throw new ResponseException(ResponseException.ExceptionType.TAKEN);
       }
-      gameDataAccess.addPlayerToGame(infoToJoin, username);
+      addPlayerToGame(gameDataAccess, infoToJoin, username);
+      //gameDataAccess.addPlayerToGame(infoToJoin, username);
 
     }
 
+  }
+
+  private boolean playerTaken(JoinGame infoToJoin, GameData game){
+
+    return true;
+  }
+
+
+
+  private void addPlayerToGame(GameDAO gameAccess, JoinGame infoToJoin, String username) throws ResponseException{
+    //so we need to update specifically
+    //might need to refactor this I don't know yet.
+    try {
+      if (infoToJoin.playerColor().equals("WHITE")) {
+        gameAccess.updateGame(infoToJoin, username, "whiteUsername");
+      } else {
+        gameAccess.updateGame(infoToJoin, username, "blackUsername");
+      }
+    }
+    catch(ResponseException e){
+      throw e;
+    }
   }
 
 }

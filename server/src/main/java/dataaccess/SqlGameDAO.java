@@ -1,5 +1,8 @@
 package dataaccess;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
+import model.AuthData;
 import model.GameData;
 import model.JoinGame;
 import model.ListingGameData;
@@ -9,15 +12,17 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.UUID;
+
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class SqlGameDAO implements GameDAO {
 
   public SqlGameDAO()  {
     try {
       configureDatabase();
-    } catch (ResponseException e) {
-      throw new RuntimeException(e);
-    } catch (DataAccessException e) {
+    }
+    catch (ResponseException | DataAccessException e) {
       throw new RuntimeException(e);
     }
   }
@@ -44,26 +49,76 @@ public class SqlGameDAO implements GameDAO {
   }
 
   @Override
-  public int addGame(GameData newGame) {
-    return 0;
+  public int addGame(GameData newGame) throws ResponseException{
+    //need to convert the game to a json string first, and then when we're getting it
+    //back we need to convert it back to a Chessgame class.
+    ChessGame gameItself = new ChessGame();
+    String jsonGameString = new Gson().toJson(gameItself);
+
+    try (var conn=DatabaseManager.getConnection()) {
+      //might need to add some more specifications to this:
+      var statement="INSERT INTO gameData (whiteUsername, blackUsername, gameName, gameItself)" +
+              "VALUES(?,?,?,?)";
+      try (var preparedStatement= conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+        preparedStatement.setString(1, newGame.whiteUsername());
+        preparedStatement.setString(2, newGame.blackUsername());
+        preparedStatement.setString(3, newGame.gameName());
+        preparedStatement.setString(4, jsonGameString);
+        preparedStatement.executeUpdate();
+        var result=preparedStatement.getGeneratedKeys();
+        int gameID=0;
+        if (result.next()) {
+          gameID=result.getInt(1);
+        }
+        return gameID;
+      }
+    }
+    catch(SQLException | DataAccessException ex){
+      ResponseException r = new ResponseException(ResponseException.ExceptionType.OTHER);
+      r.setMessage(ex.getMessage());
+      throw r;
+        //throw response exception here and just catch and throw all the way up
+
+    }
   }
 
-  @Override
-  //this could just be getGAme as well and then we'll return the game above.
-  public boolean gameIdExists(JoinGame infoToJoin) {
-    return false;
+  public GameData getGame(JoinGame infoToJoin){
+    return null;
   }
 
-  @Override
-  //this could just be getGame and then we'll return the game to above
-  public boolean playerTaken(JoinGame infoToJoin) {
-    return false;
+  public void updateGame(JoinGame infoToJoin, String username, String team) throws ResponseException{
+    String statement = "UPDATE gameData SET "+ team + " = ? WHERE gameID = ?";
+    try( var conn = DatabaseManager.getConnection()) {
+      try (var preparedStatement=conn.prepareStatement(statement)) {
+        preparedStatement.setString(1, username);
+        preparedStatement.setInt(2, infoToJoin.gameID());
+        preparedStatement.executeUpdate();
+      }
+    }
+    catch(SQLException | DataAccessException ex){
+      ResponseException r = new ResponseException(ResponseException.ExceptionType.OTHER);
+      r.setMessage(ex.getMessage());
+      throw r;
+    }
+
   }
 
-  @Override
-  public void addPlayerToGame(JoinGame infoToJoin, String username) {
+//  @Override
+//  //this could just be getGAme as well and then we'll return the game above.
+//  public boolean gameIdExists(JoinGame infoToJoin) {
+//    return false;
+//  }
+//
+//  @Override
+//  //this could just be getGame and then we'll return the game to above
+//  public boolean playerTaken(JoinGame infoToJoin) {
+//    return false;
+//  }
 
-  }
+//  @Override
+//  public void addPlayerToGame(JoinGame infoToJoin, String username) {
+//
+//  }
 
   private int executeUpdate (String statement, Object ... params) throws ResponseException {
 //    try (var conn = DatabaseManager.getConnection()) {
