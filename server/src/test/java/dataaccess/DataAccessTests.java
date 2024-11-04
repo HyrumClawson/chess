@@ -132,7 +132,108 @@ public class DataAccessTests {
     }
   }
 
+
   @Test
-  public void 
+  public void getListOfGamesPositive(){
+    GameData game = new GameData(0, "", "", "chessTime", new ChessGame());
+    try{
+      gameAccess.addGame(game);
+      assertEquals(1, gameAccess.getListOfGames().size());
+    }
+    catch(Exception e){
+      throw new RuntimeException();
+    }
+  }
+
+  @Test
+  public void getListOfGamesNegative(){
+    assertEquals(0, gameAccess.getListOfGames().size());
+  }
+
+  @Test
+  public void addGamePositiveTest(){
+    GameData game = new GameData(0, "", "", "chessTime", new ChessGame());
+    try{
+
+      assertEquals(1, gameAccess.addGame(game));
+    }
+    catch(Exception e){
+      throw new RuntimeException();
+    }
+  }
+
+  @Test
+  public void addGameNegativeTest(){
+    GameData game = new GameData(0, "", "", "chessTime", new ChessGame());
+    try{
+      gameAccess.addGame(game);
+      assertEquals(2, gameAccess.addGame(game));
+    }
+    catch(Exception e){
+      throw new RuntimeException();
+    }
+
+  }
+
+  @Test
+  public void getGamePositiveTest(){
+    GameData game = new GameData(0, "", "", "chessTime", new ChessGame());
+    JoinGame infoToJoin = new JoinGame("WHITE", 1);
+    try{
+      gameAccess.addGame(game);
+      assertEquals("chessTime", gameAccess.getGame(infoToJoin).gameName());
+    }
+    catch (Exception e){
+      throw new RuntimeException();
+    }
+  }
+
+  @Test
+  public void getGameNegativeTest(){
+    JoinGame infoToJoin = new JoinGame("WHITE", 12342);
+      assertNull(gameAccess.getGame(infoToJoin));
+  }
+
+  @Test
+  public void updateGamePositiveTest(){
+    GameData game = new GameData(0, "", "", "chessTime", new ChessGame());
+    JoinGame infoToJoin = new JoinGame("WHITE", 1);
+    try{
+      gameAccess.addGame(game);
+      gameAccess.updateGame(infoToJoin, "Dudewhowantstoplaywhite", "whiteUsername");
+      assertEquals("Dudewhowantstoplaywhite", gameAccess.getGame(infoToJoin).whiteUsername());
+    }
+    catch(Exception e){
+      throw new RuntimeException();
+    }
+  }
+
+  @Test
+  public void updateGameNegativeTest(){
+    GameData game = new GameData(0, "", "", "chessTime", new ChessGame());
+    JoinGame infoToJoin = new JoinGame("BLACK", 1);
+    try{
+      gameAccess.addGame(game);
+      gameAccess.updateGame(infoToJoin, "Dudewhowantstoplayblack", "blackUsername");
+      assertEquals("Dudewhowantstoplayblack", gameAccess.getGame(infoToJoin).blackUsername());
+    }
+    catch(Exception e){
+      throw new RuntimeException();
+    }
+  }
+
+
+  @Test
+  public void deleteAllUsers(){
+
+  }
+
+
+
+
+
+
+
+
 
 }
