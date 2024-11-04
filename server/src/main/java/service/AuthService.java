@@ -17,6 +17,10 @@ public class AuthService {
   }
 
   public AuthData addAuthData(AuthDAO authDB, model.UserData user) {
+//    AuthData returnAuthData = authDB.addnewAuth(user);
+//    if(null == returnAuthData){
+//      authDB.
+//    }
     return authDB.addnewAuth(user);
   }
 

@@ -243,7 +243,7 @@ public class SqlGameDAO implements GameDAO {
       }
     } catch (SQLException ex) {
       //just for now.
-      ResponseException r = new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
+      ResponseException r = new ResponseException(ResponseException.ExceptionType.OTHER);
       r.setMessage("Unable to configure database: %s" + ex.getMessage());
       throw r;
       //throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));

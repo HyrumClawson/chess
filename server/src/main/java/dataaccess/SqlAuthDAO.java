@@ -38,12 +38,13 @@ public class SqlAuthDAO implements AuthDAO{
 
   @Override
   public AuthData addnewAuth(UserData user) {
+    String authtoken;
     try (var conn=DatabaseManager.getConnection()) {
       //might need to add some more specifications to this:
         var statement="INSERT INTO authData (username, authToken)" +
                 "VALUES(?,?)";
         try (var preparedStatement=conn.prepareStatement(statement)) {
-          String authtoken = UUID.randomUUID().toString();
+          authtoken = UUID.randomUUID().toString();
           preparedStatement.setString(1, user.username());
           preparedStatement.setString(2, authtoken);
           preparedStatement.executeUpdate();
@@ -130,7 +131,7 @@ public class SqlAuthDAO implements AuthDAO{
       throw r;
     }
   }
-
+//              UNIQUE(username),
 
   private final String[] createStatements = {
           """
