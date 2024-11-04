@@ -225,7 +225,63 @@ public class DataAccessTests {
 
   @Test
   public void deleteAllUsers(){
+    UserData user1 = new UserData("yessir", "1203i12", "@yourmom");
+    try {
+      userAccess.addUser(user1);
+      userAccess.deleteAllUsers();
+      assertEquals("", userAccess.getUser(user1).username());
+    }
+    catch(Exception e){
+      throw new RuntimeException();
+    }
 
+  }
+
+  @Test
+  public void addUserPositiveTest(){
+    UserData user1 = new UserData("yessir", "1203i12", "@yourmom");
+    try {
+      userAccess.addUser(user1);
+      assertEquals("yessir", userAccess.getUser(user1).username());
+    }
+    catch(Exception e){
+      throw new RuntimeException();
+    }
+  }
+
+  @Test
+  public void addUserNegativeTest(){
+    UserData user1 = new UserData("HEHEHEH", "1203i12", "@yourmom");
+    try {
+      userAccess.addUser(user1);
+      assertEquals("HEHEHEH", userAccess.getUser(user1).username());
+    }
+    catch(Exception e){
+      throw new RuntimeException();
+    }
+  }
+
+  @Test
+  public void getUserPositiveTest(){
+    UserData user1 = new UserData("username", "1203i12", "@yourmom");
+    try{
+      userAccess.addUser(user1);
+      assertEquals("@yourmom", userAccess.getUser(user1).email());
+    }
+    catch(Exception e){
+      throw new RuntimeException();
+    }
+  }
+
+  @Test
+  public void getUserNegativeTest(){
+    UserData user1 = new UserData("HEHEHEH", "1203i12", "@yourmom");
+    try{
+      assertEquals("", userAccess.getUser(user1).username());
+    }
+    catch(Exception e){
+      throw new RuntimeException();
+    }
   }
 
 
