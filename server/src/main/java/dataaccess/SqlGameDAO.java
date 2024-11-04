@@ -169,17 +169,5 @@ public class SqlGameDAO implements GameDAO {
     ConfigureClass configureThis = new ConfigureClass();
     configureThis.configureSqlDatabase(createStatements);
 
-//    DatabaseManager.createDatabase();
-//    try (var conn = DatabaseManager.getConnection()) {
-//      for (var statement : createStatements) {
-//        try (var preparedStatement = conn.prepareStatement(statement)) {
-//          preparedStatement.executeUpdate();
-//        }
-//      }
-//    } catch (SQLException ex) {
-//      ResponseException r = new ResponseException(ResponseException.ExceptionType.OTHER);
-//      r.setMessage("Unable to configure database: %s" + ex.getMessage());
-//      throw r;
-//    }
   }
 }
