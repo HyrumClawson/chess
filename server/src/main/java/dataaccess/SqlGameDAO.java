@@ -28,17 +28,6 @@ public class SqlGameDAO implements GameDAO {
     }
   }
 
-//  public void someMethod() throws Exception {
-//    try (Connection conn=DatabaseManager.getConnection()) {
-//      conn.prepareStatement("yerp");
-//    }
-//    catch (DataAccessException e) {
-//      //for now have it throw an unauthorized, but maybe change it to some other status code.
-//      throw new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
-//    }
-//  }
-
-
   @Override
   public void deleteAllGames() throws ResponseException{
     String statement = "TRUNCATE TABLE gameData";
@@ -69,8 +58,6 @@ public class SqlGameDAO implements GameDAO {
             String white = rs.getString("whiteUsername");
             String black = rs.getString("blackUsername");
             String gameName = rs.getString("gameName");
-           // String jsonGameString = rs.getString("gameItself");
-           // ChessGame gameItselfObject = new Gson().fromJson(jsonGameString, ChessGame.class);
             listToReturn.add(new ListingGameData(gameID, white, black, gameName));
           }
           return listToReturn;
@@ -84,13 +71,13 @@ public class SqlGameDAO implements GameDAO {
 
   @Override
   public int addGame(GameData newGame) throws ResponseException{
-    //need to convert the game to a json string first, and then when we're getting it
-    //back we need to convert it back to a Chessgame class.
+    /**need to convert the game to a json string first, and then when we're getting it
+    back we need to convert it back to a Chessgame class.*/
     ChessGame gameItself = new ChessGame();
     String jsonGameString = new Gson().toJson(gameItself);
 
     try (var conn=DatabaseManager.getConnection()) {
-      //might need to add some more specifications to this:
+      /**might need to add some more specifications to this:*/
       var statement="INSERT INTO gameData (whiteUsername, blackUsername, gameName, gameItself)" +
               "VALUES(?,?,?,?)";
       try (var preparedStatement= conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
@@ -111,7 +98,7 @@ public class SqlGameDAO implements GameDAO {
       ResponseException r = new ResponseException(ResponseException.ExceptionType.OTHER);
       r.setMessage(ex.getMessage());
       throw r;
-        //throw response exception here and just catch and throw all the way up
+        /**throw response exception here and just catch and throw all the way up*/
 
     }
   }
@@ -132,8 +119,6 @@ public class SqlGameDAO implements GameDAO {
             String gameName = rs.getString("gameName");
             String jsonGameString = rs.getString("gameItself");
             ChessGame gameItselfObject = new Gson().fromJson(jsonGameString, ChessGame.class);
-//            gameItselfObject.updateBoard(new ChessMove(new ChessPosition(2,1)
-//            , new ChessPosition(2,3), ChessPiece.PieceType.ROOK), new ChessBoard());
             game = new GameData(gameID, white, black, gameName, gameItselfObject);
           }
           if(game.gameID() == 0){
@@ -168,60 +153,7 @@ public class SqlGameDAO implements GameDAO {
 
   }
 
-//  @Override
-//  //this could just be getGAme as well and then we'll return the game above.
-//  public boolean gameIdExists(JoinGame infoToJoin) {
-//    return false;
-//  }
-//
-//  @Override
-//  //this could just be getGame and then we'll return the game to above
-//  public boolean playerTaken(JoinGame infoToJoin) {
-//    return false;
-//  }
-
-//  @Override
-//  public void addPlayerToGame(JoinGame infoToJoin, String username) {
-//
-//  }
-
-  private int executeUpdate (String statement, Object ... params) throws ResponseException {
-//    try (var conn = DatabaseManager.getConnection()) {
-//      try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
-//        for (var i = 0; i < params.length; i++) {
-//          var param = params[i];
-//          if (param instanceof String p) ps.setString(i + 1, p);
-//          else if (param instanceof Integer p) ps.setInt(i + 1, p);
-//          else if (param instanceof PetType p) ps.setString(i + 1, p.toString());
-//          else if (param == null) ps.setNull(i + 1, NULL);
-//        }
-//        ps.executeUpdate();
-//
-//        var rs = ps.getGeneratedKeys();
-//        if (rs.next()) {
-//          return rs.getInt(1);
-//        }
-//        return 0;
-//      }
-//    }
-//    catch (SQLException | DataAccessException  e) {
-//      server.ResponseException r = new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
-//      r.setMessage(String.format("unable to update database: %s, %s", statement, e.getMessage()));
-//      throw r;
-//      //throw new ResponseException(500, String.format("unable to update database: %s, %s", statement, e.getMessage()));
-//    }
-
-    return 0;
-  }
-
-
-
-
-
   private final String[] createStatements = {
-          //this is the table for the petshop
-          //create one for my game data.
-          //Then just go through and  have
           """
             CREATE TABLE IF NOT EXISTS  gameData (
               `gameID` int NOT NULL AUTO_INCREMENT,
@@ -242,11 +174,9 @@ public class SqlGameDAO implements GameDAO {
         }
       }
     } catch (SQLException ex) {
-      //just for now.
       ResponseException r = new ResponseException(ResponseException.ExceptionType.OTHER);
       r.setMessage("Unable to configure database: %s" + ex.getMessage());
       throw r;
-      //throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));
     }
   }
 }

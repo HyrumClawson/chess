@@ -31,13 +31,6 @@ public class AuthService {
     catch(Exception ex){
       throw new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
     }
-
-//    if (!isAuthDataThere(authAccess, authToken)) {
-//      throw new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
-//    } else {
-//      authAccess.deleteSingleAuth(authToken);
-//    }
-
   }
 
   public boolean isAuthDataThere(AuthDAO authAccess, String authToken) throws ResponseException {

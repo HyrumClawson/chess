@@ -19,8 +19,8 @@ public class ResponseException extends Exception{
     this.typeOfException = type;
   }
 
-  public void setMessage(String Message){
-    message = Message;
+  public void setMessage(String message){
+    this.message = message;
   }
 
 
