@@ -106,33 +106,6 @@ public class SqlAuthDAO implements AuthDAO{
 
 
 
-//  @Override
-//  //this could be simplified with just a simple getauth and handle it in the service
-//  public boolean checkMapForAuth(String authToken) {
-//    return false;
-//  }
-//
-//  @Override
-//  //this could be simplified with just getauth function. Handle it in the service.
-//  public String getUsername(String authToken) {
-//    return null;
-//  }
-
-  private void deleteFunction(String statement, String authToken) throws Exception{
-    try( var conn = DatabaseManager.getConnection()) {
-      try (var preparedStatement=conn.prepareStatement(statement)) {
-        preparedStatement.setString(1, authToken);
-        preparedStatement.executeUpdate();
-      }
-    }
-    catch(SQLException ex){
-      ResponseException r = new ResponseException(ResponseException.ExceptionType.OTHER);
-      r.setMessage(ex.getMessage());
-      throw r;
-    }
-  }
-//              UNIQUE(username),
-
   private final String[] createStatements = {
           """
             CREATE TABLE IF NOT EXISTS  authData (

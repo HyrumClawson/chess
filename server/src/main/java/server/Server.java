@@ -24,14 +24,6 @@ public class Server {
     GameDAO gameData = new SqlGameDAO();//MemoryGameDAO();
     UserDAO userData = new SqlUserDAO();//MemoryUserDAO();
 
-//    public Server(){
-//        configureDatabase();
-//    }
-//
-//    private void configureDatabase() {
-//        DatabaseManager.createDatabase();
-//    }
-
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -96,22 +88,12 @@ public class Server {
 
 
     public Object deleteDBHandler(Request req, Response res) throws ResponseException{
-//        try{
+
             authService.clearAllAuthData(authData);
             gameService.clearAllGameData(gameData);
             userService.clearAllUserData(userData);
             res.status(200);
             return "";
-
-//        }
-//        catch (Exception e) {
-//            Error newError = new Error(e.getMessage());
-//            res.status(500);
-//            res.body(new Gson().toJson(newError));
-//            return (new Gson().toJson(newError));
-//        }
-
-
     }
 
     public Object registrationHandler(Request req, Response res) throws ResponseException/**ExceptionAlreadyTaken, BadRequest**/{

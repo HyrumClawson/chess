@@ -58,14 +58,6 @@ public abstract class MemoryGameDAO implements GameDAO{
     return newGameID;
   }
 
-  public boolean gameIdExists(JoinGame infoToJoin){
-    for(GameData game : listOfGames){
-      if(game.gameID() == infoToJoin.gameID()){
-        return true;
-      }
-    }
-    return false;
-  }
   public boolean playerTaken(JoinGame infoToJoin){
     //WHITE/BLACK
     boolean wantsWhite;

@@ -54,15 +54,4 @@ public class UserService {
 
   }
 
-  public UserData findUser(UserDAO userData, model.UserData user) {
-    //I might be screwing this all up something fierce.
-    try {
-      return (UserData) userData.getUser(user);
-    }
-    catch(Exception e){
-      return null;
-    }
-  }
-
-
 }

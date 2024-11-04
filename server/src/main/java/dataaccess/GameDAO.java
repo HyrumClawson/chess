@@ -18,9 +18,4 @@ public interface GameDAO {
 
   void updateGame(JoinGame infoToJoin, String username, String team) throws ResponseException;
 
-//  boolean gameIdExists(JoinGame infoToJoin);
-//
-//  boolean playerTaken(JoinGame infoToJoin);
-//
-//  void addPlayerToGame(JoinGame infoToJoin, String username);
 }

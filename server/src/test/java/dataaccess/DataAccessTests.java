@@ -60,14 +60,6 @@ public class DataAccessTests {
       AuthData newAuth = authAccess.addnewAuth(user1);
       AuthData newAuth2 = authAccess.addnewAuth(user2);
       assertEquals(newAuth2.username(), newAuth.username());
-
-//      AuthData authStuff = authAccess.getAuth(newAuth.authToken());
-//      assertEquals("yessir", authStuff.username());
-
-//    catch(ResponseException e){
-//      assertEquals(ResponseException.ExceptionType.TAKEN,
-//              e.typeOfException, "Threw a Taken response exception");
-//    }
   }
 
   @Test
