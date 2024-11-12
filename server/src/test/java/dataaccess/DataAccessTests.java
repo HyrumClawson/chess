@@ -1,12 +1,9 @@
 package dataaccess;
 import chess.ChessGame;
-import dataaccess.*;
 import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.ResponseException;
-
-import java.util.ArrayList;
+import Exception.ResponseException;
 
 import static org.junit.jupiter.api.Assertions.*;
 public class DataAccessTests {

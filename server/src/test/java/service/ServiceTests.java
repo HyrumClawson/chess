@@ -5,7 +5,7 @@ import dataaccess.*;
 import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import server.ResponseException;
+import Exception.ResponseException;
 
 import java.util.ArrayList;
 

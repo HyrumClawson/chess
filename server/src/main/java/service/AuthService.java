@@ -1,10 +1,8 @@
 package service;
 
 import dataaccess.AuthDAO;
-import dataaccess.DataAccessException;
 import model.AuthData;
-import server.ResponseException;
-import dataaccess.DatabaseManager;
+import Exception.ResponseException;
 
 public class AuthService {
 

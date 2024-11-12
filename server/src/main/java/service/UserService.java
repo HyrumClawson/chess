@@ -1,12 +1,8 @@
 package service;
 
-import com.google.gson.Gson;
-import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
-import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
-import server.Error;
-import server.ResponseException;
+import Exception.ResponseException;
 
 public class UserService {
 

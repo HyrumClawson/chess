@@ -2,18 +2,13 @@ package dataaccess;
 
 import chess.*;
 import com.google.gson.Gson;
-import model.AuthData;
 import model.GameData;
 import model.JoinGame;
 import model.ListingGameData;
-import server.ResponseException;
+import Exception.ResponseException;
 
-import java.sql.Array;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.UUID;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 

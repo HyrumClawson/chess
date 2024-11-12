@@ -2,10 +2,8 @@ package dataaccess;
 
 import model.AuthData;
 import model.UserData;
-import org.mindrot.jbcrypt.BCrypt;
-import server.ResponseException;
+import Exception.ResponseException;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 

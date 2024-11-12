@@ -2,19 +2,14 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
-import dataaccess.DatabaseManager;
-import model.GameData;
 import model.JoinGame;
 import model.ListingGameData;
-import model.UserData;
-import netscape.javascript.JSObject;
 import service.*;
 //import service.Service;
 import spark.*;
+import Exception.ResponseException;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 public class Server {
     AuthService authService = new AuthService();
@@ -87,7 +82,7 @@ public class Server {
     }
 
 
-    public Object deleteDBHandler(Request req, Response res) throws ResponseException{
+    public Object deleteDBHandler(Request req, Response res) throws ResponseException {
 
             authService.clearAllAuthData(authData);
             gameService.clearAllGameData(gameData);
@@ -96,7 +91,7 @@ public class Server {
             return "";
     }
 
-    public Object registrationHandler(Request req, Response res) throws ResponseException/**ExceptionAlreadyTaken, BadRequest**/{
+    public Object registrationHandler(Request req, Response res) throws ResponseException /**ExceptionAlreadyTaken, BadRequest**/{
         var newUser=new Gson().fromJson(req.body(), model.UserData.class);
         userService.registerUser(userData, newUser);
         var newAuth=authService.addAuthData(authData, newUser);
@@ -114,7 +109,7 @@ public class Server {
         return (new Gson().toJson(newAuth));
 
     }
-    public Object logoutHandler(Request req, Response res) throws ResponseException{
+    public Object logoutHandler(Request req, Response res) throws ResponseException {
         String authToken = getAuthFromHeader(req);
         authService.logoutAuth(authData, authToken);
         res.status(200);
@@ -123,7 +118,7 @@ public class Server {
         //return an empty like the clear
     }
 
-    public Object listGames(Request req, Response res) throws ResponseException{
+    public Object listGames(Request req, Response res) throws ResponseException {
         String authToken = getAuthFromHeader(req);
         authService.isAuthDataThere(authData, authToken);
         ArrayList<ListingGameData> list = gameService.listAllGames(gameData);
@@ -134,13 +129,14 @@ public class Server {
         return (new Gson().toJson(listObject));
     }
 
-    public Object createGame(Request req, Response res) throws ResponseException{
+    public Object createGame(Request req, Response res) throws ResponseException {
         String authToken = getAuthFromHeader(req);
         model.GameData newGame = new Gson().fromJson(req.body(), model.GameData.class);
         //I'm waffling back and forth on whether I should I have it check for a bad
         //request first or after the authorization. Maybe change it later.
         authService.isAuthDataThere(authData, authToken);
         int gameId = gameService.createNewGame(gameData, newGame);
+
         GameID gameIDObject = new GameID(gameId);
         res.status(200);
         res.body(new Gson().toJson(gameIDObject));
@@ -148,7 +144,7 @@ public class Server {
 
     }
 
-    public Object joinGame(Request req, Response res) throws ResponseException{
+    public Object joinGame(Request req, Response res) throws ResponseException {
         String authToken = getAuthFromHeader(req);
         String username = authService.getUserNameByToken(authData, authToken);
         model.JoinGame infoToJoin = new Gson().fromJson(req.body(), JoinGame.class);

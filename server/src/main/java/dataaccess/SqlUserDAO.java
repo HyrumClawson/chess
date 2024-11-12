@@ -2,7 +2,7 @@ package dataaccess;
 
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
-import server.ResponseException;
+import Exception.ResponseException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
