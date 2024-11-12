@@ -68,6 +68,11 @@ public class ServerFacade {
 
   }
 
+  public void joinGame(JoinGame request) throws ResponseException {
+    var path = "/game";
+    this.makeRequest("PUT", path, request, null);
+  }
+
 
 
 

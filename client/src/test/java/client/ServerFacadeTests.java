@@ -1,11 +1,15 @@
 package client;
 
 import model.GameData;
+import model.JoinGame;
+import model.ListingGameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
 import ui.ServerFacade;
 import Exception.ResponseException;
+
+import java.util.ArrayList;
 
 
 public class ServerFacadeTests {
@@ -141,7 +145,7 @@ public class ServerFacadeTests {
 
     @Test
     public void addGamesPositive(){
-        GameData game = new GameData(0, null, null, "newGame", null);
+        GameData game = new GameData(0, null, null, "lameGame", null);
         UserData user = new UserData("hyc", "123", "hyc@mail");
         try{
             serverFacade.register(user);
@@ -162,7 +166,59 @@ public class ServerFacadeTests {
             serverFacade.addGame(game);
         }
         catch(ResponseException e){
-            Assertions.assertEquals(ResponseException.ExceptionType.UNAUTHORIZED, e.typeOfException);
+            Assertions.assertEquals("failure: 401", e.getMessage());
+        }
+    }
+
+    @Test
+    public void listGamesPositive() {
+        UserData user = new UserData("hyc", "123", "hyc@mail");
+        GameData game1 = new GameData(0, null, null, "newGame", null);
+        GameData game2 = new GameData(0, null, null, "wootWoot", null);
+        try{
+            serverFacade.register(user);
+            serverFacade.addGame(game1);
+            serverFacade.addGame(game2);
+            ArrayList<ListingGameData> list = serverFacade.listGames();
+            Assertions.assertEquals("wootWoot", list.get(1).gameName());
+            Assertions.assertEquals(2, list.size());
+        }
+        catch(ResponseException e){
+            Assertions.assertEquals(1, 0);
+        }
+    }
+
+    @Test
+    public void listGamesNegative(){
+        try{
+            serverFacade.listGames();
+        }
+        catch(ResponseException e){
+            Assertions.assertEquals("failure: 401", e.getMessage());
+        }
+    }
+
+
+    @Test
+    public void joinGamePositive(){
+        UserData user = new UserData("hyc", "123", "hyc@mail");
+        UserData user1 = new UserData("BenClawson", "123", "hyc@mail");
+        GameData game1 = new GameData(0, null, null, "newGame", null);
+        JoinGame joinRequest = new JoinGame("BLACK", 1);
+        JoinGame joinRequest1 = new JoinGame("WHITE", 1);
+        try{
+            serverFacade.register(user);
+            serverFacade.addGame(game1);
+            serverFacade.joinGame(joinRequest);
+            serverFacade.register(user1);
+            serverFacade.joinGame(joinRequest1);
+            ArrayList<ListingGameData> list = serverFacade.listGames();
+            Assertions.assertEquals("hyc", list.get(0).blackUsername());
+
+
+        }
+        catch(ResponseException e){
+            Assertions.assertEquals(0,1);
         }
     }
 
