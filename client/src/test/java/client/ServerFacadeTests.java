@@ -1,5 +1,6 @@
 package client;
 
+import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
@@ -93,6 +94,7 @@ public class ServerFacadeTests {
             Assertions.assertEquals("hyc", serverFacade.login(user).username());
         }
         catch(ResponseException e){
+            Assertions.assertEquals(1, 0);
 
         }
 
@@ -138,8 +140,30 @@ public class ServerFacadeTests {
     }
 
     @Test
-    public void listGamesPositive(){
+    public void addGamesPositive(){
+        GameData game = new GameData(0, null, null, "newGame", null);
+        UserData user = new UserData("hyc", "123", "hyc@mail");
+        try{
+            serverFacade.register(user);
+            Assertions.assertEquals(1,serverFacade.addGame(game).gameID() );
+            Assertions.assertEquals(2, serverFacade.addGame(game).gameID());
+        }
+        catch(ResponseException e){
+            //meant to ruin everything
+            Assertions.assertEquals(ResponseException.ExceptionType.UNAUTHORIZED, e.typeOfException);
 
+        }
+    }
+
+    @Test
+    public void addGamesNegative(){
+        GameData game = new GameData(0, null, null, "newGame", null);
+        try{
+            serverFacade.addGame(game);
+        }
+        catch(ResponseException e){
+            Assertions.assertEquals(ResponseException.ExceptionType.UNAUTHORIZED, e.typeOfException);
+        }
     }
 
 

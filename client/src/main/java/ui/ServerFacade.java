@@ -60,10 +60,10 @@ public class ServerFacade {
     return response.games();
   }
 
-  public Object addGame(GameData request) throws ResponseException {
+  public GameID addGame(GameData request) throws ResponseException {
     //might need to finagle it a bit here. Might be int
     var path = "/game";
-    Object gameIdObject = this.makeRequest("POST", path, request, Object.class);
+    GameID gameIdObject = this.makeRequest("POST", path, request, GameID.class);
     return gameIdObject;
 
   }
