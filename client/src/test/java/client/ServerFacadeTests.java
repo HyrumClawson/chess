@@ -222,5 +222,49 @@ public class ServerFacadeTests {
         }
     }
 
+    @Test
+    public void joinGameNegative(){
+        JoinGame joinRequest = new JoinGame("BLACK", 1);
+        try{
+            serverFacade.joinGame(joinRequest);
+        }
+        catch(ResponseException e){
+            Assertions.assertEquals("failure: 401", e.getMessage());
+        }
+    }
+
+    @Test
+    public void joinGameNegative1(){
+        JoinGame joinRequest = new JoinGame("BLACK", 1);
+        UserData user = new UserData("hyc", "123", "hyc@mail");
+
+        try{
+            serverFacade.register(user);
+            serverFacade.joinGame(joinRequest);
+        }
+        catch(ResponseException e){
+            Assertions.assertEquals("failure: 400", e.getMessage());
+        }
+    }
+
+    @Test
+    public void joinGameNegative2() {
+        JoinGame joinRequest=new JoinGame("BLACK", 1);
+        UserData user=new UserData("hyc", "123", "hyc@mail");
+        UserData user1 =new UserData("Ben", "123", "hyc@mail");
+        GameData game1 = new GameData(0, null, null, "newGame", null);
+        try {
+            serverFacade.register(user);
+            serverFacade.addGame(game1);
+            serverFacade.joinGame(joinRequest);
+            serverFacade.register(user1);
+            serverFacade.joinGame(joinRequest);
+        } catch (ResponseException e) {
+            Assertions.assertEquals("failure: 403", e.getMessage());
+        }
+    }
+
+
+
 
 }
