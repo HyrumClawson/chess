@@ -2,9 +2,12 @@ import chess.*;
 import ui.PreLoginUI;
 
 public class Main {
+    static PreLoginUI preLogin;
     public static void main(String[] args) {
         var serverUrl = "http://localhost:8080";
-        PreLoginUI.run(serverUrl);
+        preLogin = new PreLoginUI(serverUrl);
+        preLogin.run();
+
 //        var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
 //        System.out.println("♕ 240 Chess Client: " + piece);
     }

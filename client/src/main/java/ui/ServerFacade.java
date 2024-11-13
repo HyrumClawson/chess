@@ -98,8 +98,6 @@ public class ServerFacade {
 
       //set the string to be the authtoken
 
-
-
       http.connect();
       throwIfNotSuccessful(http);
       return readBody(http, responseClass);

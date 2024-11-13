@@ -1,2 +1,7 @@
-package ui;public class State {
+package ui;
+
+
+public enum State {
+  SIGNEDOUT,
+  SIGNEDIN
 }
