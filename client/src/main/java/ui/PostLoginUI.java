@@ -1,18 +1,26 @@
 package ui;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class PostLoginUI {
-  private Client client;
-  String serverUrl;
 
-  public PostLoginUI(String serverUrl){
+  String serverUrl;
+  ServerFacade serverFacade;
+  Client client;
+
+
+  public PostLoginUI(String serverUrl, Client client){
     this.serverUrl = serverUrl;
-    client = new Client(serverUrl);
+    this.client = client;
+
+
+
+
   }
 
-  public void run(String visitorName){
-    System.out.println("Logged in as " + visitorName);
+  public void run(){
+    //System.out.println("Logged in as " + visitorName);
     System.out.println("Is it working?");
     //System.out.println("\uD83D\uDC36 Welcome to 240 Chess. Type Help to get started.");
     //System.out.print(client.help());
@@ -39,4 +47,14 @@ public class PostLoginUI {
     //+ RESET + GREEN
     System.out.print("\n" + "[LOGGED_IN]" + ">>> " );
   }
+
+
+
+
+
+
+
+
+
+
 }

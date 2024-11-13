@@ -9,8 +9,6 @@ public class Client {
   private String serverUrl;
   private String visitorName = null;
   private final ServerFacade serverFacade;
-  //private final NotificationHandler notificationHandler;
-  //private WebSocketFacade ws;
   private State state = State.SIGNEDOUT;
 
   private PostLoginUI postLoginUi;
@@ -24,7 +22,6 @@ public class Client {
   public Client(String serverUrl){
     serverFacade = new ServerFacade(serverUrl);
     this.serverUrl = serverUrl;
-    postLoginUi = new PostLoginUI(serverUrl);
   }
 
   public String eval(String input) {
@@ -70,7 +67,7 @@ public class Client {
         AuthData authData = serverFacade.register(newUser);
         state = State.SIGNEDIN;
         visitorName = authData.username();
-        postLoginUi.run(visitorName);
+       // postLoginUi.run(visitorName);
 
       }
       catch(ResponseException e) {
@@ -97,7 +94,7 @@ public class Client {
         AuthData authData = serverFacade.login(user);
         state = State.SIGNEDIN;
         visitorName = authData.username();
-        postLoginUi.run(visitorName);
+        //postLoginUi.run(visitorName);
 
       }
       catch(ResponseException e){
