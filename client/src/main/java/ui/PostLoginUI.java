@@ -14,17 +14,9 @@ public class PostLoginUI {
     this.serverUrl = serverUrl;
     this.client = client;
 
-
-
-
   }
 
-  public void run(){
-    //System.out.println("Logged in as " + visitorName);
-    System.out.println("Is it working?");
-    //System.out.println("\uD83D\uDC36 Welcome to 240 Chess. Type Help to get started.");
-    //System.out.print(client.help());
-
+  public String run(){
     Scanner scanner = new Scanner(System.in);
     var result = "";
     while (!result.equals("quit")) {
@@ -33,14 +25,19 @@ public class PostLoginUI {
 
       try {
         result = client.eval(line);
-        System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
+        System.out.print(result);
+        if(result.equals("quit")){
+          return result;
+        }
       } catch (Throwable e) {
         var msg = e.toString();
         System.out.print(msg);
       }
     }
     System.out.println();
+    return result;
   }
+
 
 
   private void printPrompt() {

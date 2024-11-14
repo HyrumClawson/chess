@@ -18,7 +18,7 @@ public class PreLoginUI {
   }
 
   public void run(){
-    System.out.println("Is it working?");
+    //System.out.println("Is it working?");
     System.out.println(EscapeSequences.WHITE_KING+ " Welcome to 240 Chess. " +
             "Type Help to get started." + EscapeSequences.WHITE_KING);
     //System.out.print(client.help());
@@ -32,12 +32,12 @@ public class PreLoginUI {
       try {
         result = client.eval(line);
         String[] words = result.split("\\s+");
-        if(Objects.equals(words[0], "logged")){
-          postLoginUI.run();
-        }
-
         //I might need to figure this out more
-        System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
+        System.out.print( result);
+
+        if(Objects.equals(words[0], "logged")){
+          result = postLoginUI.run();
+        }
       } catch (Throwable e) {
         var msg = e.toString();
         System.out.print(msg);

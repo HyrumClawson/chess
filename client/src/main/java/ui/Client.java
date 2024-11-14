@@ -3,6 +3,8 @@ package ui;
 import java.util.Arrays;
 import Exception.ResponseException;
 import model.AuthData;
+import model.GameData;
+import model.GameID;
 import model.UserData;
 
 public class Client {
@@ -29,7 +31,8 @@ public class Client {
       var tokens = input.toLowerCase().split(" ");
       var cmd = (tokens.length > 0) ? tokens[0] : "help";
       var params = Arrays.copyOfRange(tokens, 1, tokens.length);
-      if(state == State.SIGNEDOUT){
+
+      if(state == State.SIGNEDOUT) {
         return switch (cmd) {
           case "register" -> register(params);
           case "login" -> login(params);
@@ -43,9 +46,7 @@ public class Client {
       }
       else{
         return switch (cmd) {
-          case "register" -> register(params);
-//        case "rescue" -> rescuePet(params);
-//        case "list" -> listPets();
+          case "create" -> createGame(params);
 //        case "signout" -> signOut();
 //        case "adopt" -> adoptPet(params);
 //        case "adoptall" -> adoptAllPets();
@@ -86,6 +87,30 @@ public class Client {
   }
 
 
+  public String createGame(String... params) throws ResponseException {
+    //assertSignedIn();
+    if (params.length == 1) {
+      GameData newGame = new GameData(0, null,
+              null, params[0], null );
+      try{
+        GameID gameIdObject = serverFacade.addGame(newGame);
+        int gameId = gameIdObject.gameID();
+        //postLoginUi.run(visitorName);
+        return String.format("Successfully created %s.", params[0]);
+      }
+
+      catch(ResponseException e){
+        ResponseException r = new ResponseException(e.typeOfException);
+        r.setMessage(e.getMessage());
+        throw r;
+      }
+
+    }
+    ResponseException r = new ResponseException(ResponseException.ExceptionType.BADREQUEST);
+    r.setMessage("Bad Request, need a name for the game \n try again");
+    throw r;
+  }
+
   public String login(String... params) throws ResponseException {
     //assertSignedIn();
     if (params.length == 2) {
@@ -95,8 +120,9 @@ public class Client {
         state = State.SIGNEDIN;
         visitorName = authData.username();
         //postLoginUi.run(visitorName);
-
+        return String.format("logged in as %s.", visitorName);
       }
+
       catch(ResponseException e){
         ResponseException r = new ResponseException(e.typeOfException);
         r.setMessage(e.getMessage());
@@ -105,10 +131,12 @@ public class Client {
 
     }
     ResponseException r = new ResponseException(ResponseException.ExceptionType.BADREQUEST);
-    r.setMessage("Bad Request, missing either username, password, or email. Or added \n" +
+    r.setMessage("Bad Request, missing either username, password. Or added \n" +
             "something extra. \n try again");
     throw r;
   }
+
+
 
 //  public String listPets() throws ResponseException {
 //    assertSignedIn();
@@ -166,6 +194,9 @@ public class Client {
 //  }
 
   public String help() {
+    String RESET = "\033[0m";      // Reset color to default
+    String BLUE = "\033[34m";      // Blue color
+    String MAGENTA = "\033[35m";
     if (state == State.SIGNEDOUT) {
       return """
                     register <USERNAME> <PASSWORD> <EMAIL> - to create an account
@@ -174,15 +205,25 @@ public class Client {
                     help - with possible commands
                     """;
     }
+//""" + BLUE + "<NAME>" + RESET + " - a game
+//    """
+//                create <NAME> - a game
+//                list - games
+//                join <ID> [WHITE|BLACK] - a game
+//                observe <ID> - a game
+//                logout - when you are done
+//                quit - playing chess
+//                help - with possible commands
+//                """;
+    String returnString = BLUE + "create <NAME>" + RESET + " - " + MAGENTA + "a game" + RESET + "\n" +
+            BLUE + "list" + RESET + " - " + MAGENTA + "games" + RESET + "\n" +
+            BLUE + "join <ID> [WHITE|BLACK]" + RESET + " - " + MAGENTA + "a game" + RESET + "\n" +
+            BLUE + "observe <ID>" + RESET + " - " + MAGENTA + "a game" + RESET + "\n" +
+            BLUE + "logout" + RESET + " - " + MAGENTA + "when you are done" + RESET + "\n" +
+            BLUE + "quit" + RESET + " - " + MAGENTA + "playing chess" + RESET + "\n" +
+            BLUE + "help" + RESET + " - " + MAGENTA + "with possible commands" + RESET;
 
-    return """
-                - list
-                - adopt <pet id>
-                - rescue <name> <CAT|DOG|FROG|FISH>
-                - adoptAll
-                - signOut
-                - quit
-                """;
+    return returnString;
   }
 
 //  private void assertSignedIn() throws ResponseException {
