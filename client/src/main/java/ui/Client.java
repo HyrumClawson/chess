@@ -46,7 +46,7 @@ public class Client {
         return switch (cmd) {
           case "create" -> createGame(params);
           case "list" -> listGames();
-//        case "adopt" -> adoptPet(params);
+          case "join" -> joinGame(params);
 //        case "adoptall" -> adoptAllPets();
           case "quit" -> "quit";
           default -> help();
@@ -139,11 +139,14 @@ public class Client {
       try{
         ArrayList<ListingGameData> gameList = serverFacade.listGames();
         String output = "";
+        StringBuilder sb = new StringBuilder();
         for(ListingGameData game : gameList){
-          output += "\n" + String.valueOf(game.gameID()) + ". " + "Game name: " + game.gameName() +
+          output = "\n" + String.valueOf(game.gameID()) + ". " + "GameName: " + game.gameName() +
           " White: " + game.whiteUsername() + " Black: " + game.blackUsername();
+          sb.append(formatTheListLine(output)).append("\n");
         }
-        return output;
+        return sb.toString();
+        //return String.format(output);
         //return String.format(gameList.toString());
       }
       catch(ResponseException e){
@@ -151,6 +154,45 @@ public class Client {
         r.setMessage(e.getMessage());
         throw r;
       }
+  }
+
+  public String joinGame(String... params) throws ResponseException {
+    //assertSignedIn();
+    if (params.length == 2) {
+      if(!isAnInt(params[0])){
+        ResponseException r = new ResponseException(ResponseException.ExceptionType.BADREQUEST);
+        r.setMessage("Bad Request, ID needs to be a number \n try again");
+        throw r;
+      }
+      int id = Integer.parseInt(params[0]);
+      String desiredColor = params[1].toUpperCase();
+      if(!desiredColor.equals("WHITE") && !desiredColor.equals("BLACK")){
+        ResponseException r = new ResponseException(ResponseException.ExceptionType.BADREQUEST);
+        r.setMessage("Bad Request, please specify white or black \n try again");
+        throw r;
+      }
+
+      JoinGame joinRequest = new JoinGame(desiredColor, id);
+      try{
+        serverFacade.joinGame(joinRequest);
+//        AuthData authData = serverFacade.login(user);
+//        state = State.SIGNEDIN;
+//        visitorName = authData.username();
+        //postLoginUi.run(visitorName);
+        return String.format("Successfully Joined Game");
+      }
+
+      catch(ResponseException e){
+        ResponseException r = new ResponseException(e.typeOfException);
+        r.setMessage(e.getMessage());
+        throw r;
+      }
+
+    }
+    ResponseException r = new ResponseException(ResponseException.ExceptionType.BADREQUEST);
+    r.setMessage("Bad Request, missing either username, password. Or added \n" +
+            "something extra. \n try again");
+    throw r;
   }
 
 
@@ -250,7 +292,23 @@ public class Client {
 //  }
 //}
 
+  private Boolean isAnInt(String string){
+      try {
+        Integer.parseInt(string);
+        return true;
+      } catch (NumberFormatException e) {
+        return false;
+      }
 
+  }
+
+  private String formatTheListLine(String line) {
+    String[] parts = line.split(" ");
+    return String.format("%-1s%-10s%-15s%-10s%-10s%-10s%-10s", parts[0], parts[1], parts[2], parts[3], parts[4],
+            parts[5], parts[6]);
+  }
+
+//"%-5s%-15s%-10s%-10s"
 
 
 
