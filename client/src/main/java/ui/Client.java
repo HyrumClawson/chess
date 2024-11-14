@@ -1,11 +1,9 @@
 package ui;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import Exception.ResponseException;
-import model.AuthData;
-import model.GameData;
-import model.GameID;
-import model.UserData;
+import model.*;
 
 public class Client {
   private String serverUrl;
@@ -47,7 +45,7 @@ public class Client {
       else{
         return switch (cmd) {
           case "create" -> createGame(params);
-//        case "signout" -> signOut();
+          case "list" -> listGames();
 //        case "adopt" -> adoptPet(params);
 //        case "adoptall" -> adoptAllPets();
           case "quit" -> "quit";
@@ -95,7 +93,6 @@ public class Client {
       try{
         GameID gameIdObject = serverFacade.addGame(newGame);
         int gameId = gameIdObject.gameID();
-        //postLoginUi.run(visitorName);
         return String.format("Successfully created %s.", params[0]);
       }
 
@@ -134,6 +131,26 @@ public class Client {
     r.setMessage("Bad Request, missing either username, password. Or added \n" +
             "something extra. \n try again");
     throw r;
+  }
+
+
+  public String listGames() throws ResponseException {
+    //assertSignedIn();
+      try{
+        ArrayList<ListingGameData> gameList = serverFacade.listGames();
+        String output = "";
+        for(ListingGameData game : gameList){
+          output += "\n" + String.valueOf(game.gameID()) + ". " + "Game name: " + game.gameName() +
+          " White: " + game.whiteUsername() + " Black: " + game.blackUsername();
+        }
+        return output;
+        //return String.format(gameList.toString());
+      }
+      catch(ResponseException e){
+        ResponseException r = new ResponseException(e.typeOfException);
+        r.setMessage(e.getMessage());
+        throw r;
+      }
   }
 
 
