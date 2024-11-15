@@ -2,7 +2,7 @@ package ui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import Exception.ResponseException;
+import exception.ResponseException;
 import model.*;
 
 public class Client {
@@ -11,9 +11,9 @@ public class Client {
   private final ServerFacade serverFacade;
   private State state = State.SIGNEDOUT;
 
-  String RESET = EscapeSequences.RESET_TEXT_COLOR;//"\033[0m";      // Reset color to default
-  String BLUE = EscapeSequences.SET_TEXT_COLOR_BLUE;//"\033[34m";      // Blue color
-  String MAGENTA = EscapeSequences.SET_TEXT_COLOR_MAGENTA;//"\033[35m";
+  final static String RESET = EscapeSequences.RESET_TEXT_COLOR;//"\033[0m";      // Reset color to default
+  final static String BLUE = EscapeSequences.SET_TEXT_COLOR_BLUE;//"\033[34m";      // Blue color
+  final static String MAGENTA = EscapeSequences.SET_TEXT_COLOR_MAGENTA;//"\033[35m";
 
 
   /**

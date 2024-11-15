@@ -1,13 +1,9 @@
 package ui;
 
-import com.google.gson.reflect.TypeToken;
-
-import java.lang.reflect.Type;
 import com.google.gson.Gson;
 import model.*;
 
-import Exception.ResponseException;
-import org.junit.jupiter.api.function.Executable;
+import exception.ResponseException;
 
 
 import java.io.*;

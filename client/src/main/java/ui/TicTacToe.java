@@ -26,11 +26,11 @@ public class TicTacToe {
 
     out.print(ERASE_SCREEN);
 
-   // drawHeaders(out);
+    drawHeaders(out);
 
     drawTicTacToeBoard(out);
 
-    //drawTicTacToeBoard(out);
+
 
     out.print(SET_BG_COLOR_BLACK);
     out.print(SET_TEXT_COLOR_WHITE);

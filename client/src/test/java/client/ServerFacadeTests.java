@@ -7,7 +7,7 @@ import model.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
 import ui.ServerFacade;
-import Exception.ResponseException;
+import exception.ResponseException;
 
 import java.util.ArrayList;
 
@@ -20,7 +20,8 @@ public class ServerFacadeTests {
     @BeforeAll
     public static void init() {
         server = new Server();
-        var port = server.run(8080);
+        //might have to come back and change this?????
+        var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
     }
     @BeforeEach
