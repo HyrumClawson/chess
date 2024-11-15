@@ -14,25 +14,7 @@ public class DrawChessBoard {
       for (int i=0; i < 10; i++) {
         for (int j=0; j < 10; j++) {
           if (i == 0 || i == 9) {
-            if (j == 1) {
-              chessBoard[i][j]=" a ";
-            } else if (j == 2) {
-              chessBoard[i][j]=" b ";
-            } else if (j == 3) {
-              chessBoard[i][j]=" c ";
-            } else if (j == 4) {
-              chessBoard[i][j]=" d ";
-            } else if (j == 5) {
-              chessBoard[i][j]=" e ";
-            } else if (j == 6) {
-              chessBoard[i][j]=" f ";
-            } else if (j == 7) {
-              chessBoard[i][j]=" g ";
-            } else if (j == 8) {
-              chessBoard[i][j]=" h ";
-            }else{
-              chessBoard[i][j] = " ";
-            }
+            headerAndFooter(i, j);
           } else if (i == 1 && whiteOnTop) {
             if (j == 0 || j == 9) {
               chessBoard[i][j]=" 8 ";
@@ -111,8 +93,28 @@ public class DrawChessBoard {
         }
       }
     }
-    
 
+  public void headerAndFooter(int i, int j){
+    if (j == 1) {
+      chessBoard[i][j]=" a ";
+    } else if (j == 2) {
+      chessBoard[i][j]=" b ";
+    } else if (j == 3) {
+      chessBoard[i][j]=" c ";
+    } else if (j == 4) {
+      chessBoard[i][j]=" d ";
+    } else if (j == 5) {
+      chessBoard[i][j]=" e ";
+    } else if (j == 6) {
+      chessBoard[i][j]=" f ";
+    } else if (j == 7) {
+      chessBoard[i][j]=" g ";
+    } else if (j == 8) {
+      chessBoard[i][j]=" h ";
+    }else{
+      chessBoard[i][j] = " ";
+    }
+  }
   public void whiteRowSetUp(int i , int j){
     if (j == 1 || j == 8) {
       chessBoard[i][j]=WHITE_ROOK;
