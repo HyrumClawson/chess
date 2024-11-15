@@ -7,9 +7,6 @@ public class Main {
         var serverUrl = "http://localhost:8080";
         preLogin = new PreLoginUI(serverUrl);
         preLogin.run();
-
-//        var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-//        System.out.println("♕ 240 Chess Client: " + piece);
     }
 
     //make the repl loop class be called here. The repl class can just call the

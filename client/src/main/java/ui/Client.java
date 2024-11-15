@@ -11,7 +11,9 @@ public class Client {
   private final ServerFacade serverFacade;
   private State state = State.SIGNEDOUT;
 
-  private PostLoginUI postLoginUi;
+  String RESET = EscapeSequences.RESET_TEXT_COLOR;//"\033[0m";      // Reset color to default
+  String BLUE = EscapeSequences.SET_TEXT_COLOR_BLUE;//"\033[34m";      // Blue color
+  String MAGENTA = EscapeSequences.SET_TEXT_COLOR_MAGENTA;//"\033[35m";
 
 
   /**
@@ -34,10 +36,6 @@ public class Client {
         return switch (cmd) {
           case "register" -> register(params);
           case "login" -> login(params);
-//        case "list" -> listPets();
-//        case "signout" -> signOut();
-//        case "adopt" -> adoptPet(params);
-//        case "adoptall" -> adoptAllPets();
           case "quit" -> "quit";
           default -> help();
         };
@@ -67,7 +65,6 @@ public class Client {
         AuthData authData = serverFacade.register(newUser);
         state = State.SIGNEDIN;
         visitorName = authData.username();
-       // postLoginUi.run(visitorName);
 
       }
       catch(ResponseException e) {
@@ -75,8 +72,6 @@ public class Client {
         r.setMessage(e.getMessage());
         throw r;
       }
-      //ws = new WebSocketFacade(serverUrl, notificationHandler);
-      //ws.enterPetShop(visitorName);
       return String.format("logged in as %s.", visitorName);
     }
     ResponseException r = new ResponseException(ResponseException.ExceptionType.BADREQUEST);
@@ -136,19 +131,18 @@ public class Client {
 
 
   public String listGames() throws ResponseException {
-    //assertSignedIn();
       try{
         ArrayList<ListingGameData> gameList = serverFacade.listGames();
         String output = "";
         StringBuilder sb = new StringBuilder();
         for(ListingGameData game : gameList){
-          output = "\n" + String.valueOf(game.gameID()) + ". " + "GameName: " + game.gameName() +
-          " White: " + game.whiteUsername() + " Black: " + game.blackUsername();
+          output = "\n" + BLUE + game.gameID() + ". " + "GameName: " +
+                  RESET + MAGENTA + game.gameName() + " " + RESET + BLUE +
+          "White: " + RESET + MAGENTA + game.whiteUsername() + " " +RESET + BLUE +
+                  "Black: " + RESET + MAGENTA + game.blackUsername() + RESET;
           sb.append(formatTheListLine(output)).append("\n");
         }
         return sb.toString();
-        //return String.format(output);
-        //return String.format(gameList.toString());
       }
       catch(ResponseException e){
         ResponseException r = new ResponseException(e.typeOfException);
@@ -176,10 +170,6 @@ public class Client {
       JoinGame joinRequest = new JoinGame(desiredColor, id);
       try{
         serverFacade.joinGame(joinRequest);
-//        AuthData authData = serverFacade.login(user);
-//        state = State.SIGNEDIN;
-//        visitorName = authData.username();
-        //postLoginUi.run(visitorName);
         return String.format("Joined Game %d", id);
       }
 
@@ -248,84 +238,17 @@ public class Client {
   }
 
 
-
-//  public String listPets() throws ResponseException {
-//    assertSignedIn();
-//    var pets = server.listPets();
-//    var result = new StringBuilder();
-//    var gson = new Gson();
-//    for (var pet : pets) {
-//      result.append(gson.toJson(pet)).append('\n');
-//    }
-//    return result.toString();
-//  }
-//
-//  public String adoptPet(String... params) throws ResponseException {
-//    assertSignedIn();
-//    if (params.length == 1) {
-//      try {
-//        var id = Integer.parseInt(params[0]);
-//        var pet = getPet(id);
-//        if (pet != null) {
-//          server.deletePet(id);
-//          return String.format("%s says %s", pet.name(), pet.sound());
-//        }
-//      } catch (NumberFormatException ignored) {
-//      }
-//    }
-//    throw new ResponseException(400, "Expected: <pet id>");
-//  }
-//
-//  public String adoptAllPets() throws ResponseException {
-//    assertSignedIn();
-//    var buffer = new StringBuilder();
-//    for (var pet : server.listPets()) {
-//      buffer.append(String.format("%s says %s%n", pet.name(), pet.sound()));
-//    }
-//
-//    server.deleteAllPets();
-//    return buffer.toString();
-//  }
-//
-//  public String signOut() throws ResponseException {
-//    assertSignedIn();
-//    ws.leavePetShop(visitorName);
-//    ws = null;
-//    state = State.SIGNEDOUT;
-//    return String.format("%s left the shop", visitorName);
-//  }
-//
-//  private Pet getPet(int id) throws ResponseException {
-//    for (var pet : server.listPets()) {
-//      if (pet.id() == id) {
-//        return pet;
-//      }
-//    }
-//    return null;
-//  }
-
   public String help() {
-    String RESET = "\033[0m";      // Reset color to default
-    String BLUE = "\033[34m";      // Blue color
-    String MAGENTA = "\033[35m";
     if (state == State.SIGNEDOUT) {
-      return """
-                    register <USERNAME> <PASSWORD> <EMAIL> - to create an account
-                    login <USERNAME> <PASSWORD> - to play chess
-                    quit - playing chess
-                    help - with possible commands
-                    """;
+      String returnString = BLUE + "register <USERNAME> <PASSWORD> <EMAIL>" + RESET +
+              " - " + MAGENTA + "a game" + RESET + "\n" +
+              BLUE + "login <USERNAME> <PASSWORD>" + RESET
+              + " - " + MAGENTA + "games" + RESET + "\n" +
+              BLUE + "quit" + RESET + " - " + MAGENTA + "playing chess" + RESET + "\n" +
+              BLUE + "help" + RESET + " - " + MAGENTA + "with possible commands" + RESET;
+      return returnString;
     }
-//""" + BLUE + "<NAME>" + RESET + " - a game
-//    """
-//                create <NAME> - a game
-//                list - games
-//                join <ID> [WHITE|BLACK] - a game
-//                observe <ID> - a game
-//                logout - when you are done
-//                quit - playing chess
-//                help - with possible commands
-//                """;
+
     String returnString = BLUE + "create <NAME>" + RESET + " - " + MAGENTA + "a game" + RESET + "\n" +
             BLUE + "list" + RESET + " - " + MAGENTA + "games" + RESET + "\n" +
             BLUE + "join <ID> [WHITE|BLACK]" + RESET + " - " + MAGENTA + "a game" + RESET + "\n" +
@@ -356,14 +279,8 @@ public class Client {
 
   private String formatTheListLine(String line) {
     String[] parts = line.split(" ");
-    return String.format("%-1s%-10s%-15s%-10s%-10s%-10s%-10s", parts[0], parts[1], parts[2], parts[3], parts[4],
+    return String.format("%-10s%-10s%-30s%-25s%-25s%-25s%-25s", parts[0], parts[1], parts[2], parts[3], parts[4],
             parts[5], parts[6]);
   }
-
-//"%-5s%-15s%-10s%-10s"
-
-
-
-
 
 }
