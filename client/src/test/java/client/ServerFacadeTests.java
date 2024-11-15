@@ -85,7 +85,7 @@ public class ServerFacadeTests {
             //Assertions.assertEquals("hyc", serverFacade.register(user).username());
         }
         catch(ResponseException e){
-            Assertions.assertEquals("failure: 403", e.getMessage());
+            Assertions.assertEquals("failure: Already Taken", e.getMessage());
         }
 
     }
@@ -113,7 +113,7 @@ public class ServerFacadeTests {
             serverFacade.login(userWithBadPass);
         }
         catch(ResponseException e){
-            Assertions.assertEquals("failure: 401", e.getMessage());
+            Assertions.assertEquals("failure: Unauthorized", e.getMessage());
         }
     }
 
@@ -139,7 +139,7 @@ public class ServerFacadeTests {
 
         }
         catch(ResponseException e){
-            Assertions.assertEquals("failure: 401", e.getMessage());
+            Assertions.assertEquals("failure: Unauthorized", e.getMessage());
         }
     }
 
@@ -166,7 +166,7 @@ public class ServerFacadeTests {
             serverFacade.addGame(game);
         }
         catch(ResponseException e){
-            Assertions.assertEquals("failure: 401", e.getMessage());
+            Assertions.assertEquals("failure: Unauthorized", e.getMessage());
         }
     }
 
@@ -194,7 +194,7 @@ public class ServerFacadeTests {
             serverFacade.listGames();
         }
         catch(ResponseException e){
-            Assertions.assertEquals("failure: 401", e.getMessage());
+            Assertions.assertEquals("failure: Unauthorized", e.getMessage());
         }
     }
 
@@ -229,7 +229,7 @@ public class ServerFacadeTests {
             serverFacade.joinGame(joinRequest);
         }
         catch(ResponseException e){
-            Assertions.assertEquals("failure: 401", e.getMessage());
+            Assertions.assertEquals("failure: Unauthorized", e.getMessage());
         }
     }
 
@@ -243,7 +243,7 @@ public class ServerFacadeTests {
             serverFacade.joinGame(joinRequest);
         }
         catch(ResponseException e){
-            Assertions.assertEquals("failure: 400", e.getMessage());
+            Assertions.assertEquals("failure: Bad Request", e.getMessage());
         }
     }
 
@@ -260,7 +260,7 @@ public class ServerFacadeTests {
             serverFacade.register(user1);
             serverFacade.joinGame(joinRequest);
         } catch (ResponseException e) {
-            Assertions.assertEquals("failure: 403", e.getMessage());
+            Assertions.assertEquals("failure: Already Taken", e.getMessage());
         }
     }
 

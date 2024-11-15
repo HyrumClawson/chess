@@ -9,17 +9,20 @@ public class PostLoginUI {
   ServerFacade serverFacade;
   Client client;
 
+  GamePlayUI gamePlay;
+
 
   public PostLoginUI(String serverUrl, Client client){
     this.serverUrl = serverUrl;
     this.client = client;
+    gamePlay = new GamePlayUI();
 
   }
 
   public String run(){
     Scanner scanner = new Scanner(System.in);
     var result = "";
-    while (!result.equals("quit")) {
+    while (!result.equals("logout")) {
       printPrompt();
       String line = scanner.nextLine();
 
@@ -29,7 +32,13 @@ public class PostLoginUI {
         if(result.equals("quit")){
           return result;
         }
-      } catch (Throwable e) {
+        
+        String[] resultFirst = result.split(" ");
+        if(resultFirst[0].equals("Observing") || resultFirst[0].equals("Joined")) {
+          gamePlay.drawBoard();
+        }
+      }
+      catch (Throwable e) {
         var msg = e.toString();
         System.out.print(msg);
       }

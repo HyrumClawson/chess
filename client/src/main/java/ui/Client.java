@@ -47,7 +47,8 @@ public class Client {
           case "create" -> createGame(params);
           case "list" -> listGames();
           case "join" -> joinGame(params);
-//        case "adoptall" -> adoptAllPets();
+          case "logout" -> logout();
+          case "observe" -> observe(params);
           case "quit" -> "quit";
           default -> help();
         };
@@ -179,7 +180,7 @@ public class Client {
 //        state = State.SIGNEDIN;
 //        visitorName = authData.username();
         //postLoginUi.run(visitorName);
-        return String.format("Successfully Joined Game");
+        return String.format("Joined Game %d", id);
       }
 
       catch(ResponseException e){
@@ -193,6 +194,57 @@ public class Client {
     r.setMessage("Bad Request, missing either username, password. Or added \n" +
             "something extra. \n try again");
     throw r;
+  }
+
+
+  public String logout() throws ResponseException{
+    try{
+      serverFacade.logout();
+      String name = visitorName;
+      visitorName = null;
+      state = State.SIGNEDOUT;
+      return "logout";
+    }
+    catch(ResponseException e){
+      ResponseException r = new ResponseException(e.typeOfException);
+      r.setMessage(e.getMessage());
+      throw r;
+    }
+  }
+
+  public String observe(String ... params) throws ResponseException{
+    if(params.length != 1){
+      ResponseException r = new ResponseException(ResponseException.ExceptionType.BADREQUEST);
+      r.setMessage("Is it really that hard? Just put in a gameID \n try again");
+      throw r;
+    }
+    if(!isAnInt(params[0])){
+      ResponseException r = new ResponseException(ResponseException.ExceptionType.BADREQUEST);
+      r.setMessage("Bruh please just put in a number \n try again");
+      throw r;
+    }
+    try{
+      int id = Integer.parseInt(params[0]);
+      ArrayList<ListingGameData> list = serverFacade.listGames();
+      String gameName = "";
+      for(ListingGameData game : list){
+        if(id == game.gameID()){
+          gameName = game.gameName();
+        }
+      }
+      if(gameName.isEmpty()){
+        ResponseException r = new ResponseException(ResponseException.ExceptionType.BADREQUEST);
+        r.setMessage("That gameID doesn't exist \n try again");
+        throw r;
+      }
+      return String.format("Observing game %s", gameName);
+
+    }
+    catch(ResponseException e){
+      ResponseException r = new ResponseException(e.typeOfException);
+      r.setMessage(e.getMessage());
+      throw r;
+    }
   }
 
 

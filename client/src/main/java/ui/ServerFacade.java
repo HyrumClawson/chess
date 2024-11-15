@@ -101,7 +101,6 @@ public class ServerFacade {
       http.connect();
       throwIfNotSuccessful(http);
       return readBody(http, responseClass);
-
     }
     catch(IOException | URISyntaxException ex){
       ResponseException r = new ResponseException(ResponseException.ExceptionType.OTHER);
@@ -128,12 +127,33 @@ public class ServerFacade {
   }
 
   private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
-    var status = http.getResponseCode();
+    int status = http.getResponseCode();
+    String response = http.getResponseMessage();
+    //System.out.println(response);
     if (!isSuccessful(status)) {
       //need to fix this
-      ResponseException r = new ResponseException(ResponseException.ExceptionType.OTHER);
-      r.setStatusCode(status);
-      r.setMessage("failure: " + status);
+      ResponseException r;
+      if(status == 400){
+        r = new ResponseException(ResponseException.ExceptionType.BADREQUEST);
+        r.setStatusCode(status);
+        r.setMessage("failure: " + response);
+      }
+      else if(status == 401){
+        r = new ResponseException(ResponseException.ExceptionType.UNAUTHORIZED);
+        r.setStatusCode(status);
+        r.setMessage("failure: " + response);
+      }
+      else if(status == 403){
+        r = new ResponseException(ResponseException.ExceptionType.TAKEN);
+        r.setStatusCode(status);
+        r.setMessage("failure: " + "Already Taken");
+      }
+      else{
+        r = new ResponseException(ResponseException.ExceptionType.OTHER);
+        r.setStatusCode(status);
+        r.setMessage(response);
+      }
+
       throw r;
       //throw new ResponseException(status, "failure: " + status);
     }
