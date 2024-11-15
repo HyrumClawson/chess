@@ -15,14 +15,16 @@ import java.util.ArrayList;
 public class ServerFacadeTests {
 
     private static Server server;
-    ServerFacade serverFacade = new ServerFacade("http://localhost:8080");
+    private static ServerFacade serverFacade;
 
     @BeforeAll
     public static void init() {
         server = new Server();
         //might have to come back and change this?????
-        var port = server.run(8080);
+        var port = server.run(0);
         System.out.println("Started test HTTP server on " + port);
+        serverFacade = new ServerFacade("http://localhost:" + port);
+
     }
     @BeforeEach
     public void setUp(){
