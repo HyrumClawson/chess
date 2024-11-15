@@ -1,4 +1,4 @@
-package Exception;
+package exception;
 
 public class ResponseException extends Exception{
   public Enum typeOfException;
