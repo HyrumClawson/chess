@@ -1,8 +1,5 @@
 package ui;
 
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
-import java.util.Random;
 
 import static ui.EscapeSequences.*;
 
@@ -10,13 +7,10 @@ public class DrawChessBoard {
   String[][] chessBoard = new String[10][10];
   Boolean whiteOnTop;
 
-  public DrawChessBoard() {
-  }
-
-    // Define a chessboard with pieces using Unicode characters
+  public DrawChessBoard() {}
     //i will be the rows
     //j will be the columns
-    public void initializeStuff(String colorOnTop) {
+    public void initializeStuff() {
       for (int i=0; i < 10; i++) {
         for (int j=0; j < 10; j++) {
           if (i == 0 || i == 9) {
@@ -36,6 +30,8 @@ public class DrawChessBoard {
               chessBoard[i][j]=" g ";
             } else if (j == 8) {
               chessBoard[i][j]=" h ";
+            }else{
+              chessBoard[i][j] = " ";
             }
           } else if (i == 1 && whiteOnTop) {
             if (j == 0 || j == 9) {
@@ -81,17 +77,29 @@ public class DrawChessBoard {
             if (j == 0 || j == 9) {
               chessBoard[i][j]=" 6 ";
             }
+            else{
+              chessBoard[i][j] = " ";
+            }
           } else if (i == 4) {
             if (j == 0 || j == 9) {
               chessBoard[i][j]=" 5 ";
+            }
+            else{
+              chessBoard[i][j] = " ";
             }
           } else if (i == 5) {
             if (j == 0 || j == 9) {
               chessBoard[i][j]=" 4 ";
             }
+            else{
+              chessBoard[i][j] = " ";
+            }
           } else if (i == 6) {
             if (j == 0 || j == 9) {
               chessBoard[i][j]=" 3 ";
+            }
+            else{
+              chessBoard[i][j] = " ";
             }
           } else if (i == 7 && whiteOnTop) {
             if (j == 0 || j == 9) {
@@ -105,57 +113,45 @@ public class DrawChessBoard {
             } else {
               chessBoard[i][j]=WHITE_PAWN;
             }
-          } else if (i == 8) {
+          } else if (i == 8 && whiteOnTop) {
             if (j == 0 || j == 9) {
               chessBoard[i][j]=" 1 ";
+            } else if (j == 1 || j == 8) {
+              chessBoard[i][j]=BLACK_ROOK;
+            } else if (j == 2 || j == 7) {
+              chessBoard[i][j]=BLACK_KNIGHT;
+            } else if (j == 3 || j == 6) {
+              chessBoard[i][j]=BLACK_BISHOP;
+            } else if (j == 4) {
+              chessBoard[i][j]=BLACK_KING;
+            } else {
+              chessBoard[i][j]=BLACK_QUEEN;
             }
           }
+          else if (i==8 && !whiteOnTop){
+            if (j == 0 || j == 9) {
+              chessBoard[i][j]=" 1 ";
+            }else if (j == 1 || j == 8) {
+              chessBoard[i][j]=WHITE_ROOK;
+            } else if (j == 2 || j == 7) {
+              chessBoard[i][j]=WHITE_KNIGHT;
+            } else if (j == 3 || j == 6) {
+              chessBoard[i][j]=WHITE_BISHOP;
+            } else if (j == 4) {
+              chessBoard[i][j]=WHITE_QUEEN;
+            } else {
+              chessBoard[i][j]=WHITE_KING;
+            }
 
+          }
+          else{
+            chessBoard[i][j] = " ";
+          }
         }
       }
     }
 
 
-
-
-
-
-
-//    // Initialize the board with the starting positions of the pieces
-//    for (int i = 0; i < 8; i++) {
-//      for (int j = 0; j < 8; j++) {
-//        if (i == 0) {
-//          // Black pieces on the first row
-//          if (j == 0 || j == 7) chessBoard[i][j] = "\u265C"; // Black rook
-//          else if (j == 1 || j == 6) chessBoard[i][j] = "\u265E"; // Black knight
-//          else if (j == 2 || j == 5) chessBoard[i][j] = "\u265D"; // Black bishop
-//          else if (j == 3) chessBoard[i][j] = "\u265B"; // Black queen
-//          else chessBoard[i][j] = "\u265A"; // Black king
-//        } else if (i == 1) {
-//          // Black pawns on the second row
-//          chessBoard[i][j] = "\u265F"; // Black pawn
-//        } else if (i == 6) {
-//          // White pawns on the seventh row
-//          chessBoard[i][j] = "\u2659"; // White pawn
-//        } else if (i == 7) {
-//          // White pieces on the eighth row
-//          if (j == 0 || j == 7) chessBoard[i][j] = "\u2656"; // White rook
-//          else if (j == 1 || j == 6) chessBoard[i][j] = "\u2658"; // White knight
-//          else if (j == 2 || j == 5) chessBoard[i][j] = "\u2657"; // White bishop
-//          else if (j == 3) chessBoard[i][j] = "\u2655"; // White queen
-//          else chessBoard[i][j] = "\u2654"; // White king
-//        } else {
-//          // Empty squares
-//          chessBoard[i][j] = " "; // Empty space
-//        }
-//      }
-//    }
-
-    // Print the chessboard
-    //printChessBoard(chessBoard);
-//  }
-
-  // Method to print the chessboard to the console
   public void printChessBoard(String colorOnTop) {
     if(colorOnTop.equals("white")){
       whiteOnTop = true;
@@ -163,60 +159,46 @@ public class DrawChessBoard {
     else{
       whiteOnTop = false;
     }
-    // Print top border with column letters (a-h)
-    System.out.print("\u001B[48;5;15m"); // White background for outline
-    System.out.print("   a  b  c  d  e  f  g  h   ");
-    System.out.println("\u001B[0m");
+    initializeStuff();
 
+    for( int i = 0; i < 10; i++){
 
-    // Print each row with the left-side row number
-    for (int i=7; i >= 0; i--) {
-      // Print row number on the left side, inside the white outline
-      System.out.print("\u001B[48;5;15m"); // White background
-      System.out.print(" " + (i + 1) + " "); // Row number
-      System.out.print("\u001B[0m"); // Reset the background color
-
-      // Print the chessboard row
       for (int j=0; j < 10; j++) {
-        // Alternate the background color for chessboard visualization (tan and brown)
         if(i == 0 || i == 9){
+          System.out.print(SET_BG_COLOR_WHITE);
+        }
+        else if(j == 0 || j == 9){
           System.out.print(SET_BG_COLOR_WHITE);
         }
         else if ((i + j) % 2 == 0) {
           System.out.print("\u001B[48;5;230m"); // Tan background (light brown)
         }
-        else if(j == 0 || j == 9){
-          System.out.print(SET_BG_COLOR_WHITE);
-        }
         else {
           System.out.print("\u001B[48;5;94m"); // Brown background (dark brown)
         }
-
-        // Center the piece in the square by adding spaces
-        String piece=chessBoard[i][j];
+        String piece= chessBoard[i][j];
         if (piece.equals(" ")) {
-          // Empty space, just add a single space
           System.out.print("   ");
         } else {
-          // For pieces, add padding to center them
-          System.out.print(" " + piece + " ");
+          System.out.print(piece);
         }
+//        "\u001B[0m"
+        System.out.print(RESET_BG_COLOR);
 
-        // Reset the background color to default
-        System.out.print("\u001B[0m");
       }
+      System.out.print("\n");
 
       // Print the row number on the right side, inside the white outline
-      System.out.print("\u001B[48;5;15m"); // White background
-      System.out.println(" " + (i + 1) + " ");
-      System.out.print("\u001B[0m"); // Reset background
+//      System.out.print("\u001B[48;5;15m"); // White background
+//      System.out.println(" " + (i + 1) + " ");
+//      System.out.print("\u001B[0m"); // Reset background
 
     }
 
     // Print the bottom border with column letters (a-h) inside white background
-    System.out.print("\u001B[48;5;15m");
-    System.out.print("   a  b  c  d  e  f  g  h   ");
-    System.out.println("\u001B[0m");
+//    System.out.print("\u001B[48;5;15m");
+//    System.out.print("   a  b  c  d  e  f  g  h   ");
+//    System.out.println("\u001B[0m");
   }
 
 }
