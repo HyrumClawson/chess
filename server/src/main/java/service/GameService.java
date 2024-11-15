@@ -4,7 +4,7 @@ import dataaccess.GameDAO;
 import model.GameData;
 import model.JoinGame;
 import model.ListingGameData;
-import Exception.ResponseException;
+import exception.ResponseException;
 
 import java.util.ArrayList;
 

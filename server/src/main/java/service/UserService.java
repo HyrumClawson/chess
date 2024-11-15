@@ -2,7 +2,7 @@ package service;
 
 import dataaccess.UserDAO;
 import org.mindrot.jbcrypt.BCrypt;
-import Exception.ResponseException;
+import exception.ResponseException;
 
 public class UserService {
 

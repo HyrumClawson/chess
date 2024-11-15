@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import model.GameData;
 import model.JoinGame;
 import model.ListingGameData;
-import Exception.ResponseException;
+import exception.ResponseException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

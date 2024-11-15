@@ -7,7 +7,7 @@ import model.ListingGameData;
 import service.*;
 //import service.Service;
 import spark.*;
-import Exception.ResponseException;
+import exception.ResponseException;
 
 import java.util.ArrayList;
 
@@ -15,9 +15,9 @@ public class Server {
     AuthService authService = new AuthService();
     GameService gameService = new GameService();
     UserService userService = new UserService();
-    AuthDAO authData = new SqlAuthDAO();//MemoryAuthDAO();
-    GameDAO gameData = new SqlGameDAO();//MemoryGameDAO();
-    UserDAO userData = new SqlUserDAO();//MemoryUserDAO();
+    AuthDAO authData = new SqlAuthDAO();
+    GameDAO gameData = new SqlGameDAO();
+    UserDAO userData = new SqlUserDAO();
 
 
     public int run(int desiredPort) {
