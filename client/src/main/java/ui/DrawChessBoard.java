@@ -36,30 +36,14 @@ public class DrawChessBoard {
           } else if (i == 1 && whiteOnTop) {
             if (j == 0 || j == 9) {
               chessBoard[i][j]=" 8 ";
-            } else if (j == 1 || j == 8) {
-              chessBoard[i][j]=WHITE_ROOK;
-            } else if (j == 2 || j == 7) {
-              chessBoard[i][j]=WHITE_KNIGHT;
-            } else if (j == 3 || j == 6) {
-              chessBoard[i][j]=WHITE_BISHOP;
-            } else if (j == 4) {
-              chessBoard[i][j]=WHITE_KING;
-            } else {
-              chessBoard[i][j]=WHITE_QUEEN;
+            } else{
+              whiteRowSetUp(i, j);
             }
           } else if (i == 1 && !whiteOnTop) {
             if (j == 0 || j == 9) {
               chessBoard[i][j]=" 8 ";
-            } else if (j == 1 || j == 8) {
-              chessBoard[i][j]=BLACK_ROOK;
-            } else if (j == 2 || j == 7) {
-              chessBoard[i][j]=BLACK_KNIGHT;
-            } else if (j == 3 || j == 6) {
-              chessBoard[i][j]=BLACK_BISHOP;
-            } else if (j == 4) {
-              chessBoard[i][j]=BLACK_QUEEN;
-            } else {
-              chessBoard[i][j]=BLACK_KING;
+            }else{
+              blackRowSetUp(i , j);
             }
           } else if (i == 2 && whiteOnTop) {
             if (j == 0 || j == 9) {
@@ -76,29 +60,25 @@ public class DrawChessBoard {
           } else if (i == 3) {
             if (j == 0 || j == 9) {
               chessBoard[i][j]=" 6 ";
-            }
-            else{
+            } else{
               chessBoard[i][j] = " ";
             }
           } else if (i == 4) {
             if (j == 0 || j == 9) {
               chessBoard[i][j]=" 5 ";
-            }
-            else{
+            } else{
               chessBoard[i][j] = " ";
             }
           } else if (i == 5) {
             if (j == 0 || j == 9) {
               chessBoard[i][j]=" 4 ";
-            }
-            else{
+            } else{
               chessBoard[i][j] = " ";
             }
           } else if (i == 6) {
             if (j == 0 || j == 9) {
               chessBoard[i][j]=" 3 ";
-            }
-            else{
+            } else{
               chessBoard[i][j] = " ";
             }
           } else if (i == 7 && whiteOnTop) {
@@ -116,41 +96,64 @@ public class DrawChessBoard {
           } else if (i == 8 && whiteOnTop) {
             if (j == 0 || j == 9) {
               chessBoard[i][j]=" 1 ";
-            } else if (j == 1 || j == 8) {
-              chessBoard[i][j]=BLACK_ROOK;
-            } else if (j == 2 || j == 7) {
-              chessBoard[i][j]=BLACK_KNIGHT;
-            } else if (j == 3 || j == 6) {
-              chessBoard[i][j]=BLACK_BISHOP;
-            } else if (j == 4) {
-              chessBoard[i][j]=BLACK_KING;
-            } else {
-              chessBoard[i][j]=BLACK_QUEEN;
+            } else{
+              blackRowSetUp(i,j);
             }
-          }
-          else if (i==8 && !whiteOnTop){
+          } else if (i==8 && !whiteOnTop){
             if (j == 0 || j == 9) {
               chessBoard[i][j]=" 1 ";
-            }else if (j == 1 || j == 8) {
-              chessBoard[i][j]=WHITE_ROOK;
-            } else if (j == 2 || j == 7) {
-              chessBoard[i][j]=WHITE_KNIGHT;
-            } else if (j == 3 || j == 6) {
-              chessBoard[i][j]=WHITE_BISHOP;
-            } else if (j == 4) {
-              chessBoard[i][j]=WHITE_QUEEN;
-            } else {
-              chessBoard[i][j]=WHITE_KING;
+            } else{
+              whiteRowSetUp(i, j);
             }
-
-          }
-          else{
+          } else{
             chessBoard[i][j] = " ";
           }
         }
       }
     }
+    
 
+  public void whiteRowSetUp(int i , int j){
+    if (j == 1 || j == 8) {
+      chessBoard[i][j]=WHITE_ROOK;
+    } else if (j == 2 || j == 7) {
+      chessBoard[i][j]=WHITE_KNIGHT;
+    } else if (j == 3 || j == 6) {
+      chessBoard[i][j]=WHITE_BISHOP;
+    } else if (j == 4 && whiteOnTop) {
+      chessBoard[i][j]=WHITE_KING;
+    } else if(j == 4 && !whiteOnTop){
+      chessBoard[i][j] = WHITE_QUEEN;
+    } else {
+      if(whiteOnTop){
+        chessBoard[i][j]=WHITE_QUEEN;
+      }
+      else{
+        chessBoard[i][j]=WHITE_KING;
+      }
+    }
+  }
+
+  public void blackRowSetUp(int i , int j){
+    if (j == 1 || j == 8) {
+      chessBoard[i][j]=BLACK_ROOK;
+    } else if (j == 2 || j == 7) {
+      chessBoard[i][j]=BLACK_KNIGHT;
+    } else if (j == 3 || j == 6) {
+      chessBoard[i][j]=BLACK_BISHOP;
+    } else if (j == 4 && whiteOnTop) {
+      chessBoard[i][j]=BLACK_KING;
+    } else if(j == 4 && !whiteOnTop){
+      chessBoard[i][j] = BLACK_QUEEN;
+    } else {
+      if(whiteOnTop){
+        chessBoard[i][j]=BLACK_QUEEN;
+      }
+      else{
+        chessBoard[i][j]=BLACK_KING;
+      }
+    }
+  }
 
   public void printChessBoard(String colorOnTop) {
     if(colorOnTop.equals("white")){
