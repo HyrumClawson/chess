@@ -9,7 +9,7 @@ public class Main {
         preLogin.run();
     }
 
-    //make the repl loop class be called here. The repl class can just call the
-    //actual 3 classes that determine the result of the given input.
-    //go look at petshop and do something similar.
+    /**make the repl loop class be called here. The repl class can just call the
+    actual 3 classes that determine the result of the given input.
+    go look at petshop and do something similar. */
 }

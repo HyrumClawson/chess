@@ -155,7 +155,6 @@ public class ServerFacade {
       }
 
       throw r;
-      //throw new ResponseException(status, "failure: " + status);
     }
   }
 
