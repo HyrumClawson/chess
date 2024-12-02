@@ -181,7 +181,7 @@ public class Client {
 
     }
     ResponseException r = new ResponseException(ResponseException.ExceptionType.BADREQUEST);
-    r.setMessage("Bad Request, missing either username, password. Or added \n" +
+    r.setMessage("Bad Request, missing either gameId, desired color, or added \n" +
             "something extra. \n try again");
     throw r;
   }
@@ -241,9 +241,9 @@ public class Client {
   public String help() {
     if (state == State.SIGNEDOUT) {
       String returnString = BLUE + "register <USERNAME> <PASSWORD> <EMAIL>" + RESET +
-              " - " + MAGENTA + "a game" + RESET + "\n" +
+              " - " + MAGENTA + "to create an account" + RESET + "\n" +
               BLUE + "login <USERNAME> <PASSWORD>" + RESET
-              + " - " + MAGENTA + "games" + RESET + "\n" +
+              + " - " + MAGENTA + "to play chess" + RESET + "\n" +
               BLUE + "quit" + RESET + " - " + MAGENTA + "playing chess" + RESET + "\n" +
               BLUE + "help" + RESET + " - " + MAGENTA + "with possible commands" + RESET;
       return returnString;

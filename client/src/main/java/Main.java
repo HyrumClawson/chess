@@ -1,9 +1,12 @@
 import chess.*;
 import ui.PreLoginUI;
 
+
 public class Main {
     static PreLoginUI preLogin;
     public static void main(String[] args) {
+        //might have to come back and change this?????
+        //var port = server.run(0);
         var serverUrl = "http://localhost:8080";
         preLogin = new PreLoginUI(serverUrl);
         preLogin.run();
