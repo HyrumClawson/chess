@@ -1,11 +1,14 @@
 package ui;
 
 
+import model.JoinGame;
+
 import static ui.EscapeSequences.*;
 
 public class DrawChessBoard {
   String[][] chessBoard = new String[10][10];
   Boolean whiteOnTop;
+  //pass board.
 
   public DrawChessBoard() {}
     //i will be the rows

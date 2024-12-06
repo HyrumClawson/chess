@@ -1,5 +1,7 @@
 package ui;
 
+import chess.ChessGame;
+
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Random;
@@ -19,9 +21,13 @@ public class TicTacToe {
   private static final String O = " O ";
 
   private static Random rand = new Random();
+  static DrawChessBoard board = new DrawChessBoard();
+  ChessGame game = new ChessGame();
+
 
 
   public static void main(String[] args) {
+    board.printChessBoard("black");
     var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
     out.print(ERASE_SCREEN);

@@ -131,6 +131,15 @@ public class SqlGameDAO implements GameDAO {
 
   }
 
+  /**
+   *Need to find a sneaky way to add a way to update a game here
+   * "UPDATE gameData SET " + team + " = ?, gameItself = ? WHERE gameID = ?";
+   * something like that would modify the statement
+   * then just add a setString method after serializing the game to json
+   * also got to find a way to return the actual instance of the chessgame.
+   * could also just add a second function that only ever gets called by
+   * the websocket "service" that passes in the updated game.
+   */
   public void updateGame(JoinGame infoToJoin, String username, String team) throws ResponseException{
     String statement = "UPDATE gameData SET "+ team + " = ? WHERE gameID = ?";
     try( var conn = DatabaseManager.getConnection()) {

@@ -2,13 +2,17 @@ package ui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
+import com.sun.nio.sctp.NotificationHandler;
 import exception.ResponseException;
 import model.*;
 
-public class Client {
+public class Client  {
   private String serverUrl;
   private String visitorName = null;
   private final ServerFacade serverFacade;
+  //here's the websocket facade object.
+  private WebSocketFacade ws;
   private State state = State.SIGNEDOUT;
 
   final static String RESET = EscapeSequences.RESET_TEXT_COLOR;//"\033[0m";      // Reset color to default
@@ -240,24 +244,36 @@ public class Client {
 
   public String help() {
     if (state == State.SIGNEDOUT) {
-      String returnString = BLUE + "register <USERNAME> <PASSWORD> <EMAIL>" + RESET +
+      String returnString=BLUE + "register <USERNAME> <PASSWORD> <EMAIL>" + RESET +
               " - " + MAGENTA + "to create an account" + RESET + "\n" +
               BLUE + "login <USERNAME> <PASSWORD>" + RESET
               + " - " + MAGENTA + "to play chess" + RESET + "\n" +
               BLUE + "quit" + RESET + " - " + MAGENTA + "playing chess" + RESET + "\n" +
               BLUE + "help" + RESET + " - " + MAGENTA + "with possible commands" + RESET;
       return returnString;
+    } else if (state == State.SIGNEDIN) {
+      String returnString=BLUE + "create <NAME>" + RESET + " - " + MAGENTA + "a game" + RESET + "\n" +
+              BLUE + "list" + RESET + " - " + MAGENTA + "games" + RESET + "\n" +
+              BLUE + "join <ID> [WHITE|BLACK]" + RESET + " - " + MAGENTA + "a game" + RESET + "\n" +
+              BLUE + "observe <ID>" + RESET + " - " + MAGENTA + "a game" + RESET + "\n" +
+              BLUE + "logout" + RESET + " - " + MAGENTA + "when you are done" + RESET + "\n" +
+              BLUE + "quit" + RESET + " - " + MAGENTA + "playing chess" + RESET + "\n" +
+              BLUE + "help" + RESET + " - " + MAGENTA + "with possible commands" + RESET;
+
+      return returnString;
     }
+    //
+    else{
+      String returnString=BLUE + "create <NAME>" + RESET + " - " + MAGENTA + "a game" + RESET + "\n" +
+              BLUE + "list" + RESET + " - " + MAGENTA + "games" + RESET + "\n" +
+              BLUE + "join <ID> [WHITE|BLACK]" + RESET + " - " + MAGENTA + "a game" + RESET + "\n" +
+              BLUE + "observe <ID>" + RESET + " - " + MAGENTA + "a game" + RESET + "\n" +
+              BLUE + "logout" + RESET + " - " + MAGENTA + "when you are done" + RESET + "\n" +
+              BLUE + "quit" + RESET + " - " + MAGENTA + "playing chess" + RESET + "\n" +
+              BLUE + "help" + RESET + " - " + MAGENTA + "with possible commands" + RESET;
 
-    String returnString = BLUE + "create <NAME>" + RESET + " - " + MAGENTA + "a game" + RESET + "\n" +
-            BLUE + "list" + RESET + " - " + MAGENTA + "games" + RESET + "\n" +
-            BLUE + "join <ID> [WHITE|BLACK]" + RESET + " - " + MAGENTA + "a game" + RESET + "\n" +
-            BLUE + "observe <ID>" + RESET + " - " + MAGENTA + "a game" + RESET + "\n" +
-            BLUE + "logout" + RESET + " - " + MAGENTA + "when you are done" + RESET + "\n" +
-            BLUE + "quit" + RESET + " - " + MAGENTA + "playing chess" + RESET + "\n" +
-            BLUE + "help" + RESET + " - " + MAGENTA + "with possible commands" + RESET;
-
-    return returnString;
+      return returnString;
+    }
   }
 
 

@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import dataaccess.*;
 import model.JoinGame;
 import model.ListingGameData;
+import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import server.websocket.WebSocketHandler;
 import service.*;
 //import service.Service;
 import spark.*;
@@ -19,9 +21,13 @@ public class Server {
     GameDAO gameData = new SqlGameDAO();
     UserDAO userData = new SqlUserDAO();
 
+    WebSocketHandler webSocketHandler = new WebSocketHandler(authData, gameData);
+
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
+// I guess maybe this gives me the ability to upgrade to websocket
+        Spark.webSocket("/ws", webSocketHandler);
 
         Spark.staticFiles.location("web");
 
@@ -81,6 +87,12 @@ public class Server {
 
     }
 
+    //I don't knoow if this is the best place to put this.. I guess we'll see.
+    @OnWebSocketMessage
+    public void onMessage(Session session, String message) throws Exception{
+
+    }
+
 
     public Object deleteDBHandler(Request req, Response res) throws ResponseException {
 
@@ -136,7 +148,6 @@ public class Server {
         //request first or after the authorization. Maybe change it later.
         authService.isAuthDataThere(authData, authToken);
         int gameId = gameService.createNewGame(gameData, newGame);
-
         GameID gameIDObject = new GameID(gameId);
         res.status(200);
         res.body(new Gson().toJson(gameIDObject));
@@ -150,6 +161,7 @@ public class Server {
         model.JoinGame infoToJoin = new Gson().fromJson(req.body(), JoinGame.class);
         authService.isAuthDataThere(authData, authToken);
         gameService.joinGame(gameData, infoToJoin, username);
+
         res.status(200);
         return "";
 

@@ -101,11 +101,11 @@ public class ChessGame {
          * very interesting...
          */
         if(gameBoard.getPiece(move.getStartPosition()) == null){
-            throw new InvalidMoveException();
+            throw new InvalidMoveException(InvalidMoveException.ExceptionType.STARTNULL);
         }
         else {
             if(teamTurn.peek() != gameBoard.getPiece(move.getStartPosition()).pieceColor){
-                throw new InvalidMoveException();
+                throw new InvalidMoveException(InvalidMoveException.ExceptionType.WRONGTURN);
             }
             //Collection<ChessMove> goodMoves = validMoves(move.getStartPosition());
             //goodMoves.contains(move);
@@ -121,7 +121,7 @@ public class ChessGame {
                 }
             }
             else {
-                throw new InvalidMoveException();
+                throw new InvalidMoveException(InvalidMoveException.ExceptionType.INVALIDMOVE);
             }
         }
     }
