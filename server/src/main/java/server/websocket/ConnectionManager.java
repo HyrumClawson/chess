@@ -56,8 +56,9 @@ public class ConnectionManager {
 
 // I might need to change the NO
 
-  public void broadcastInGame(String authToken, Session excludeSession, Integer gameId, ServerMessage message) throws IOException {
+  public void broadcastInGame(String authToken, Session excludeSession, Integer gameId, ServerMessage message, Boolean everyone) throws IOException {
     // if weird replace with connectio nthing
+
     var removeList = new ArrayList<Connection>();
     Set<Connection> setOfConnections = gameConnections.get(gameId);
     for (Connection connection : setOfConnections) {

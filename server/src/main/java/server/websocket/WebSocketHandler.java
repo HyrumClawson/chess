@@ -36,8 +36,6 @@ public class WebSocketHandler {
   // the TA told me that I do indeed need to swtich the perspectives for the chessboard
   // I guess I'll figure out how to do that later.
 
-
-
   @OnWebSocketMessage
   public void onMessage(Session session, String message) throws IOException {
 
@@ -96,26 +94,26 @@ public class WebSocketHandler {
     String stringVersion = move.toString();
 
     var notification = new NotificationMessage();
+    //here check if they're name is either in black or white and change the move
+    //accordingly. If they're name isn't in either white or black then they are an
+    //observer and send them an error message accordingly.
+    //ie if they're white and send in a move just directly change it to numbers
+    //and send it in as "move". But if they're black when you receive it call a
+    //method on it that switches it around so it's takes it from their perspective
+    // to how the game is actually stored. Meaning if
+    //the move is for black from (1,1) -> (2,1) change it so that it's actually from
+    // (8,8) -> (7,8)
     try{
       game.makeMove(move);
+      var reloadGame = new LoadGameMessage(game);
+      connections.broadcastInGame(authToken, session, gameID, reloadGame);
     }
     catch(InvalidMoveException e){
-      var exceptionType = e.typeOfException;
-      switch (exceptionType){
-        case InvalidMoveException.ExceptionType.STARTNULL :
-          notification.setNotification("Trying to move from empty square");
-          connections.send(authToken, session, gameID, notification);
-        case InvalidMoveException.ExceptionType.WRONGTURN:
-          notification.setNotification("Not your turn");
-          connections.send(authToken, session, gameID, notification);
-        case InvalidMoveException.ExceptionType.INVALIDMOVE:
-          notification.setNotification("Invalid move");
-          connections.send(authToken, session, gameID, notification);
-        default:
-          notification.setNotification(username + "has moved" + stringVersion);
-          connections.broadcastInGame(authToken, session, gameID, notification);
-      }
+      notification.setNotification(e.reason);
+      connections.send(authToken, session, gameID, notification);
     }
+//    notification.setNotification(username + "has moved" + stringVersion);
+//    connections.broadcastInGame(authToken, session, gameID, notification);
     //do I need to notify them of the move?
     /**
      * a lot of other cases I need to look out for above but that should
@@ -126,10 +124,12 @@ public class WebSocketHandler {
      * for everybody.
      */
 
-    var reloadGame = new LoadGameMessage(game);
+
+
   }
 
   private void leaveGame(String authToken, Session session, Integer gameID){
+
     var notification = new NotificationMessage();
   }
 
@@ -156,7 +156,7 @@ public class WebSocketHandler {
 //  }
 
   private String getTeamColor(String authToken, Integer gameId){
-    
+
     return "";
   }
 
