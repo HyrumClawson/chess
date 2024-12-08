@@ -157,6 +157,27 @@ public class SqlGameDAO implements GameDAO {
 
   }
 
+  //this better not screw anything up, but if it does... well kill me then
+  public void updateGameItself(Integer gameID, ChessGame game) throws ResponseException{
+    String statement = "UPDATE gameData SET gameItself = ? WHERE gameID = ?";
+    try( var conn = DatabaseManager.getConnection()) {
+      try (var preparedStatement=conn.prepareStatement(statement)) {
+        //idk hopefully this works.
+        preparedStatement.setObject(1, game);
+        preparedStatement.setInt(2, gameID);
+        preparedStatement.executeUpdate();
+      }
+    }
+    catch(SQLException | DataAccessException ex){
+      ResponseException r = new ResponseException(ResponseException.ExceptionType.OTHER);
+      r.setMessage(ex.getMessage());
+      throw r;
+    }
+
+  }
+
+
+
   private final String[] createStatements = {
           """
             CREATE TABLE IF NOT EXISTS  gameData (

@@ -3,16 +3,19 @@ package ui;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import com.sun.nio.sctp.NotificationHandler;
 import exception.ResponseException;
 import model.*;
 
-public class Client  {
+public class Client implements NotificationHandler {
   private String serverUrl;
   private String visitorName = null;
-  private final ServerFacade serverFacade;
+  private String authToken;
+  private Integer gameId;
+  private ServerFacade serverFacade;
+
   //here's the websocket facade object.
-  private WebSocketFacade ws;
+  public WebSocketFacade ws;
+
   private State state = State.SIGNEDOUT;
 
   final static String RESET = EscapeSequences.RESET_TEXT_COLOR;//"\033[0m";      // Reset color to default
@@ -24,8 +27,10 @@ public class Client  {
    * So essentially put all the calls to the server in here and based on whether it's
    * the state is signed in or signed out. Like all the calls from the prelogin and postlogin
    * will come here to this client.
+   *
+   * also have this implement that notification handler that we spoke of.
    * */
-  public Client(String serverUrl){
+  public Client(String serverUrl) {
     serverFacade = new ServerFacade(serverUrl);
     this.serverUrl = serverUrl;
   }
@@ -44,7 +49,7 @@ public class Client  {
           default -> help();
         };
       }
-      else{
+      else if(state == State.SIGNEDIN){
         return switch (cmd) {
           case "create" -> createGame(params);
           case "list" -> listGames();
@@ -52,6 +57,16 @@ public class Client  {
           case "logout" -> logout();
           case "observe" -> observe(params);
           case "quit" -> "quit";
+          default -> help();
+        };
+      }
+      else{
+        return switch (cmd) {
+          case "redraw" -> redrawBoard(params);
+          case "leave" -> leaveGame(params);
+          case "move" -> makeMove(params);
+          case "resign" -> resignGame(params);
+          case "strategy" -> highlightMoves(params);
           default -> help();
         };
       }
@@ -68,6 +83,7 @@ public class Client  {
       try {
         AuthData authData = serverFacade.register(newUser);
         state = State.SIGNEDIN;
+        authToken = authData.authToken();
         visitorName = authData.username();
 
       }
@@ -116,6 +132,7 @@ public class Client  {
         AuthData authData = serverFacade.login(user);
         state = State.SIGNEDIN;
         visitorName = authData.username();
+        authToken = authData.authToken();
         //postLoginUi.run(visitorName);
         return String.format("logged in as %s.", visitorName);
       }
@@ -172,8 +189,13 @@ public class Client  {
       }
 
       JoinGame joinRequest = new JoinGame(desiredColor, id);
+
       try{
         serverFacade.joinGame(joinRequest);
+        state = State.GAME;
+        //, authToken, joinRequest.gameID()
+        ws = new WebSocketFacade(serverUrl, this, authToken, joinRequest.gameID());
+        ws.connect();
         return String.format("Joined Game %d", id);
       }
 
@@ -242,6 +264,44 @@ public class Client  {
   }
 
 
+  public String redrawBoard(String ... params) throws ResponseException{
+    //ws.redrawChessBoard();
+    return "";
+  }
+
+  public String leaveGame(String ... params) throws ResponseException{
+    state = State.SIGNEDIN;
+    return "leave";
+  }
+
+  public String makeMove(String ... params) throws ResponseException{
+    return "";
+  }
+
+  public String resignGame(String ... params) throws ResponseException{
+    return "";
+  }
+
+  public String highlightMoves(String ... params) throws ResponseException{
+    return "";
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   public String help() {
     if (state == State.SIGNEDOUT) {
       String returnString=BLUE + "register <USERNAME> <PASSWORD> <EMAIL>" + RESET +
@@ -264,12 +324,11 @@ public class Client  {
     }
     //
     else{
-      String returnString=BLUE + "create <NAME>" + RESET + " - " + MAGENTA + "a game" + RESET + "\n" +
-              BLUE + "list" + RESET + " - " + MAGENTA + "games" + RESET + "\n" +
-              BLUE + "join <ID> [WHITE|BLACK]" + RESET + " - " + MAGENTA + "a game" + RESET + "\n" +
-              BLUE + "observe <ID>" + RESET + " - " + MAGENTA + "a game" + RESET + "\n" +
-              BLUE + "logout" + RESET + " - " + MAGENTA + "when you are done" + RESET + "\n" +
-              BLUE + "quit" + RESET + " - " + MAGENTA + "playing chess" + RESET + "\n" +
+      String returnString=BLUE + "redraw" + RESET + " - " + MAGENTA + "your board" + RESET + "\n" +
+              BLUE + "leave" + RESET + " - " + MAGENTA + "your game" + RESET + "\n" +
+              BLUE + "move <start>[a-g][1-8]<end>[a-g][1-8] " + RESET + " - " + MAGENTA + "a chesspiece" + RESET + "\n" +
+              BLUE + "resign" + RESET + " - " + MAGENTA + "acknowledge defeat" + RESET + "\n" +
+              BLUE + "strategy <position>[a-g][1-8]" + RESET + " - " + MAGENTA + "see different moves for a piece" + RESET + "\n" +
               BLUE + "help" + RESET + " - " + MAGENTA + "with possible commands" + RESET;
 
       return returnString;
@@ -290,6 +349,12 @@ public class Client  {
     String[] parts = line.split(" ");
     return String.format("%-10s%-10s%-30s%-25s%-25s%-25s%-25s", parts[0], parts[1], parts[2], parts[3], parts[4],
             parts[5], parts[6]);
+  }
+
+
+
+  public void notify(String message){
+    System.out.println(message);
   }
 
 }

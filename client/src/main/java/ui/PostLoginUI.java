@@ -15,7 +15,7 @@ public class PostLoginUI {
   public PostLoginUI(String serverUrl, Client client){
     this.serverUrl = serverUrl;
     this.client = client;
-    gamePlay = new GamePlayUI();
+    gamePlay = new GamePlayUI(serverUrl, client);
 
   }
 
@@ -36,6 +36,7 @@ public class PostLoginUI {
         String[] resultFirst = result.split(" ");
         if(resultFirst[0].equals("Observing") || resultFirst[0].equals("Joined")) {
           gamePlay.drawBoard();
+          gamePlay.run();
         }
       }
       catch (Throwable e) {

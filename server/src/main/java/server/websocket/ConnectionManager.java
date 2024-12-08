@@ -46,8 +46,6 @@ public class ConnectionManager {
     gamelessSessions.remove(session);
 
   }
-
-
   Set<Connection> getConnectionsForGame(Integer gameId){
     //just for now, change this soon.
     return gameConnections.get(gameId);
@@ -56,6 +54,7 @@ public class ConnectionManager {
 
 // I might need to change the NO
 
+  //might want to come back and change it so it just sends the
   public void broadcastInGame(String authToken, Session excludeSession, Integer gameId, ServerMessage message, Boolean everyone) throws IOException {
     // if weird replace with connectio nthing
 
@@ -63,14 +62,18 @@ public class ConnectionManager {
     Set<Connection> setOfConnections = gameConnections.get(gameId);
     for (Connection connection : setOfConnections) {
       if (connection.session.isOpen()) {
-        if (!connection.session.equals(excludeSession)) {
+        if(everyone){
           connection.session.getRemote().sendString(message.toString());
+        }
+        else{
+          if (!connection.session.equals(excludeSession)) {
+            connection.session.getRemote().sendString(message.toString());
+          }
         }
       } else {
         removeList.add(connection);
       }
     }
-
   //   Clean up any connections that were left open.
     for (var c : removeList) {
       Set<Connection> connections = gameConnections.get(gameId);
@@ -82,13 +85,13 @@ public class ConnectionManager {
    * connection
 
    */
-  public void send(String authToken, Session session, Integer gameId, ServerMessage message) throws IOException{
+  public void send(String authToken, Session session, Integer gameId, NotificationMessage message) throws IOException{
     var removeList = new ArrayList<Connection>();
     Set<Connection> setOfConnections = gameConnections.get(gameId);
     for (Connection connection : setOfConnections) {
       if (connection.session.isOpen()) {
         if (connection.authToken.equals(authToken)) {
-          connection.session.getRemote().sendString(message.toString());
+          connection.session.getRemote().sendString(message.getMessage());
         }
       } else {
         removeList.add(connection);

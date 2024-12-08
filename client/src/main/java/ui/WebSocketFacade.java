@@ -1,34 +1,82 @@
 package ui;
 
 import com.google.gson.Gson;
-import com.sun.nio.sctp.NotificationHandler;
 import exception.ResponseException;
+import websocket.commands.MakeMoveCommand;
+import websocket.commands.UserGameCommand;
 
-import javax.swing.*;
-import javax.websocket.Endpoint;
+import javax.websocket.*;
 import javax.websocket.Session;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
-public abstract class WebSocketFacade extends Endpoint {
-  Session session;
+public  class WebSocketFacade extends Endpoint {
+  public Session session;
   NotificationHandler notificationHandler;
-  //have the GamePlayUI implement notification handler... this will just handle communicating
-  //with the server when things need to happen.
-  //or have the client do it I guess.
+  String authToken;
+  Integer gameId;
 
-  public WebSocketFacade(String url, NotificationHandler notificationHandler) throws ResponseException {
-    try{
+  public WebSocketFacade(String url, NotificationHandler notificationHandler, String authToken, Integer gameId) throws ResponseException {
+    this.authToken = authToken;
+    this.gameId = gameId;
 
+    try {
+      url = url.replace("http", "ws");
+      URI socketURI = new URI(url + "/ws");
+      this.notificationHandler = notificationHandler;
+      WebSocketContainer container = ContainerProvider.getWebSocketContainer();
+      this.session = container.connectToServer(this, socketURI);
+
+      //set message handler
+      //Notification notification = new Gson().fromJson(message, Notification.class);
+      this.session.addMessageHandler((MessageHandler.Whole<String>) notificationHandler::notify);
+
+    } catch (DeploymentException | IOException | URISyntaxException ex) {
+      //fix later
+      throw new ResponseException(ResponseException.ExceptionType.OTHER);
     }
-    catch(Exception e){
-      // change the exceptions to whatever it needs to catch.
+
+
+  }
+  
+  public void connect() throws ResponseException {
+    try {
+      //will have to fix this up a bit...
+      UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameId);
+      //come back and add this. to the sessions if this don't work.
+      if(session.isOpen() ){
+        String jsonString = new Gson().toJson(command);
+        System.out.println("here's the jsonstring" + jsonString);
+        //add the string back after we're done. 
+        session.getBasicRemote().sendText("Merry Christmas");
+      }
+      else{
+        System.out.println("Yo what the frick it's not doing the thing. The connection" +
+                "is already closed\n");
+      }
+    }
+
+    catch (IOException ex) {
+      ResponseException r = new ResponseException(ResponseException.ExceptionType.OTHER);
+      r.setMessage(ex.getMessage());
+      throw  r;
     }
   }
 
 
 
 
-  public void redrawChessBoard(String visitorName) throws ResponseException {
+  public void redrawChessBoard() throws ResponseException {
+//    try {
+//      //will have to fix this up a bit...
+//      UserGameCommand command = new MakeMoveCommand(null, authToken, gameId);
+//      this.session.getBasicRemote().sendText(new Gson().toJson(command));
+//    } catch (IOException ex) {
+//      ResponseException r = new ResponseException(ResponseException.ExceptionType.OTHER);
+//      r.setMessage(ex.getMessage());
+//      throw  r;
+//    }
     /**
      * Redraws the chess board upon the user’s request.
      */
@@ -47,6 +95,7 @@ public abstract class WebSocketFacade extends Endpoint {
      * Removes the user from the game (whether they are playing or
      * observing the game). The client transitions back to the Post-Login UI.
      */
+    //this is probably the place to close the connection.
   }
 
   public void makeMove() throws ResponseException {
@@ -71,12 +120,29 @@ public abstract class WebSocketFacade extends Endpoint {
   }
 
 
+  @Override
+  public void onClose(Session session, CloseReason closeReason) {
+    System.out.println("Disconnected from server: " + closeReason.getReasonPhrase());
+  }
+
+  @Override
+  public void onError(Session session, Throwable throwable) {
+    throwable.printStackTrace();
+  }
+
+  // Handle incoming messages from the server
+//  @Override
+//  public void onMessage(Session session, String message) {
+//    System.out.println("Received from server: " + message);
+//  }
 
 
 
 
 
+  @Override
+  public void onOpen(Session session, EndpointConfig endpointConfig) {
+    System.out.println("WebSocket opened: " + session.getId());
 
-
-
+  }
 }

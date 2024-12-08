@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.GameData;
 import model.JoinGame;
 import model.ListingGameData;
@@ -17,5 +18,7 @@ public interface GameDAO {
   GameData getGame(JoinGame infoToJoin);
 
   void updateGame(JoinGame infoToJoin, String username, String team) throws ResponseException;
+
+  void updateGameItself(Integer gameID, ChessGame game) throws ResponseException;
 
 }
