@@ -14,6 +14,7 @@ import java.util.*;
 public class ChessGame {
     private ChessBoard gameBoard = new ChessBoard();
     Stack<ChessGame.TeamColor> teamTurn=new Stack<>();
+    public Boolean active = true;
 
     public ChessGame() {
         gameBoard.resetBoard();
@@ -318,6 +319,10 @@ public class ChessGame {
             }
         }
         return validMoves;
+    }
+
+    ChessBoard getGameBoard(){
+        return gameBoard;
     }
 
 }

@@ -1,5 +1,8 @@
 package ui;
 
+import chess.ChessBoard;
+import chess.ChessGame;
+
 import java.util.Scanner;
 
 public class GamePlayUI {
@@ -8,7 +11,8 @@ public class GamePlayUI {
    * that means I need to pass in the WebScoketFacade object from the client
    * when gameplay is called.
    */
-  DrawChessBoard drawIt = new DrawChessBoard();
+  ChessGame game = new ChessGame();
+  DrawChessBoard drawIt = new DrawChessBoard(game);
   String serverUrl;
   Client client;
 

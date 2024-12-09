@@ -10,7 +10,7 @@ import javax.websocket.Session;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-
+@ClientEndpoint
 public  class WebSocketFacade extends Endpoint {
   public Session session;
   NotificationHandler notificationHandler;
@@ -43,13 +43,21 @@ public  class WebSocketFacade extends Endpoint {
   public void connect() throws ResponseException {
     try {
       //will have to fix this up a bit...
-      UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameId);
+
       //come back and add this. to the sessions if this don't work.
       if(session.isOpen() ){
+        UserGameCommand command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameId);
         String jsonString = new Gson().toJson(command);
-        System.out.println("here's the jsonstring" + jsonString);
-        //add the string back after we're done. 
-        session.getBasicRemote().sendText("Merry Christmas");
+        UserGameCommand command1 = new Gson().fromJson(jsonString, UserGameCommand.class);
+        if(UserGameCommand.CommandType.CONNECT == command1.getCommandType()){
+          System.out.println("It serialized correctly... soo");
+        }
+        else{
+          System.out.println("It's not serializing correctly and must find new way to serialize");
+        }
+        //System.out.println("here's the jsonstring" + jsonString);
+        //add the string back after we're done.
+        session.getBasicRemote().sendText(jsonString);
       }
       else{
         System.out.println("Yo what the frick it's not doing the thing. The connection" +

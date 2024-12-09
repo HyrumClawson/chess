@@ -41,12 +41,8 @@ public class WebSocketHandler {
   public void onMessage(Session session, String message) throws IOException {
     try {
       System.out.println("Received message from client: " + message);
-
       UserGameCommand action = new Gson().fromJson(message, UserGameCommand.class);
-
       //connections.addSessionToGame(action.getAuthToken(), action.getGameID(), session);
-
-
 //    MakeMoveCommand move = new Gson().fromJson(message, MakeMoveCommand.class);
       /**
        * add the cases for when a player does the following, and the respective actions
@@ -59,11 +55,9 @@ public class WebSocketHandler {
       switch (action.getCommandType()) {
         case CONNECT -> connect(action.getAuthToken(), session, action.getGameID());
         //just checking to see if this is the problem
-
         //case MAKE_MOVE -> makeMove(move.getAuthToken(), session, move.getMove(), move.getGameID());
         case LEAVE -> leaveGame(action.getAuthToken(), session, action.getGameID());
         case RESIGN -> resignGame(action.getAuthToken(), session, action.getGameID());
-
       }
     } catch (JsonSyntaxException e) {
       // Handle JSON deserialization issues
@@ -99,8 +93,8 @@ public class WebSocketHandler {
 //    LoadGameMessage loadGame = new LoadGameMessage(game);
 //    connections.send(authToken, session, gameID, loadGame);
     //get rid of this next line, just seeeing if it works
-    connections.send(authToken, session, gameID, notification);
-    //connections.broadcastInGame(authToken,session, gameID, notification, false);
+    //connections.send(authToken, session, gameID, notification);
+    connections.broadcastInGame(authToken,session, gameID, notification, false);
 
   }
 

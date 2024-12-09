@@ -15,4 +15,8 @@ public class NotificationMessage extends ServerMessage{
     this.notification = notification;
   }
 
+  public String getMessage(){
+    return "Notification: " + notification;
+  }
+
 }

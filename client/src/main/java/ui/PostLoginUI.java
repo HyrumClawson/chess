@@ -35,7 +35,7 @@ public class PostLoginUI {
         
         String[] resultFirst = result.split(" ");
         if(resultFirst[0].equals("Observing") || resultFirst[0].equals("Joined")) {
-          gamePlay.drawBoard();
+          //gamePlay.drawBoard();
           gamePlay.run();
         }
       }

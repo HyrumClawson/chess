@@ -1,6 +1,6 @@
 package ui;
 
-import chess.ChessGame;
+import chess.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -21,25 +21,39 @@ public class TicTacToe {
   private static final String O = " O ";
 
   private static Random rand = new Random();
-  static DrawChessBoard board = new DrawChessBoard();
-  ChessGame game = new ChessGame();
+
+  static DrawChessBoard board;
+  static ChessGame game = new ChessGame();
 
 
 
   public static void main(String[] args) {
+//    ChessPosition positionStart = new ChessPosition(1,3);
+//    ChessPosition positionEnd = new ChessPosition(3,3);
+//    ChessMove newMove = new ChessMove(positionStart, positionEnd, null);
+//    try{
+//      game.makeMove(newMove);
+//    }
+//    catch(InvalidMoveException e){
+//
+//    }
+
+    board = new DrawChessBoard(game);
     board.printChessBoard("black");
+    System.out.println("\n");
+    board.printChessBoard("white");
     var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
     out.print(ERASE_SCREEN);
 
-    drawHeaders(out);
+    //drawHeaders(out);
 
-    drawTicTacToeBoard(out);
+    //drawTicTacToeBoard(out);
 
 
 
-    out.print(SET_BG_COLOR_BLACK);
-    out.print(SET_TEXT_COLOR_WHITE);
+    //out.print(SET_BG_COLOR_BLACK);
+   // out.print(SET_TEXT_COLOR_WHITE);
   }
 
   private static void drawHeaders(PrintStream out) {

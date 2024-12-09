@@ -9,8 +9,8 @@ import java.util.*;
  * signature of the existing methods.
  */
 public class ChessBoard {
-
-  private ChessPiece[][] squares=new ChessPiece[9][9];
+//come bakc and change ot 9 after this inevitably fails
+  private ChessPiece[][] squares=new ChessPiece[10][10];
 
   public ChessBoard() {
 
@@ -52,7 +52,7 @@ public class ChessBoard {
     return positions;
   }
 
-  ChessPiece[][] getSquares() {
+  public ChessPiece[][] getSquares() {
     return squares;
   }
 
@@ -69,7 +69,7 @@ public class ChessBoard {
     }
   }
 
-  ChessPiece[][] makeStartBoard() {
+  public ChessPiece[][] makeStartBoard() {
     ChessPiece whiteRook=new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
     ChessPiece whiteKnight=new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
     ChessPiece whiteBishop=new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
