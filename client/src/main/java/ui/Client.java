@@ -2,9 +2,11 @@ package ui;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
 import chess.ChessGame;
 import chess.ChessMove;
+import chess.ChessPiece;
 import chess.ChessPosition;
 import com.google.gson.Gson;
 import exception.ResponseException;
@@ -13,6 +15,9 @@ import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
+
+import static ui.EscapeSequences.SET_TEXT_COLOR_BLUE;
+import static ui.EscapeSequences.SET_TEXT_COLOR_RED;
 
 public class Client implements NotificationHandler {
   private String serverUrl;
@@ -29,7 +34,7 @@ public class Client implements NotificationHandler {
   private State state = State.SIGNEDOUT;
 
   final static String RESET = EscapeSequences.RESET_TEXT_COLOR;//"\033[0m";      // Reset color to default
-  final static String BLUE = EscapeSequences.SET_TEXT_COLOR_BLUE;//"\033[34m";      // Blue color
+  final static String BLUE = SET_TEXT_COLOR_BLUE;//"\033[34m";      // Blue color
   final static String MAGENTA = EscapeSequences.SET_TEXT_COLOR_MAGENTA;//"\033[35m";
 
 
@@ -289,7 +294,7 @@ public class Client implements NotificationHandler {
 
   public String leaveGame(String ... params) throws ResponseException{
     state = State.SIGNEDIN;
-
+    ws.leave();
     return "leave";
   }
 
@@ -309,6 +314,19 @@ public class Client implements NotificationHandler {
     }
     else {
       ChessMove newMove = generateMove(params[0]);
+      ChessPiece.PieceType type = gameToUpdate.getBoard().getPiece(newMove.getStartPosition()).getPieceType();
+      if(type == ChessPiece.PieceType.PAWN){
+        if(newMove.getEndPosition().getRow() == 1 || newMove.getEndPosition().getRow() == 9){
+          Scanner scanner = new Scanner(System.in);
+
+          // Prompt the user for input
+          System.out.println("Please enter your desired promotion piece: ");
+
+          String userInput = scanner.nextLine();
+          ChessPiece.PieceType promtionPiece = changeToPieceEnum(userInput);
+          newMove.setPromotionPiece(promtionPiece);
+        }
+      }
       ws.makeMove(newMove);
       //System.out.println("Input does NOT match the regex.");
     }
@@ -321,6 +339,28 @@ public class Client implements NotificationHandler {
   }
 
   public String highlightMoves(String ... params) throws ResponseException{
+    if(params.length != 1){
+      ResponseException r = new ResponseException(ResponseException.ExceptionType.BADREQUEST);
+      r.setMessage("put in the position that you want to see \n the moves for.  try again");
+      throw r;
+    }
+    String regex = "^[a-h][0-9]$";  // Matches: letter-digit-letter-digit
+
+    if (!params[0].matches(regex)) {
+      ResponseException r = new ResponseException(ResponseException.ExceptionType.BADREQUEST);
+      r.setMessage("put in the form col-row. Try again");
+      throw r;
+//      System.out.println("Input matches the regex!");
+    }
+    else{
+      ChessMove newMove = generateMove(params[0]);
+
+      DrawChessBoard drawer = new DrawChessBoard(gameToUpdate);
+
+      drawer.setPositionToLookAtMoves(newMove.getStartPosition());
+      //might need to come back and do the opposite of teh color.
+      drawer.printChessBoard(color);
+    }
     return "";
   }
 
@@ -394,12 +434,19 @@ public class Client implements NotificationHandler {
 
     char symbol = charArray[0];
     Integer row1 = Character.getNumericValue(charArray[1]);
-    char symbol2 = charArray[2];
-    Integer row2 =Character.getNumericValue(charArray[3]);
-
+    char symbol2;
+    Integer row2;
+    Integer col2;
     Integer col1 = letterToNumber(symbol);
-    Integer col2 = letterToNumber(symbol2);
-    return  new ChessMove(new ChessPosition(row1, col1), new ChessPosition(row2,col2), null);
+    if(charArray.length > 2) {
+      symbol2=charArray[2];
+      row2=Character.getNumericValue(charArray[3]);
+      col2 = letterToNumber(symbol2);
+      return  new ChessMove(new ChessPosition(row1, col1), new ChessPosition(row2,col2), null);
+    }
+    else{
+      return new ChessMove(new ChessPosition(row1, col1), new ChessPosition(1,1), null);
+    }
 
   }
 
@@ -424,6 +471,22 @@ public class Client implements NotificationHandler {
     }
   }
 
+  public ChessPiece.PieceType changeToPieceEnum(String userInput){
+    switch(userInput){
+      case "queen":
+        return ChessPiece.PieceType.QUEEN;
+      case "bishop":
+        return ChessPiece.PieceType.BISHOP;
+      case "knight":
+        return ChessPiece.PieceType.KNIGHT;
+      case "rook":
+        return ChessPiece.PieceType.ROOK;
+      default:
+        return null;
+
+    }
+  }
+
 
 
   public void notify(String message){
@@ -432,7 +495,7 @@ public class Client implements NotificationHandler {
       case NOTIFICATION:
         NotificationMessage notification = new Gson().fromJson(message, NotificationMessage.class);
         System.out.print("\n");
-        System.out.print(notification.getMessage());
+        System.out.print(SET_TEXT_COLOR_BLUE + notification.getMessage() + RESET);
         System.out.print("\n");
         break;
       case LOAD_GAME:
@@ -447,7 +510,7 @@ public class Client implements NotificationHandler {
       case ERROR:
         ErrorMessage error = new Gson().fromJson(message, ErrorMessage.class);
         System.out.print("\n");
-        System.out.print(error.getErrorMessage());
+        System.out.print(SET_TEXT_COLOR_RED + error.getErrorMessage() + RESET);
         System.out.print("\n");
         //System.out.print("this is where the errors go");
         break;

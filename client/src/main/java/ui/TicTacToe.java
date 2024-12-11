@@ -38,7 +38,7 @@ public class TicTacToe {
 
     out.print(ERASE_SCREEN);
 
-    
+
   }
 
 

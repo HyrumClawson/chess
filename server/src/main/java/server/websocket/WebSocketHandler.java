@@ -199,7 +199,7 @@ public class WebSocketHandler {
     String color = getTeamColor(authToken, gameID);
     var notification = new NotificationMessage();
     if(isObserver(authToken, gameID)){
-      notification.setNotification(username + "has left the game");
+      notification.setNotification(username + " has left the game");
       connections.broadcastInGame(authToken, session,gameID, notification, false);
       connections.removeSessionFromGame(authToken, gameID, session);
     }
