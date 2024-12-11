@@ -156,6 +156,8 @@ public class WebSocketHandler {
     else {
       JoinGame getGame=new JoinGame(null, gameID);
       ChessGame game=gameDAO.getGame(getGame).game();
+      ChessPiece.PieceType type = game.getBoard().getPiece(move.getStartPosition()).getPieceType();
+      String stringType = type.toString();
       String username=authDAO.getAuth(authToken).username();
       String color = getTeamColor(authToken, gameID);
       String otherTeamColor;
@@ -179,6 +181,7 @@ public class WebSocketHandler {
 
 
       var notification=new NotificationMessage();
+      var notification2 = new NotificationMessage();
 
       //here check if they're name is either in black or white and change the move
       //accordingly. If they're name isn't in either white or black then they are an
@@ -190,22 +193,22 @@ public class WebSocketHandler {
       //the move is for black from (1,1) -> (2,1) change it so that it's actually from
       // (8,8) -> (7,8)
       try {
-        if(game.isInCheckmate(ChessGame.TeamColor.WHITE) || game.isInCheckmate(ChessGame.TeamColor.BLACK)){
-          String winner;
-          String loser;
-          if(game.isInCheckmate(ChessGame.TeamColor.WHITE)){
-            winner = "White ";
-            loser = " Black";
-          }
-          else{
-            winner = "Black ";
-            loser = " White";
-          }
-          notification.setNotification(winner + "has put" + loser + " in checkmate");
-          //might need this to be a send rather than a broadcast
-          connections.broadcastInGame(authToken, session, gameID, notification, true);
-        }
-        else if (!game.active) {
+//        if(game.isInCheckmate(ChessGame.TeamColor.WHITE) || game.isInCheckmate(ChessGame.TeamColor.BLACK)){
+//          String winner;
+//          String loser;
+//          if(game.isInCheckmate(ChessGame.TeamColor.WHITE)){
+//            winner = "White ";
+//            loser = " Black";
+//          }
+//          else{
+//            winner = "Black ";
+//            loser = " White";
+//          }
+//          notification.setNotification(winner + "has put" + loser + " in checkmate");
+//          //might need this to be a send rather than a broadcast
+//          connections.broadcastInGame(authToken, session, gameID, notification, true);
+//        }
+        if (!game.active) {
           //maybe change this
           var error = new ErrorMessage("Game has been resigned, cannot play anymore");
           //either make an error or a notification idk;
@@ -217,21 +220,36 @@ public class WebSocketHandler {
           game.makeMove(move);
 
           if(game.isInCheck(getTeamEnum(otherTeamAuthToken, gameID))){
-            notification.setNotification(otherTeamUsername + " is in check");
+            notification2.setNotification(otherTeamUsername + " is in check");
+            connections.broadcastInGame(authToken, session, gameID, notification2, true);
           }
           if(game.isInCheck(getTeamEnum(authToken, gameID))){
-            notification.setNotification(username + " is in check");
+            notification2.setNotification(username + " is in check");
+            connections.broadcastInGame(authToken, session, gameID, notification2, true);
           }
-          if(game.isInCheckmate(ChessGame.TeamColor.WHITE) || game.isInCheckmate(ChessGame.TeamColor.BLACK)){
+//          if(game.isInCheckmate(ChessGame.TeamColor.WHITE) || game.isInCheckmate(ChessGame.TeamColor.BLACK)){
+//            game.active = false;
+//          }
+          if(game.isInCheckmate(getTeamEnum(authToken, gameID))){
             game.active = false;
+            notification2.setNotification(username + " has been checkmated!!!");
+            connections.broadcastInGame(authToken, session, gameID, notification2, true);
           }
+          if(game.isInCheckmate(getTeamEnum(otherTeamAuthToken, gameID))){
+            game.active = false;
+            notification2.setNotification(otherTeamUsername + " has been checkmated!!!");
+          }
+
           gameDAO.updateGameItself(gameID, game);
           var reloadGame=new LoadGameMessage(game);
           reloadGame.setColorOnTop(getTeamColor(authToken, gameID));
-          
-          notification.setNotification(username + "has moved");
+          String newPosition = goBackToLetter(move.getEndPosition());
+          notification.setNotification(username + " has moved a " + stringType + " to " + newPosition );
           connections.broadcastInGame(authToken, session, gameID, reloadGame, true);
           connections.broadcastInGame(authToken, session, gameID, notification, false);
+//          if(notification2.getMessage() != null){
+//            connections.broadcastInGame(authToken, session, gameID, notification2, true);
+//          }
 
         }
 
@@ -350,6 +368,32 @@ public class WebSocketHandler {
   public void onError(Session session, Throwable error) {
     System.err.println("WebSocket error: " + error.getMessage());
     error.printStackTrace();
+  }
+
+  private String goBackToLetter(ChessPosition endPosition){
+    int col = endPosition.getColumn();
+    String letter = getLetter(col);
+    return letter + endPosition.getRow();
+  }
+
+  private String getLetter(Integer col){
+    if(col == 1){
+      return "a";
+    } else if(col ==2){
+      return "b";
+    } else if(col ==3){
+      return "c";
+    }else if(col ==4){
+      return "d";
+    }else if(col ==5){
+      return "e";
+    }else if(col ==6){
+      return "f";
+    }else if(col ==7){
+      return "g";
+    }else {
+      return "h";
+    }
   }
 
   private Boolean isObserver(String authToken, Integer gameId){

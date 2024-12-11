@@ -299,14 +299,18 @@ public class ChessGame {
     }
 
     ArrayList<ChessMove> kingIsInCheckMoves(Collection<ChessMove> potentialMoves, ArrayList<ChessMove> validMoves, ChessGame.TeamColor color){
+        //something is misbehaving here...
+        ChessBoard dummyBoard = gameBoard;
+        //note that if this screws everythin up the only thing I changed was gameBoard to dummyBoard
+        //come back and fix it.
         for(ChessMove move : potentialMoves){
-            ChessPiece potentialPiece = gameBoard.getPiece(move.getEndPosition());
-            updateBoard(move, gameBoard);
+            ChessPiece potentialPiece = dummyBoard.getPiece(move.getEndPosition());
+            updateBoard(move, dummyBoard);
             if(!isInCheck(color)){
                 validMoves.add(move);
                 ChessMove undoMove = new ChessMove(move.getEndPosition(),move.getStartPosition(), move.getPromotionPiece());
-                updateBoard(undoMove, gameBoard);
-                gameBoard.addPiece(move.getEndPosition(), potentialPiece);
+                updateBoard(undoMove, dummyBoard);
+                dummyBoard.addPiece(move.getEndPosition(), potentialPiece);
                 // I see what is happening. My undo move doesn't take into account
                 // the times when a piece of another team is offed. it just
                 //leaves that space null. Thus making
@@ -315,11 +319,13 @@ public class ChessGame {
             }
             else{
                 ChessMove undoMove = new ChessMove(move.getEndPosition(),move.getStartPosition(), move.getPromotionPiece());
-                updateBoard(undoMove, gameBoard);
+                updateBoard(undoMove, dummyBoard);
             }
         }
         return validMoves;
     }
+
+
 
     ChessBoard getGameBoard(){
         return gameBoard;
