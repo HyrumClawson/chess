@@ -2,7 +2,7 @@ package websocket.messages;
 
 
 public class NotificationMessage extends ServerMessage{
-  String notification;
+  String message;
 
 
   public NotificationMessage(){
@@ -12,11 +12,11 @@ public class NotificationMessage extends ServerMessage{
   }
 
   public void setNotification(String notification){
-    this.notification = notification;
+    this.message = notification;
   }
 
   public String getMessage(){
-    return "Notification: " + notification;
+    return "Notification: " + message;
   }
 
 }

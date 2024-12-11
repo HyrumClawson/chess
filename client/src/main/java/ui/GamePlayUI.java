@@ -48,13 +48,13 @@ public class GamePlayUI {
     System.out.println();
     return result;
   }
-  public void drawBoard(){
-    System.out.println("\n White On Top");
-    drawIt.printChessBoard("white");
-
-    System.out.println("\n Black On Top");
-    drawIt.printChessBoard("black");
-  }
+//  public void drawBoard(){
+//    System.out.println("\n White On Top");
+//    drawIt.printChessBoard("white");
+//
+//    System.out.println("\n Black On Top");
+//    drawIt.printChessBoard("black");
+//  }
 
   private void printPrompt() {
     //+ RESET + GREEN

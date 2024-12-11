@@ -21,29 +21,8 @@ public class DrawChessBoard {
 
   public DrawChessBoard(ChessGame game) {
     this.game = game;
-    ChessPosition positionStart = new ChessPosition(2,2);
-    ChessPosition positionEnd = new ChessPosition(4,2);
-    ChessMove newMove = new ChessMove(positionStart, positionEnd, null);
-
-    ChessPosition positionStart1 = new ChessPosition(8,2);
-    ChessPosition positionEnd1 = new ChessPosition(6,3);
-    ChessMove newMove1 = new ChessMove(positionStart1, positionEnd1, null);
-
-    ChessPosition positionStart2 = new ChessPosition(1,3);
-    ChessPosition positionEnd2 = new ChessPosition(3,1);
-    ChessMove newMove2 = new ChessMove(positionStart2, positionEnd2, null);
-    try{
-      game.makeMove(newMove);
-      game.makeMove(newMove1);
-      game.makeMove(newMove2);
-    }
-    catch(InvalidMoveException e){
-      System.out.println("caught an invalid move exception");
-    }
-    setPositionToLookAtMoves(new ChessPosition(3,1));
-
     this.board = game.getBoard();
-    squares = board.getSquares();
+    squares = game.getBoard().getSquares();//board.getSquares();
 
   }
 
@@ -233,9 +212,7 @@ public class DrawChessBoard {
   }
 
   public void getProperHighLight(Collection<ChessMove> potentialMoves, int i, int j){
-    ArrayList<ChessPosition> positions = new ArrayList<>();
     for(ChessMove move : potentialMoves){
-       positions.add(move.getEndPosition());
       if(whiteOnTop){
         if(i == move.getEndPosition().getRow() && j == (9 - move.getEndPosition().getColumn())) {
           System.out.print(SET_BG_COLOR_DARK_GREY);

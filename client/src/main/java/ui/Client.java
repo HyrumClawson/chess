@@ -3,8 +3,14 @@ package ui;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
 import exception.ResponseException;
 import model.*;
+import websocket.messages.ErrorMessage;
+import websocket.messages.LoadGameMessage;
+import websocket.messages.NotificationMessage;
+import websocket.messages.ServerMessage;
 
 public class Client implements NotificationHandler {
   private String serverUrl;
@@ -12,6 +18,8 @@ public class Client implements NotificationHandler {
   private String authToken;
   private Integer gameId;
   private ServerFacade serverFacade;
+  ChessGame gameToUpdate = new ChessGame();
+  String color = null;
 
   //here's the websocket facade object.
   public WebSocketFacade ws;
@@ -265,7 +273,10 @@ public class Client implements NotificationHandler {
 
 
   public String redrawBoard(String ... params) throws ResponseException{
+    //just use the
     //ws.redrawChessBoard();
+    DrawChessBoard draw = new DrawChessBoard(gameToUpdate);
+    draw.printChessBoard(this.color);
     return "";
   }
 
@@ -354,7 +365,28 @@ public class Client implements NotificationHandler {
 
 
   public void notify(String message){
-    System.out.println(message);
+    ServerMessage checkWithThis = new Gson().fromJson(message, ServerMessage.class);
+    switch (checkWithThis.getServerMessageType()) {
+      case NOTIFICATION:
+        NotificationMessage notification = new Gson().fromJson(message, NotificationMessage.class);
+        System.out.print("\n");
+        System.out.print(notification.getMessage());
+        System.out.print("\n");
+      case LOAD_GAME:
+        LoadGameMessage loadGameMessage = new Gson().fromJson(message, LoadGameMessage.class);
+        gameToUpdate = loadGameMessage.getGame();
+        this.color = loadGameMessage.getColor();
+        DrawChessBoard board = new DrawChessBoard(loadGameMessage.getGame());
+        System.out.print("\n");
+        board.printChessBoard(loadGameMessage.getColor());
+        System.out.print("\n");
+      case ERROR:
+        System.out.print("this is where the errors go");
+    }
+
+    System.out.print("\n" + "[GAME_PLAY]" + ">>> " );
+
+    //System.out.println(message);
   }
 
 }

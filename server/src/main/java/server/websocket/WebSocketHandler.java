@@ -154,6 +154,7 @@ public class WebSocketHandler {
 
 
       var notification=new NotificationMessage();
+
       //here check if they're name is either in black or white and change the move
       //accordingly. If they're name isn't in either white or black then they are an
       //observer and send them an error message accordingly.
@@ -165,12 +166,32 @@ public class WebSocketHandler {
       // (8,8) -> (7,8)
       try {
         if (!game.active) {
+          //maybe change this
+          var error = new ErrorMessage("Game has been resigned, cannot play anymore");
           //either make an error or a notification idk;
-          notification.setNotification("Game has been resigned, cannot play anymore");
+          //might need this to be a send rather than a broadcast
+          connections.broadcastInGame(authToken, session, gameID, error, true);
+        }
+        else if(game.isInCheckmate(ChessGame.TeamColor.WHITE) || game.isInCheckmate(ChessGame.TeamColor.BLACK)){
+          String winner;
+          String loser;
+          if(game.isInCheckmate(ChessGame.TeamColor.WHITE)){
+            winner = "White ";
+            loser = " Black";
+          }
+          else{
+            winner = "Black ";
+            loser = " White";
+          }
+          notification.setNotification(winner + "has put" + loser + " in checkmate");
           //might need this to be a send rather than a broadcast
           connections.broadcastInGame(authToken, session, gameID, notification, true);
-        } else {
+        }
+        else {
           game.makeMove(move);
+          if(game.isInCheckmate(ChessGame.TeamColor.WHITE) || game.isInCheckmate(ChessGame.TeamColor.BLACK)){
+            game.active = false;
+          }
           gameDAO.updateGameItself(gameID, game);
           var reloadGame=new LoadGameMessage(game);
           //+ stringVersion

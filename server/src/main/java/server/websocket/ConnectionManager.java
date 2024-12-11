@@ -77,18 +77,20 @@ public class ConnectionManager {
     for (Connection connection : setOfConnections) {
       if (connection.session.isOpen()) {
         if(everyone){
+          connection.session.getRemote().sendString(new Gson().toJson(message) );
           //have a function here that does the stuff.
-          if(message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
-            //need to figure out how to send it correctly.
-            LoadGameMessage loadGameMessage = (LoadGameMessage) message;
-            loadGameMessage.setColorOnTop(connection.color);
-            connection.session.getRemote().sendString(new Gson().toJson(loadGameMessage) );
-          }
-          else if(message.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION){
-            NotificationMessage notification = (NotificationMessage) message;
-            connection.session.getRemote().sendString(new Gson().toJson(notification) );
-          }
 
+//          if(message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
+//            //need to figure out how to send it correctly.
+//            LoadGameMessage loadGameMessage = (LoadGameMessage) message;
+//            loadGameMessage.setColorOnTop(connection.color);
+//            connection.session.getRemote().sendString(new Gson().toJson(loadGameMessage) );
+//          }
+//          else if(message.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION){
+//            NotificationMessage notification = (NotificationMessage) message;
+//            connection.session.getRemote().sendString(new Gson().toJson(notification) );
+//          }
+//
         }
         else{
           if (!connection.session.equals(excludeSession)) {

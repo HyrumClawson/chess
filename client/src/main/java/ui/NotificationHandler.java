@@ -1,5 +1,7 @@
 package ui;
 
+import websocket.messages.ServerMessage;
+
 public interface NotificationHandler {
-  void notify(String message);
+  void notify( String message);
 }
