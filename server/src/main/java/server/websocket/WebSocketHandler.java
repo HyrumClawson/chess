@@ -323,6 +323,9 @@ public class WebSocketHandler {
       return !gameData.whiteUsername().equals(username);
       //!Objects.equals(gameData.blackUsername(), username) && !gameData.whiteUsername().equals(username)
     }
+    else if(!gameData.whiteUsername().equals(username) && !gameData.blackUsername().equals(username)){
+      return true;
+    }
     else{
       return false;
     }

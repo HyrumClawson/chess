@@ -372,6 +372,7 @@ public class Client implements NotificationHandler {
         System.out.print("\n");
         System.out.print(notification.getMessage());
         System.out.print("\n");
+        break;
       case LOAD_GAME:
         LoadGameMessage loadGameMessage = new Gson().fromJson(message, LoadGameMessage.class);
         gameToUpdate = loadGameMessage.getGame();
@@ -380,8 +381,12 @@ public class Client implements NotificationHandler {
         System.out.print("\n");
         board.printChessBoard(loadGameMessage.getColor());
         System.out.print("\n");
+        break;
       case ERROR:
         System.out.print("this is where the errors go");
+        break;
+      default:
+        System.out.print("ooops");
     }
 
     System.out.print("\n" + "[GAME_PLAY]" + ">>> " );

@@ -45,43 +45,118 @@ public class DrawChessBoard {
           if (i == 0 || i == 9) {
             headerAndFooter(i, j);
           }
-          else if (i == 1) {
-            if (j == 0 || j == 9) {
-              chessBoard[i][j]=" 8 ";
-            }
-          } else if (i == 2) {
-            if (j == 0 || j == 9) {
-              chessBoard[i][j]=" 7 ";
-            }
-          }  else if (i == 3) {
-            if (j == 0 || j == 9) {
-              chessBoard[i][j]=" 6 ";
-            }
-          } else if (i == 4) {
-            if (j == 0 || j == 9) {
-              chessBoard[i][j]=" 5 ";
-            }
-          } else if (i == 5) {
-            if (j == 0 || j == 9) {
-              chessBoard[i][j]=" 4 ";
-            }
-          } else if (i == 6) {
-            if (j == 0 || j == 9) {
-              chessBoard[i][j]=" 3 ";
-            }
-          } else if (i == 7) {
-            if (j == 0 || j == 9) {
-              chessBoard[i][j]=" 2 ";
-            } //place like here may be a good place to add blank spaces.
-          }  else if (i == 8) {
-            if (j == 0 || j == 9) {
-              chessBoard[i][j]=" 1 ";
-            }
-          }
+          setSideNumber(i, j);
+//          else if (i == 1) {
+//            if (j == 0 || j == 9) {
+//              chessBoard[i][j]=" 8 ";
+//            }
+//          } else if (i == 2) {
+//            if (j == 0 || j == 9) {
+//              chessBoard[i][j]=" 7 ";
+//            }
+//          }  else if (i == 3) {
+//            if (j == 0 || j == 9) {
+//              chessBoard[i][j]=" 6 ";
+//            }
+//          } else if (i == 4) {
+//            if (j == 0 || j == 9) {
+//              chessBoard[i][j]=" 5 ";
+//            }
+//          } else if (i == 5) {
+//            if (j == 0 || j == 9) {
+//              chessBoard[i][j]=" 4 ";
+//            }
+//          } else if (i == 6) {
+//            if (j == 0 || j == 9) {
+//              chessBoard[i][j]=" 3 ";
+//            }
+//          } else if (i == 7) {
+//            if (j == 0 || j == 9) {
+//              chessBoard[i][j]=" 2 ";
+//            } //place like here may be a good place to add blank spaces.
+//          }  else if (i == 8) {
+//            if (j == 0 || j == 9) {
+//              chessBoard[i][j]=" 1 ";
+//            }
+//          }
 //          else{
 //            whiteRowSetUp(i, j);
 //            blackRowSetUp(i, j);
 //          }
+        }
+      }
+    }
+
+
+    public void setSideNumber(Integer i, Integer j) {
+      if(whiteOnTop) {
+        if (i == 1) {
+          if (j == 0 || j == 9) {
+            chessBoard[i][j]=" 1 ";
+          }
+        } else if (i == 2) {
+          if (j == 0 || j == 9) {
+            chessBoard[i][j]=" 2 ";
+          }
+        } else if (i == 3) {
+          if (j == 0 || j == 9) {
+            chessBoard[i][j]=" 3 ";
+          }
+        } else if (i == 4) {
+          if (j == 0 || j == 9) {
+            chessBoard[i][j]=" 4 ";
+          }
+        } else if (i == 5) {
+          if (j == 0 || j == 9) {
+            chessBoard[i][j]=" 5 ";
+          }
+        } else if (i == 6) {
+          if (j == 0 || j == 9) {
+            chessBoard[i][j]=" 6 ";
+          }
+        } else if (i == 7) {
+          if (j == 0 || j == 9) {
+            chessBoard[i][j]=" 7 ";
+          } //place like here may be a good place to add blank spaces.
+        } else if (i == 8) {
+          if (j == 0 || j == 9) {
+            chessBoard[i][j]=" 8 ";
+          }
+        }
+      }
+      else {
+        if (i == 1) {
+          if (j == 0 || j == 9) {
+            chessBoard[i][j]=" 8 ";
+          }
+        } else if (i == 2) {
+          if (j == 0 || j == 9) {
+            chessBoard[i][j]=" 7 ";
+          }
+        } else if (i == 3) {
+          if (j == 0 || j == 9) {
+            chessBoard[i][j]=" 6 ";
+          }
+        } else if (i == 4) {
+          if (j == 0 || j == 9) {
+            chessBoard[i][j]=" 5 ";
+          }
+        } else if (i == 5) {
+          if (j == 0 || j == 9) {
+            chessBoard[i][j]=" 4 ";
+          }
+        } else if (i == 6) {
+          if (j == 0 || j == 9) {
+            chessBoard[i][j]=" 3 ";
+          }
+        } else if (i == 7) {
+          if (j == 0 || j == 9) {
+            chessBoard[i][j]=" 2 ";
+          } //place like here may be a good place to add blank spaces.
+        } else if (i == 8) {
+          if (j == 0 || j == 9) {
+            chessBoard[i][j]=" 1 ";
+          }
         }
       }
     }
@@ -100,25 +175,49 @@ public class DrawChessBoard {
     }
 
   public void headerAndFooter(int i, int j){
-    if (j == 1) {
-      chessBoard[i][j]=" a ";
-    } else if (j == 2) {
-      chessBoard[i][j]=" b ";
-    } else if (j == 3) {
-      chessBoard[i][j]=" c ";
-    } else if (j == 4) {
-      chessBoard[i][j]=" d ";
-    } else if (j == 5) {
-      chessBoard[i][j]=" e ";
-    } else if (j == 6) {
-      chessBoard[i][j]=" f ";
-    } else if (j == 7) {
-      chessBoard[i][j]=" g ";
-    } else if (j == 8) {
-      chessBoard[i][j]=" h ";
-    }else{
-      chessBoard[i][j] = " ";
+    if(!whiteOnTop){
+      if (j == 1) {
+        chessBoard[i][j]=" a ";
+      } else if (j == 2) {
+        chessBoard[i][j]=" b ";
+      } else if (j == 3) {
+        chessBoard[i][j]=" c ";
+      } else if (j == 4) {
+        chessBoard[i][j]=" d ";
+      } else if (j == 5) {
+        chessBoard[i][j]=" e ";
+      } else if (j == 6) {
+        chessBoard[i][j]=" f ";
+      } else if (j == 7) {
+        chessBoard[i][j]=" g ";
+      } else if (j == 8) {
+        chessBoard[i][j]=" h ";
+      }else{
+        chessBoard[i][j] = " ";
+      }
     }
+    else{
+      if (j == 1) {
+        chessBoard[i][j]=" h ";
+      } else if (j == 2) {
+        chessBoard[i][j]=" g ";
+      } else if (j == 3) {
+        chessBoard[i][j]=" f ";
+      } else if (j == 4) {
+        chessBoard[i][j]=" e ";
+      } else if (j == 5) {
+        chessBoard[i][j]=" d ";
+      } else if (j == 6) {
+        chessBoard[i][j]=" c ";
+      } else if (j == 7) {
+        chessBoard[i][j]=" b ";
+      } else if (j == 8) {
+        chessBoard[i][j]=" a ";
+      }else{
+        chessBoard[i][j] = " ";
+      }
+    }
+
   }
 
   public void whiteRowSetUp(int i , int j){
