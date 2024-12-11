@@ -1,7 +1,5 @@
 package server.websocket;
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.InvalidMoveException;
+import chess.*;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import dataaccess.AuthDAO;
@@ -13,9 +11,11 @@ import org.eclipse.jetty.websocket.api.annotations.*;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.commands.MakeMoveCommand;
 import websocket.commands.UserGameCommand;
+import websocket.messages.ErrorMessage;
 import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Set;
 
 
@@ -42,6 +42,10 @@ public class WebSocketHandler {
     try {
       System.out.println("Received message from client: " + message);
       UserGameCommand action = new Gson().fromJson(message, UserGameCommand.class);
+      MakeMoveCommand move = new Gson().fromJson(message, MakeMoveCommand.class);
+//      if(action.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE){
+//
+//      }
       //connections.addSessionToGame(action.getAuthToken(), action.getGameID(), session);
 //    MakeMoveCommand move = new Gson().fromJson(message, MakeMoveCommand.class);
       /**
@@ -55,7 +59,7 @@ public class WebSocketHandler {
       switch (action.getCommandType()) {
         case CONNECT -> connect(action.getAuthToken(), session, action.getGameID());
         //just checking to see if this is the problem
-        //case MAKE_MOVE -> makeMove(move.getAuthToken(), session, move.getMove(), move.getGameID());
+        case MAKE_MOVE -> makeMove(move.getAuthToken(), session, move.getMove(), move.getGameID());
         case LEAVE -> leaveGame(action.getAuthToken(), session, action.getGameID());
         case RESIGN -> resignGame(action.getAuthToken(), session, action.getGameID());
       }
@@ -74,69 +78,114 @@ public class WebSocketHandler {
   }
 
   //@Override
-  @OnWebSocketConnect
+  /*(@OnWebSocketConnect
   public void onConnect(Session session) {
 
     System.out.println("WebSocket connected: " + session.getRemoteAddress());
-  }
+  }*/
 
 
 
   private void connect(String authToken, Session session, Integer gameID) throws IOException {
-    String username = authDAO.getAuth(authToken).username();
-    NotificationMessage notification = new NotificationMessage();
+    // need to test whether it's a bad authToken (ie just not in the game)
+    // or later on if it's an authtoken of an observer... Oh I might just need to
+    //make that functionality
+    if(authDAO.getAuth(authToken) == null){
+      connections.addSessionToGame(authToken,  gameID, session, null);
+      ErrorMessage error = new ErrorMessage("Invalid authToken");
+      connections.send(authToken,session, gameID, error);
+      session.close();
+    }
+    else{
+      if(gameDAO.getGame(new JoinGame(null, gameID))== null){
+        connections.addSessionToGame(authToken,  gameID, session, null);
+        ErrorMessage error = new ErrorMessage("Invalid gameID");
+        connections.send(authToken,session, gameID, error);
+      }
+      else{
+        String username = authDAO.getAuth(authToken).username();
+        String color = getTeamColor(authToken, gameID);
+        ChessGame game = gameDAO.getGame(new JoinGame(null, gameID)).game();
+        NotificationMessage notification = new NotificationMessage();
+        LoadGameMessage loadGame = new LoadGameMessage(game);
+        loadGame.setColorOnTop(color);
+        notification.setNotification(username + " has joined as " + color);
+        connections.addSessionToGame(authToken, gameID, session, color);
 
-    String color = getTeamColor(authToken, gameID);
-    connections.addSessionToGame(authToken, gameID, session);
-    ChessGame game = gameDAO.getGame(new JoinGame(null, gameID)).game();
-    notification.setNotification(username + "has joined as" + color);
-//    LoadGameMessage loadGame = new LoadGameMessage(game);
-//    connections.send(authToken, session, gameID, loadGame);
-    //get rid of this next line, just seeeing if it works
-    //connections.send(authToken, session, gameID, notification);
-    connections.broadcastInGame(authToken,session, gameID, notification, false);
+
+        //connections.broadcastInGame(authToken, session, gameID, loadGame, true);
+        connections.send(authToken,session, gameID, loadGame);
+        connections.broadcastInGame(authToken,session, gameID, notification, false);
+      }
+
+
+      //add some if statement to check for stuff
+    }
+
+
+    //System.out.print(color);
+
 
   }
 
   private void makeMove(String authToken, Session session, ChessMove move, Integer gameID) throws IOException{
-    JoinGame getGame = new JoinGame(null, gameID);
-    ChessGame game = gameDAO.getGame(getGame).game();
-    String username = authDAO.getAuth(authToken).username();
-    String stringVersion = move.toString();
-
-
-    var notification = new NotificationMessage();
-    //here check if they're name is either in black or white and change the move
-    //accordingly. If they're name isn't in either white or black then they are an
-    //observer and send them an error message accordingly.
-    //ie if they're white and send in a move just directly change it to numbers
-    //and send it in as "move". But if they're black when you receive it call a
-    //method on it that switches it around so it's takes it from their perspective
-    // to how the game is actually stored. Meaning if
-    //the move is for black from (1,1) -> (2,1) change it so that it's actually from
-    // (8,8) -> (7,8)
-    try{
-      if(endedGameIds.contains(gameID)){
-        //either make an error or a notification idk;
-        notification.setNotification("Game has been resigned, cannot play anymore");
-        connections.broadcastInGame(authToken, session, gameID, notification, true);
-      }
-      else{
-        game.makeMove(move);
-        gameDAO.updateGameItself(gameID, game);
-        var reloadGame = new LoadGameMessage(game);
-        notification.setNotification(username + "has moved" + stringVersion);
-        connections.broadcastInGame(authToken, session, gameID, notification, false);
-        connections.broadcastInGame(authToken, session, gameID, reloadGame, true);
-      }
+    if(authDAO.getAuth(authToken) == null){
+      connections.addSessionToGame(authToken,  gameID, session, null);
+      //might have to make a function
+      ErrorMessage error = new ErrorMessage("Invalid authToken");
+      connections.send(authToken,session, gameID, error);
+      session.close();
+    }
+    else if(getTeamEnum(authToken, gameID) !=
+            gameDAO.getGame(new JoinGame(null, gameID)).game().getBoard().
+                    getPiece(move.getStartPosition()).getTeamColor()){
+      ErrorMessage error = new ErrorMessage("Not allowed to move");
+      connections.send(authToken, session, gameID, error);
 
     }
-    catch(InvalidMoveException  e){
-      notification.setNotification(e.reason);
-      connections.send(authToken, session, gameID, notification);
+    else if(isObserver(authToken, gameID)){
+
     }
-    catch(ResponseException e){
-      // put some stuff here and what not
+    else {
+      JoinGame getGame=new JoinGame(null, gameID);
+      ChessGame game=gameDAO.getGame(getGame).game();
+      String username=authDAO.getAuth(authToken).username();
+      String stringVersion=move.toString();
+
+
+      var notification=new NotificationMessage();
+      //here check if they're name is either in black or white and change the move
+      //accordingly. If they're name isn't in either white or black then they are an
+      //observer and send them an error message accordingly.
+      //ie if they're white and send in a move just directly change it to numbers
+      //and send it in as "move". But if they're black when you receive it call a
+      //method on it that switches it around so it's takes it from their perspective
+      // to how the game is actually stored. Meaning if
+      //the move is for black from (1,1) -> (2,1) change it so that it's actually from
+      // (8,8) -> (7,8)
+      try {
+        if (!game.active) {
+          //either make an error or a notification idk;
+          notification.setNotification("Game has been resigned, cannot play anymore");
+          //might need this to be a send rather than a broadcast
+          connections.broadcastInGame(authToken, session, gameID, notification, true);
+        } else {
+          game.makeMove(move);
+          gameDAO.updateGameItself(gameID, game);
+          var reloadGame=new LoadGameMessage(game);
+          //+ stringVersion
+          notification.setNotification(username + "has moved");
+          connections.broadcastInGame(authToken, session, gameID, notification, false);
+          connections.broadcastInGame(authToken, session, gameID, reloadGame, true);
+
+        }
+
+      } catch (InvalidMoveException e) {
+        ErrorMessage error = new ErrorMessage(e.reason);
+        connections.send(authToken, session, gameID, error);
+      } catch (ResponseException e) {
+        // put some stuff here and what not
+      }
     }
     //do I need to notify them of the move?
     /**
@@ -188,6 +237,16 @@ public class WebSocketHandler {
     }
   }
 
+  private ChessGame.TeamColor getTeamEnum(String authToken, Integer gameId){
+    String color = getTeamColor(authToken, gameId);
+    if(color.equals("white")){
+      return ChessGame.TeamColor.WHITE;
+    }
+    else{
+      return ChessGame.TeamColor.BLACK;
+    }
+  }
+
 
   @OnWebSocketClose
   public void onClose(Session session, int statusCode, String reason) {
@@ -201,7 +260,14 @@ public class WebSocketHandler {
   }
 
   private Boolean isObserver(String authToken, Integer gameId){
-    return true;
+    GameData gameData =  gameDAO.getGame(new JoinGame(null , gameId));
+    String username = authDAO.getAuth(authToken).username();
+    if(!Objects.equals(gameData.blackUsername(), username) && !gameData.whiteUsername().equals(username)){
+      return true;
+    }
+    else{
+      return false;
+    }
   }
 
 

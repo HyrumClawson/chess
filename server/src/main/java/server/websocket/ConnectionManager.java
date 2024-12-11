@@ -1,12 +1,17 @@
 package server.websocket;
 
+import com.google.gson.Gson;
+import model.GameData;
+import model.JoinGame;
 import org.eclipse.jetty.websocket.api.Session;
+import websocket.messages.LoadGameMessage;
 import websocket.messages.NotificationMessage;
 import websocket.messages.ServerMessage;
 //import webSocketMessages.Notification;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -18,13 +23,22 @@ public class ConnectionManager {
   private Set<Session> gamelessSessions;
 
 
-  public void addSessionToGame(String authToken, Integer gameId, Session session) {
-    Connection connection = new Connection(authToken, session);
-    Set<Connection> setOfConnections = gameConnections.get(gameId);
-    setOfConnections.add(connection);
-    //var connection = new Connection(visitorName, session);
-    //gameConnections.put(visitorName, connection);
-    gameConnections.put(gameId, setOfConnections);
+  public void addSessionToGame(String authToken, Integer gameId, Session session, String color) {
+    //check to see if null first.
+    Connection connection = new Connection(authToken, session, color);
+    if(gameConnections.get(gameId) == null){
+      Set<Connection> newSet = new HashSet<>();
+      newSet.add(connection);
+      gameConnections.put(gameId, newSet);
+    }
+    else{
+      Set<Connection> setOfConnections = gameConnections.get(gameId);
+      setOfConnections.add(connection);
+      //var connection = new Connection(visitorName, session);
+      //gameConnections.put(visitorName, connection);
+      gameConnections.put(gameId, setOfConnections);
+    }
+
   }
 
 
@@ -63,11 +77,22 @@ public class ConnectionManager {
     for (Connection connection : setOfConnections) {
       if (connection.session.isOpen()) {
         if(everyone){
-          connection.session.getRemote().sendString(message.toString());
+          //have a function here that does the stuff.
+          if(message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
+            //need to figure out how to send it correctly.
+            LoadGameMessage loadGameMessage = (LoadGameMessage) message;
+            loadGameMessage.setColorOnTop(connection.color);
+            connection.session.getRemote().sendString(new Gson().toJson(loadGameMessage) );
+          }
+          else if(message.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION){
+            NotificationMessage notification = (NotificationMessage) message;
+            connection.session.getRemote().sendString(new Gson().toJson(notification) );
+          }
+
         }
         else{
           if (!connection.session.equals(excludeSession)) {
-            connection.session.getRemote().sendString(message.toString());
+            connection.session.getRemote().sendString(new Gson().toJson(message));
           }
         }
       } else {
@@ -85,23 +110,36 @@ public class ConnectionManager {
    * connection
 
    */
-  public void send(String authToken, Session session, Integer gameId, NotificationMessage message) throws IOException{
+  public void send(String authToken, Session session, Integer gameId, ServerMessage message) throws IOException{
     var removeList = new ArrayList<Connection>();
-    Set<Connection> setOfConnections = gameConnections.get(gameId);
-    for (Connection connection : setOfConnections) {
-      if (connection.session.isOpen()) {
-        if (connection.authToken.equals(authToken)) {
-          connection.session.getRemote().sendString(message.getMessage());
+      Set<Connection> setOfConnections = gameConnections.get(gameId);
+      for (Connection connection : setOfConnections) {
+        if (connection.session.isOpen()) {
+          if (connection.authToken.equals(authToken)) {
+            connection.session.getRemote().sendString(new Gson().toJson(message));
+          }
+        } else {
+          removeList.add(connection);
         }
-      } else {
-        removeList.add(connection);
       }
-    }
-    for (var c : removeList) {
-      Set<Connection> connections = gameConnections.get(gameId);
-      connections.remove(c);
-    }
+      for (var c : removeList) {
+        Set<Connection> connections = gameConnections.get(gameId);
+        connections.remove(c);
+      }
+
   }
+
+
+//  private String getTeamColor(String authToken, Integer gameId){
+//    GameData game = gameDAO.getGame(new JoinGame(null, gameId));
+//    String username = authDAO.getAuth(authToken).username();
+//    if(username.equals(game.whiteUsername())){
+//      return "white";
+//    }
+//    else{
+//      return "black";
+//    }
+//  }
 
 
 

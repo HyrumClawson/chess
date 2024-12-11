@@ -160,10 +160,11 @@ public class SqlGameDAO implements GameDAO {
   //this better not screw anything up, but if it does... well kill me then
   public void updateGameItself(Integer gameID, ChessGame game) throws ResponseException{
     String statement = "UPDATE gameData SET gameItself = ? WHERE gameID = ?";
+    String jsonGame = new Gson().toJson(game);
     try( var conn = DatabaseManager.getConnection()) {
       try (var preparedStatement=conn.prepareStatement(statement)) {
         //idk hopefully this works.
-        preparedStatement.setObject(1, game);
+        preparedStatement.setString(1, jsonGame);
         preparedStatement.setInt(2, gameID);
         preparedStatement.executeUpdate();
       }
