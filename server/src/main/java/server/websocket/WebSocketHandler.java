@@ -224,11 +224,20 @@ public class WebSocketHandler {
     String username = authDAO.getAuth(authToken).username();
     String color = getTeamColor(authToken, gameID);
     var notification = new NotificationMessage();
-
+    if(isObserver(authToken, gameID)){
+      notification.setNotification(username + "has left the game");
+      connections.broadcastInGame(authToken, session,gameID, notification, false);
+      connections.removeSessionFromGame(authToken, gameID, session);
+    }
     //we'll see if this works just setting the player username back to null.
-    gameDAO.updateGame(new JoinGame(color, gameID), null, color);
-    notification.setNotification(username + "has left the game");
-    connections.broadcastInGame(authToken, session,gameID, notification, false);
+    else {
+      gameDAO.updateGame(new JoinGame(color, gameID), null, color + "Username");
+      //just to check that everything is going smoothly
+      GameData gameData=gameDAO.getGame(new JoinGame(null, gameID));
+      notification.setNotification(username + "has left the game");
+      connections.broadcastInGame(authToken, session, gameID, notification, false);
+      connections.removeSessionFromGame(authToken, gameID, session);
+    }
   }
 
   private void resignGame(String authToken, Session session, Integer gameID) throws IOException{
@@ -303,8 +312,16 @@ public class WebSocketHandler {
   private Boolean isObserver(String authToken, Integer gameId){
     GameData gameData =  gameDAO.getGame(new JoinGame(null , gameId));
     String username = authDAO.getAuth(authToken).username();
-    if(!Objects.equals(gameData.blackUsername(), username) && !gameData.whiteUsername().equals(username)){
+
+    if(gameData.whiteUsername() == null && gameData.blackUsername() == null){
       return true;
+    }
+    else if(gameData.whiteUsername() == null){
+      return !gameData.blackUsername().equals(username);
+    }
+    else if(gameData.blackUsername() == null){
+      return !gameData.whiteUsername().equals(username);
+      //!Objects.equals(gameData.blackUsername(), username) && !gameData.whiteUsername().equals(username)
     }
     else{
       return false;
