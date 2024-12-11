@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessMove;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import websocket.commands.MakeMoveCommand;
@@ -84,30 +85,6 @@ public  class WebSocketFacade extends Endpoint {
 
 
 
-
-  public void redrawChessBoard() throws ResponseException {
-//    try {
-//      //will have to fix this up a bit...
-//      UserGameCommand command = new MakeMoveCommand(null, authToken, gameId);
-//      this.session.getBasicRemote().sendText(new Gson().toJson(command));
-//    } catch (IOException ex) {
-//      ResponseException r = new ResponseException(ResponseException.ExceptionType.OTHER);
-//      r.setMessage(ex.getMessage());
-//      throw  r;
-//    }
-    /**
-     * Redraws the chess board upon the user’s request.
-     */
-//    try {
-//      var action = new Action(Action.Type.EXIT, visitorName);
-//      this.session.getBasicRemote().sendText(new Gson().toJson(action));
-//      this.session.close();
-//    } catch (IOException ex) {
-//      throw new ResponseException(500, ex.getMessage());
-//    }
-  }
-
-
   public void leave(){
     /**
      * Removes the user from the game (whether they are playing or
@@ -116,7 +93,18 @@ public  class WebSocketFacade extends Endpoint {
     //this is probably the place to close the connection.
   }
 
-  public void makeMove() throws ResponseException {
+  public void makeMove(ChessMove move) throws ResponseException {
+    try{
+      if(session.isOpen()){
+        MakeMoveCommand moveCommand = new MakeMoveCommand(move, authToken, gameId);
+        String jsonString = new Gson().toJson(moveCommand);
+        session.getBasicRemote().sendText(jsonString);
+      }
+    }
+    catch(Exception e){
+      //come back if things get weird.
+      throw new ResponseException(ResponseException.ExceptionType.OTHER);
+    }
     /**
      * Allow the user to input what move they want to make. The board
      * is updated to reflect the result of the move, and the board automatically

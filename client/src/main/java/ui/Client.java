@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import exception.ResponseException;
 import model.*;
@@ -261,6 +263,11 @@ public class Client implements NotificationHandler {
         r.setMessage("That gameID doesn't exist \n try again");
         throw r;
       }
+      state = State.GAME;
+      //, authToken, joinRequest.gameID()
+      ws = new WebSocketFacade(serverUrl, this, authToken, id);
+      ws.connect();
+
       return String.format("Observing game %s", gameName);
 
     }
@@ -286,6 +293,25 @@ public class Client implements NotificationHandler {
   }
 
   public String makeMove(String ... params) throws ResponseException{
+    if(params.length != 1){
+        ResponseException r = new ResponseException(ResponseException.ExceptionType.BADREQUEST);
+        r.setMessage("put in the start position then \nthe position you want to move to.  try again");
+        throw r;
+    }
+    String regex = "^[a-h]\\d[a-h]\\d$";  // Matches: letter-digit-letter-digit
+
+    if (!params[0].matches(regex)) {
+      ResponseException r = new ResponseException(ResponseException.ExceptionType.BADREQUEST);
+      r.setMessage("put in the form col-row-col-row. Try again");
+      throw r;
+//      System.out.println("Input matches the regex!");
+    }
+    else {
+      ChessMove newMove = generateMove(params[0]);
+      ws.makeMove(newMove);
+      //System.out.println("Input does NOT match the regex.");
+    }
+
     return "";
   }
 
@@ -362,6 +388,41 @@ public class Client implements NotificationHandler {
             parts[5], parts[6]);
   }
 
+  private ChessMove generateMove(String input){
+    char[] charArray = input.toCharArray();
+
+    char symbol = charArray[0];
+    Integer row1 = Character.getNumericValue(charArray[1]);
+    char symbol2 = charArray[2];
+    Integer row2 =Character.getNumericValue(charArray[3]);
+
+    Integer col1 = letterToNumber(symbol);
+    Integer col2 = letterToNumber(symbol2);
+    return  new ChessMove(new ChessPosition(row1, col1), new ChessPosition(row2,col2), null);
+
+  }
+
+  private Integer letterToNumber(char symbol ){
+    String letter = Character.toString(symbol);
+    if("a".equals(letter)){
+      return 1;
+    } else if("b".equals(letter)){
+      return 2;
+    }else if("c".equals(letter) ){
+      return 3;
+    }else if("d".equals(letter) ){
+      return 4;
+    }else if("e".equals(letter) ){
+      return 5;
+    }else if("f".equals(letter) ){
+      return 6;
+    }else if("g".equals(letter) ){
+      return 7;
+    }else {
+      return 8;
+    }
+  }
+
 
 
   public void notify(String message){
@@ -383,7 +444,11 @@ public class Client implements NotificationHandler {
         System.out.print("\n");
         break;
       case ERROR:
-        System.out.print("this is where the errors go");
+        ErrorMessage error = new Gson().fromJson(message, ErrorMessage.class);
+        System.out.print("\n");
+        System.out.print(error.getErrorMessage());
+        System.out.print("\n");
+        //System.out.print("this is where the errors go");
         break;
       default:
         System.out.print("ooops");

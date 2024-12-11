@@ -27,6 +27,7 @@ public class WebSocketHandler {
   GameDAO gameDAO;
   Set<Integer> endedGameIds;
 
+
   public WebSocketHandler(AuthDAO authDAO, GameDAO gameDAO){
     this.authDAO = authDAO;
     this.gameDAO = gameDAO;
@@ -136,6 +137,11 @@ public class WebSocketHandler {
       connections.send(authToken,session, gameID, error);
       session.close();
     }
+    else if(gameDAO.getGame(new JoinGame(null,
+            gameID)).game().getBoard().getPiece(move.getStartPosition()) == null){
+      var error = new ErrorMessage("That space is null");
+      connections.send(authToken, session, gameID, error);
+    }
     else if(getTeamEnum(authToken, gameID) !=
             gameDAO.getGame(new JoinGame(null, gameID)).game().getBoard().
                     getPiece(move.getStartPosition()).getTeamColor()){
@@ -144,13 +150,32 @@ public class WebSocketHandler {
 
     }
     else if(isObserver(authToken, gameID)){
+      //generate an error message
 
     }
     else {
       JoinGame getGame=new JoinGame(null, gameID);
       ChessGame game=gameDAO.getGame(getGame).game();
       String username=authDAO.getAuth(authToken).username();
-      String stringVersion=move.toString();
+      String color = getTeamColor(authToken, gameID);
+      String otherTeamColor;
+      String otherTeamUsername = "";
+      String otherTeamAuthToken = "";
+      Set<Connection> setOfConnections = connections.getConnectionsForGame(gameID);
+      if(color.equals("white")){
+        otherTeamColor = "black";
+      }
+      else{
+        otherTeamColor = "white";
+      }
+      for(Connection connection : setOfConnections){
+        if(otherTeamColor.equals(connection.color)){
+          otherTeamAuthToken = connection.authToken;
+          otherTeamUsername = authDAO.getAuth(connection.authToken).username();
+        }
+      }
+
+
 
 
       var notification=new NotificationMessage();
@@ -165,15 +190,7 @@ public class WebSocketHandler {
       //the move is for black from (1,1) -> (2,1) change it so that it's actually from
       // (8,8) -> (7,8)
       try {
-        if (!game.active) {
-          //maybe change this
-          var error = new ErrorMessage("Game has been resigned, cannot play anymore");
-          //either make an error or a notification idk;
-          //might need this to be a send rather than a broadcast
-          connections.send(authToken, session, gameID, error);
-          //connections.broadcastInGame(authToken, session, gameID, error, false, true);
-        }
-        else if(game.isInCheckmate(ChessGame.TeamColor.WHITE) || game.isInCheckmate(ChessGame.TeamColor.BLACK)){
+        if(game.isInCheckmate(ChessGame.TeamColor.WHITE) || game.isInCheckmate(ChessGame.TeamColor.BLACK)){
           String winner;
           String loser;
           if(game.isInCheckmate(ChessGame.TeamColor.WHITE)){
@@ -188,17 +205,33 @@ public class WebSocketHandler {
           //might need this to be a send rather than a broadcast
           connections.broadcastInGame(authToken, session, gameID, notification, true);
         }
+        else if (!game.active) {
+          //maybe change this
+          var error = new ErrorMessage("Game has been resigned, cannot play anymore");
+          //either make an error or a notification idk;
+          //might need this to be a send rather than a broadcast
+          connections.send(authToken, session, gameID, error);
+          //connections.broadcastInGame(authToken, session, gameID, error, false, true);
+        }
         else {
           game.makeMove(move);
+
+          if(game.isInCheck(getTeamEnum(otherTeamAuthToken, gameID))){
+            notification.setNotification(otherTeamUsername + " is in check");
+          }
+          if(game.isInCheck(getTeamEnum(authToken, gameID))){
+            notification.setNotification(username + " is in check");
+          }
           if(game.isInCheckmate(ChessGame.TeamColor.WHITE) || game.isInCheckmate(ChessGame.TeamColor.BLACK)){
             game.active = false;
           }
           gameDAO.updateGameItself(gameID, game);
           var reloadGame=new LoadGameMessage(game);
-          //+ stringVersion
+          reloadGame.setColorOnTop(getTeamColor(authToken, gameID));
+          
           notification.setNotification(username + "has moved");
-          connections.broadcastInGame(authToken, session, gameID, notification, false);
           connections.broadcastInGame(authToken, session, gameID, reloadGame, true);
+          connections.broadcastInGame(authToken, session, gameID, notification, false);
 
         }
 
@@ -274,6 +307,16 @@ public class WebSocketHandler {
 
 
   private String getTeamColor(String authToken, Integer gameId){
+//    Set<Connection> setOfConnections = connections.getConnectionsForGame(gameId);
+//    for (Connection connection : setOfConnections){
+//      if(authToken.equals(connection.authToken)){
+//        return connection.color;
+//      }
+//      //could mess some stuff up...
+//    }
+//    return "observer";
+// have the above be the thing if the get connections isn't null. Because if the connections
+    //are null the we can do the method below (ie it's the first one)
     GameData game = gameDAO.getGame(new JoinGame(null, gameId));
     String username = authDAO.getAuth(authToken).username();
     if(username.equals(game.whiteUsername())){

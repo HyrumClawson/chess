@@ -1,5 +1,6 @@
 package server.websocket;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import model.GameData;
 import model.JoinGame;
@@ -60,7 +61,7 @@ public class ConnectionManager {
     gamelessSessions.remove(session);
 
   }
-  Set<Connection> getConnectionsForGame(Integer gameId){
+  public Set<Connection> getConnectionsForGame(Integer gameId){
     //just for now, change this soon.
     return gameConnections.get(gameId);
   }
@@ -72,13 +73,26 @@ public class ConnectionManager {
   public void broadcastInGame(String authToken, Session excludeSession, Integer gameId,
                               ServerMessage message, Boolean everyone) throws IOException {
     // if weird replace with connectio nthing
-
+    //bruh this might kill a lot of things.
+    Boolean loadGame = false;
+    LoadGameMessage loadGameMessage = new LoadGameMessage(new ChessGame());
+    if(message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
+      loadGame = true;
+      loadGameMessage = (LoadGameMessage) message;
+    }
     var removeList = new ArrayList<Connection>();
     Set<Connection> setOfConnections = gameConnections.get(gameId);
     for (Connection connection : setOfConnections) {
       if (connection.session.isOpen()) {
         if(everyone){
-          connection.session.getRemote().sendString(new Gson().toJson(message) );
+          if(loadGame){
+            loadGameMessage.setColorOnTop(connection.color);
+            connection.session.getRemote().sendString(new Gson().toJson(loadGameMessage));
+          }
+          else{
+            connection.session.getRemote().sendString(new Gson().toJson(message) );
+          }
+
         }
 //        else if(notObserver){
 //          if(!connection.color.equals("observer")){
