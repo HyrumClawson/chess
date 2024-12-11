@@ -34,7 +34,7 @@ public class GamePlayUI {
         if(result.equals("leave")){
           return result;
         }
-        
+
       }
       catch (Throwable e) {
         var msg = e.toString();
