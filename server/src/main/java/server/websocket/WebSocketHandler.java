@@ -250,7 +250,7 @@ public class WebSocketHandler {
       //set the active to false
       // put back to db
       //do same sort of thing with checkmate
-      //also don't let observers resign
+
 
       var notification=new NotificationMessage();
       notification.setNotification(username + "has resigned the game");
