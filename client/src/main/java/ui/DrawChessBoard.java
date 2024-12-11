@@ -46,43 +46,6 @@ public class DrawChessBoard {
             headerAndFooter(i, j);
           }
           setSideNumber(i, j);
-//          else if (i == 1) {
-//            if (j == 0 || j == 9) {
-//              chessBoard[i][j]=" 8 ";
-//            }
-//          } else if (i == 2) {
-//            if (j == 0 || j == 9) {
-//              chessBoard[i][j]=" 7 ";
-//            }
-//          }  else if (i == 3) {
-//            if (j == 0 || j == 9) {
-//              chessBoard[i][j]=" 6 ";
-//            }
-//          } else if (i == 4) {
-//            if (j == 0 || j == 9) {
-//              chessBoard[i][j]=" 5 ";
-//            }
-//          } else if (i == 5) {
-//            if (j == 0 || j == 9) {
-//              chessBoard[i][j]=" 4 ";
-//            }
-//          } else if (i == 6) {
-//            if (j == 0 || j == 9) {
-//              chessBoard[i][j]=" 3 ";
-//            }
-//          } else if (i == 7) {
-//            if (j == 0 || j == 9) {
-//              chessBoard[i][j]=" 2 ";
-//            } //place like here may be a good place to add blank spaces.
-//          }  else if (i == 8) {
-//            if (j == 0 || j == 9) {
-//              chessBoard[i][j]=" 1 ";
-//            }
-//          }
-//          else{
-//            whiteRowSetUp(i, j);
-//            blackRowSetUp(i, j);
-//          }
         }
       }
     }

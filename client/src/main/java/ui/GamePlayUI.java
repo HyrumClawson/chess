@@ -34,11 +34,7 @@ public class GamePlayUI {
         if(result.equals("leave")){
           return result;
         }
-
-//        String[] resultFirst = result.split(" ");
-//        if(resultFirst[0].equals("Observing") || resultFirst[0].equals("Joined")) {
-//          //gamePlay.drawBoard();
-//        }
+        
       }
       catch (Throwable e) {
         var msg = e.toString();
@@ -48,13 +44,7 @@ public class GamePlayUI {
     System.out.println();
     return result;
   }
-//  public void drawBoard(){
-//    System.out.println("\n White On Top");
-//    drawIt.printChessBoard("white");
-//
-//    System.out.println("\n Black On Top");
-//    drawIt.printChessBoard("black");
-//  }
+
 
   private void printPrompt() {
     //+ RESET + GREEN

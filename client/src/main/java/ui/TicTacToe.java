@@ -28,15 +28,7 @@ public class TicTacToe {
 
 
   public static void main(String[] args) {
-//    ChessPosition positionStart = new ChessPosition(1,3);
-//    ChessPosition positionEnd = new ChessPosition(3,3);
-//    ChessMove newMove = new ChessMove(positionStart, positionEnd, null);
-//    try{
-//      game.makeMove(newMove);
-//    }
-//    catch(InvalidMoveException e){
-//
-//    }
+
 
     board = new DrawChessBoard(game);
     board.printChessBoard("black");
@@ -56,21 +48,7 @@ public class TicTacToe {
    // out.print(SET_TEXT_COLOR_WHITE);
   }
 
-  private static void drawHeaders(PrintStream out) {
 
-    setBlack(out);
-
-    String[] headers = { "TIC", "TAC", "TOE" };
-    for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
-      drawHeader(out, headers[boardCol]);
-
-      if (boardCol < BOARD_SIZE_IN_SQUARES - 1) {
-        out.print(EMPTY.repeat(LINE_WIDTH_IN_PADDED_CHARS));
-      }
-    }
-
-    out.println();
-  }
 
   private static void drawHeader(PrintStream out, String headerText) {
     int prefixLength = SQUARE_SIZE_IN_PADDED_CHARS / 2;
@@ -90,19 +68,6 @@ public class TicTacToe {
     setBlack(out);
   }
 
-  private static void drawTicTacToeBoard(PrintStream out) {
-
-    for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow) {
-
-      drawRowOfSquares(out);
-
-      if (boardRow < BOARD_SIZE_IN_SQUARES - 1) {
-        // Draw horizontal row separator.
-        drawHorizontalLine(out);
-        setBlack(out);
-      }
-    }
-  }
 
   private static void drawRowOfSquares(PrintStream out) {
 

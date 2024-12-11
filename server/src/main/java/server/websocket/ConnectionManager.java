@@ -56,11 +56,6 @@ public class ConnectionManager {
 
   //server only stores sessions inside the map here, technically don't have to remove
 
-  public void removeSession(Session session){
-    //got to figure out in what way this differs from removesSessionFromGame
-    gamelessSessions.remove(session);
-
-  }
   public Set<Connection> getConnectionsForGame(Integer gameId){
     //just for now, change this soon.
     return gameConnections.get(gameId);
@@ -94,12 +89,6 @@ public class ConnectionManager {
           }
 
         }
-//        else if(notObserver){
-//          if(!connection.color.equals("observer")){
-//            connection.session.getRemote().sendString(new Gson().toJson(message));
-//          }
-//
-//        }
         else{
           if (!connection.session.equals(excludeSession)) {
             connection.session.getRemote().sendString(new Gson().toJson(message));

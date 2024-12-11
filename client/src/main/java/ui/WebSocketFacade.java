@@ -116,12 +116,7 @@ public  class WebSocketFacade extends Endpoint {
      * is updated to reflect the result of the move, and the board automatically
      * updates on all clients involved in the game.
      */
-//    try {
-//      var action = new Action(Action.Type.ENTER, visitorName);
-//      this.session.getBasicRemote().sendText(new Gson().toJson(action));
-//    } catch (IOException ex) {
-//      throw new ResponseException(500, ex.getMessage());
-//    }
+
   }
 
   public void resign(){
@@ -141,13 +136,6 @@ public  class WebSocketFacade extends Endpoint {
   public void onError(Session session, Throwable throwable) {
     throwable.printStackTrace();
   }
-
-  // Handle incoming messages from the server
-//  @Override
-//  public void onMessage(Session session, String message) {
-//    System.out.println("Received from server: " + message);
-//  }
-
 
 
 

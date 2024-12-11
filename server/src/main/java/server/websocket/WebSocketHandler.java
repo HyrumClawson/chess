@@ -33,10 +33,7 @@ public class WebSocketHandler {
     this.gameDAO = gameDAO;
   }
 
-//  @OnWebSocketMessage
-//  public void onMessage(Session session, String message) throws Exception {
-//    session.getRemote().sendString("WebSocket response: " + message);
-//  }
+
 
   @OnWebSocketMessage
   public void onMessage(Session session, String message) throws IOException {
@@ -44,11 +41,6 @@ public class WebSocketHandler {
       System.out.println("Received message from client: " + message);
       UserGameCommand action = new Gson().fromJson(message, UserGameCommand.class);
       MakeMoveCommand move = new Gson().fromJson(message, MakeMoveCommand.class);
-//      if(action.getCommandType() == UserGameCommand.CommandType.MAKE_MOVE){
-//
-//      }
-      //connections.addSessionToGame(action.getAuthToken(), action.getGameID(), session);
-//    MakeMoveCommand move = new Gson().fromJson(message, MakeMoveCommand.class);
       /**
        * add the cases for when a player does the following, and the respective actions
        * makes a moves
