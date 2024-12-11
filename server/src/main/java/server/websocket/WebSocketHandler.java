@@ -170,7 +170,8 @@ public class WebSocketHandler {
           var error = new ErrorMessage("Game has been resigned, cannot play anymore");
           //either make an error or a notification idk;
           //might need this to be a send rather than a broadcast
-          connections.broadcastInGame(authToken, session, gameID, error, true);
+          connections.send(authToken, session, gameID, error);
+          //connections.broadcastInGame(authToken, session, gameID, error, false, true);
         }
         else if(game.isInCheckmate(ChessGame.TeamColor.WHITE) || game.isInCheckmate(ChessGame.TeamColor.BLACK)){
           String winner;
@@ -231,19 +232,35 @@ public class WebSocketHandler {
   }
 
   private void resignGame(String authToken, Session session, Integer gameID) throws IOException{
+    if(isObserver(authToken, gameID)){
+      ErrorMessage error = new ErrorMessage("You are an Observer and cannot resign the game");
+      connections.send(authToken, session, gameID, error);
+    }
     //the game is marked as over and no one can make any moves now.
     String username = authDAO.getAuth(authToken).username();
-    //get game from db
-    //set the active to false
-    // put back to db
-    //do same sort of thing with checkmate
-    //also don't let observers resign
+    ChessGame game = gameDAO.getGame(new JoinGame(null, gameID)).game();
+    if(!game.active){
+      ErrorMessage error = new ErrorMessage("the Game has already been resigned");
+      connections.send(authToken, session, gameID, error);
+    }
+    else {
+      game.active=false;
+      try {
+        gameDAO.updateGameItself(gameID, game);
+      } catch (ResponseException e) {
+        // decide what to do later if it is a problem.
+      }
+      //get game from db
+      //set the active to false
+      // put back to db
+      //do same sort of thing with checkmate
+      //also don't let observers resign
 
-    endedGameIds.add(gameID);
-
-    var notification = new NotificationMessage();
-    notification.setNotification(username + "has resigned the game");
-    connections.broadcastInGame(authToken, session, gameID, notification, true);
+      var notification=new NotificationMessage();
+      notification.setNotification(username + "has resigned the game");
+      //shoudl the observer see or no?
+      connections.broadcastInGame(authToken, session, gameID, notification, true);
+    }
   }
 
 
@@ -253,8 +270,11 @@ public class WebSocketHandler {
     if(username.equals(game.whiteUsername())){
       return "white";
     }
-    else{
+    else if (username.equals(game.blackUsername())){
       return "black";
+    }
+    else{
+      return "observer";
     }
   }
 

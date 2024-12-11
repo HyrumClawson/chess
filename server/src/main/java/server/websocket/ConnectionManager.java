@@ -69,7 +69,8 @@ public class ConnectionManager {
 // I might need to change the NO
 
   //might want to come back and change it so it just sends the
-  public void broadcastInGame(String authToken, Session excludeSession, Integer gameId, ServerMessage message, Boolean everyone) throws IOException {
+  public void broadcastInGame(String authToken, Session excludeSession, Integer gameId,
+                              ServerMessage message, Boolean everyone) throws IOException {
     // if weird replace with connectio nthing
 
     var removeList = new ArrayList<Connection>();
@@ -78,20 +79,13 @@ public class ConnectionManager {
       if (connection.session.isOpen()) {
         if(everyone){
           connection.session.getRemote().sendString(new Gson().toJson(message) );
-          //have a function here that does the stuff.
-
-//          if(message.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME){
-//            //need to figure out how to send it correctly.
-//            LoadGameMessage loadGameMessage = (LoadGameMessage) message;
-//            loadGameMessage.setColorOnTop(connection.color);
-//            connection.session.getRemote().sendString(new Gson().toJson(loadGameMessage) );
-//          }
-//          else if(message.getServerMessageType() == ServerMessage.ServerMessageType.NOTIFICATION){
-//            NotificationMessage notification = (NotificationMessage) message;
-//            connection.session.getRemote().sendString(new Gson().toJson(notification) );
+        }
+//        else if(notObserver){
+//          if(!connection.color.equals("observer")){
+//            connection.session.getRemote().sendString(new Gson().toJson(message));
 //          }
 //
-        }
+//        }
         else{
           if (!connection.session.equals(excludeSession)) {
             connection.session.getRemote().sendString(new Gson().toJson(message));
@@ -130,23 +124,6 @@ public class ConnectionManager {
       }
 
   }
-
-
-//  private String getTeamColor(String authToken, Integer gameId){
-//    GameData game = gameDAO.getGame(new JoinGame(null, gameId));
-//    String username = authDAO.getAuth(authToken).username();
-//    if(username.equals(game.whiteUsername())){
-//      return "white";
-//    }
-//    else{
-//      return "black";
-//    }
-//  }
-
-
-
-
-
 
 }
 
