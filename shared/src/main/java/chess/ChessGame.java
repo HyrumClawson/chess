@@ -134,9 +134,11 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
+        ChessBoard dummyBoard = gameBoard;
+        //again only replacing gameBoard with dummyboard.
         ArrayList<ChessMove> opposingTeamMoves;
-        opposingTeamMoves = getOpposingTeamMoves(teamColor, gameBoard);
-        ChessPosition kingPosition = gameBoard.getPosition(teamColor, ChessPiece.PieceType.KING).getFirst();
+        opposingTeamMoves = getOpposingTeamMoves(teamColor, dummyBoard);
+        ChessPosition kingPosition = dummyBoard.getPosition(teamColor, ChessPiece.PieceType.KING).getFirst();
         return isKingInCheck(opposingTeamMoves, kingPosition);
     }
 
@@ -267,13 +269,15 @@ public class ChessGame {
     }
 
     public boolean isInCheckMateOrStalemate(TeamColor teamColor, TeamColor opposingColor){
-        Collection<ChessMove> kingTeamMoves = getOpposingTeamMoves(opposingColor, gameBoard);
+        ChessBoard dummyBoard = gameBoard;
+        //again just replacing it with dummyBoard
+        Collection<ChessMove> kingTeamMoves = getOpposingTeamMoves(opposingColor, dummyBoard);
         ArrayList<ChessMove> kingTeam = new ArrayList<>();
         kingTeam.addAll(kingTeamMoves);
         boolean isInCheckEverywhere = false;
         for (ChessMove teamMove : kingTeam){
-            ChessPiece potentialPiece = gameBoard.getPiece(teamMove.getEndPosition());
-            updateBoard(teamMove, gameBoard);
+            ChessPiece potentialPiece = dummyBoard.getPiece(teamMove.getEndPosition());
+            updateBoard(teamMove, dummyBoard);
             if(!isInCheck(teamColor)){
                 return false;
             }
@@ -281,8 +285,8 @@ public class ChessGame {
                 isInCheckEverywhere = true;
             }
             ChessMove undoMove = new ChessMove(teamMove.getEndPosition(),teamMove.getStartPosition(), teamMove.getPromotionPiece());
-            updateBoard(undoMove, gameBoard);
-            gameBoard.addPiece(teamMove.getEndPosition(), potentialPiece);
+            updateBoard(undoMove, dummyBoard);
+            dummyBoard.addPiece(teamMove.getEndPosition(), potentialPiece);
         }
         return isInCheckEverywhere;
     }

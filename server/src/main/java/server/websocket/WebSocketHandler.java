@@ -150,7 +150,8 @@ public class WebSocketHandler {
 
     }
     else if(isObserver(authToken, gameID)){
-      //generate an error message
+      ErrorMessage error = new ErrorMessage("Not allowed to move as an observer");
+      connections.send(authToken, session, gameID, error);
 
     }
     else {
@@ -217,27 +218,31 @@ public class WebSocketHandler {
           //connections.broadcastInGame(authToken, session, gameID, error, false, true);
         }
         else {
+          Boolean notify2 = false;
           game.makeMove(move);
 
           if(game.isInCheck(getTeamEnum(otherTeamAuthToken, gameID))){
+            notify2 = true;
             notification2.setNotification(otherTeamUsername + " is in check");
-            connections.broadcastInGame(authToken, session, gameID, notification2, true);
+            //connections.broadcastInGame(authToken, session, gameID, notification2, true);
           }
           if(game.isInCheck(getTeamEnum(authToken, gameID))){
+            notify2 = true;
             notification2.setNotification(username + " is in check");
-            connections.broadcastInGame(authToken, session, gameID, notification2, true);
+            //connections.broadcastInGame(authToken, session, gameID, notification2, true);
           }
-//          if(game.isInCheckmate(ChessGame.TeamColor.WHITE) || game.isInCheckmate(ChessGame.TeamColor.BLACK)){
-//            game.active = false;
-//          }
+
           if(game.isInCheckmate(getTeamEnum(authToken, gameID))){
             game.active = false;
+            notify2 = true;
             notification2.setNotification(username + " has been checkmated!!!");
-            connections.broadcastInGame(authToken, session, gameID, notification2, true);
+            //connections.broadcastInGame(authToken, session, gameID, notification2, true);
           }
           if(game.isInCheckmate(getTeamEnum(otherTeamAuthToken, gameID))){
+            notify2 = true;
             game.active = false;
             notification2.setNotification(otherTeamUsername + " has been checkmated!!!");
+            //connections.broadcastInGame(authToken, session, gameID, notification2, true);
           }
 
           gameDAO.updateGameItself(gameID, game);
@@ -247,9 +252,9 @@ public class WebSocketHandler {
           notification.setNotification(username + " has moved a " + stringType + " to " + newPosition );
           connections.broadcastInGame(authToken, session, gameID, reloadGame, true);
           connections.broadcastInGame(authToken, session, gameID, notification, false);
-//          if(notification2.getMessage() != null){
-//            connections.broadcastInGame(authToken, session, gameID, notification2, true);
-//          }
+          if(notify2){
+            connections.broadcastInGame(authToken, session, gameID, notification2, true);
+          }
 
         }
 
