@@ -88,9 +88,6 @@ public class WebSocketHandler {
 
 
   private void connect(String authToken, Session session, Integer gameID) throws IOException {
-    // need to test whether it's a bad authToken (ie just not in the game)
-    // or later on if it's an authtoken of an observer... Oh I might just need to
-    //make that functionality
     if(authDAO.getAuth(authToken) == null){
       connections.addSessionToGame(authToken,  gameID, session, null);
       ErrorMessage error = new ErrorMessage("Invalid authToken");
@@ -112,27 +109,15 @@ public class WebSocketHandler {
         loadGame.setColorOnTop(color);
         notification.setNotification(username + " has joined as " + color);
         connections.addSessionToGame(authToken, gameID, session, color);
-
-
-        //connections.broadcastInGame(authToken, session, gameID, loadGame, true);
         connections.send(authToken,session, gameID, loadGame);
         connections.broadcastInGame(authToken,session, gameID, notification, false);
       }
-
-
-      //add some if statement to check for stuff
     }
-
-
-    //System.out.print(color);
-
-
   }
 
   private void makeMove(String authToken, Session session, ChessMove move, Integer gameID) throws IOException{
     if(authDAO.getAuth(authToken) == null){
       connections.addSessionToGame(authToken,  gameID, session, null);
-      //might have to make a function
       ErrorMessage error = new ErrorMessage("Invalid authToken");
       connections.send(authToken,session, gameID, error);
       session.close();
@@ -147,12 +132,10 @@ public class WebSocketHandler {
                     getPiece(move.getStartPosition()).getTeamColor()){
       ErrorMessage error = new ErrorMessage("Not allowed to move");
       connections.send(authToken, session, gameID, error);
-
     }
     else if(isObserver(authToken, gameID)){
       ErrorMessage error = new ErrorMessage("Not allowed to move as an observer");
       connections.send(authToken, session, gameID, error);
-
     }
     else {
       JoinGame getGame=new JoinGame(null, gameID);
@@ -177,74 +160,34 @@ public class WebSocketHandler {
           otherTeamUsername = authDAO.getAuth(connection.authToken).username();
         }
       }
-
-
-
-
       var notification=new NotificationMessage();
       var notification2 = new NotificationMessage();
-
-      //here check if they're name is either in black or white and change the move
-      //accordingly. If they're name isn't in either white or black then they are an
-      //observer and send them an error message accordingly.
-      //ie if they're white and send in a move just directly change it to numbers
-      //and send it in as "move". But if they're black when you receive it call a
-      //method on it that switches it around so it's takes it from their perspective
-      // to how the game is actually stored. Meaning if
-      //the move is for black from (1,1) -> (2,1) change it so that it's actually from
-      // (8,8) -> (7,8)
       try {
-//        if(game.isInCheckmate(ChessGame.TeamColor.WHITE) || game.isInCheckmate(ChessGame.TeamColor.BLACK)){
-//          String winner;
-//          String loser;
-//          if(game.isInCheckmate(ChessGame.TeamColor.WHITE)){
-//            winner = "White ";
-//            loser = " Black";
-//          }
-//          else{
-//            winner = "Black ";
-//            loser = " White";
-//          }
-//          notification.setNotification(winner + "has put" + loser + " in checkmate");
-//          //might need this to be a send rather than a broadcast
-//          connections.broadcastInGame(authToken, session, gameID, notification, true);
-//        }
         if (!game.active) {
-          //maybe change this
-          var error = new ErrorMessage("Game has been resigned, cannot play anymore");
-          //either make an error or a notification idk;
-          //might need this to be a send rather than a broadcast
+          var error = new ErrorMessage("Game is resigned/over, you cannot play anymore");
           connections.send(authToken, session, gameID, error);
-          //connections.broadcastInGame(authToken, session, gameID, error, false, true);
         }
         else {
           Boolean notify2 = false;
           game.makeMove(move);
-
           if(game.isInCheck(getTeamEnum(otherTeamAuthToken, gameID))){
             notify2 = true;
             notification2.setNotification(otherTeamUsername + " is in check");
-            //connections.broadcastInGame(authToken, session, gameID, notification2, true);
           }
           if(game.isInCheck(getTeamEnum(authToken, gameID))){
             notify2 = true;
             notification2.setNotification(username + " is in check");
-            //connections.broadcastInGame(authToken, session, gameID, notification2, true);
           }
-
           if(game.isInCheckmate(getTeamEnum(authToken, gameID))){
             game.active = false;
             notify2 = true;
             notification2.setNotification(username + " has been checkmated!!!");
-            //connections.broadcastInGame(authToken, session, gameID, notification2, true);
           }
           if(game.isInCheckmate(getTeamEnum(otherTeamAuthToken, gameID))){
             notify2 = true;
             game.active = false;
             notification2.setNotification(otherTeamUsername + " has been checkmated!!!");
-            //connections.broadcastInGame(authToken, session, gameID, notification2, true);
           }
-
           gameDAO.updateGameItself(gameID, game);
           var reloadGame=new LoadGameMessage(game);
           reloadGame.setColorOnTop(getTeamColor(authToken, gameID));
@@ -255,25 +198,13 @@ public class WebSocketHandler {
           if(notify2){
             connections.broadcastInGame(authToken, session, gameID, notification2, true);
           }
-
         }
-
       } catch (InvalidMoveException e) {
         ErrorMessage error = new ErrorMessage(e.reason);
         connections.send(authToken, session, gameID, error);
       } catch (ResponseException e) {
-        // put some stuff here and what not
       }
     }
-    //do I need to notify them of the move?
-    /**
-     * a lot of other cases I need to look out for above but that should
-     * be a good starting point.
-     *
-     * now we just call a method that updates the gameitself in game data
-     * then send the game to LoadGameMessage which will redraw the board
-     * for everybody.
-     */
   }
 
   private void leaveGame(String authToken, Session session, Integer gameID) throws IOException, ResponseException{

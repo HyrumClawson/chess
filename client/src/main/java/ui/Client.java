@@ -289,6 +289,7 @@ public class Client implements NotificationHandler {
 
   public String leaveGame(String ... params) throws ResponseException{
     state = State.SIGNEDIN;
+
     return "leave";
   }
 

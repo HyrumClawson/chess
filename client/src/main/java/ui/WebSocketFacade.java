@@ -85,11 +85,17 @@ public  class WebSocketFacade extends Endpoint {
 
 
 
-  public void leave(){
+  public void leave() throws ResponseException{
     /**
      * Removes the user from the game (whether they are playing or
      * observing the game). The client transitions back to the Post-Login UI.
      */
+    try{
+
+    }
+    catch(Exception e){
+      //do something here later.
+    }
     //this is probably the place to close the connection.
   }
 
