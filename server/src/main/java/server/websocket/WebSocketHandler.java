@@ -89,10 +89,8 @@ public class WebSocketHandler {
 
   private void connect(String authToken, Session session, Integer gameID) throws IOException {
     if(authDAO.getAuth(authToken) == null){
-      connections.addSessionToGame(authToken,  gameID, session, null);
-      ErrorMessage error = new ErrorMessage("Invalid authToken");
-      connections.send(authToken,session, gameID, error);
-      session.close();
+      checkAuth(authToken, gameID, session);
+
     }
     else{
       if(gameDAO.getGame(new JoinGame(null, gameID))== null){
@@ -117,10 +115,7 @@ public class WebSocketHandler {
 
   private void makeMove(String authToken, Session session, ChessMove move, Integer gameID) throws IOException{
     if(authDAO.getAuth(authToken) == null){
-      connections.addSessionToGame(authToken,  gameID, session, null);
-      ErrorMessage error = new ErrorMessage("Invalid authToken");
-      connections.send(authToken,session, gameID, error);
-      session.close();
+      checkAuth(authToken, gameID, session);
     }
     else if(gameDAO.getGame(new JoinGame(null,
             gameID)).game().getBoard().getPiece(move.getStartPosition()) == null){
@@ -261,16 +256,6 @@ public class WebSocketHandler {
 
 
   private String getTeamColor(String authToken, Integer gameId){
-//    Set<Connection> setOfConnections = connections.getConnectionsForGame(gameId);
-//    for (Connection connection : setOfConnections){
-//      if(authToken.equals(connection.authToken)){
-//        return connection.color;
-//      }
-//      //could mess some stuff up...
-//    }
-//    return "observer";
-// have the above be the thing if the get connections isn't null. Because if the connections
-    //are null the we can do the method below (ie it's the first one)
     GameData game = gameDAO.getGame(new JoinGame(null, gameId));
     String username = authDAO.getAuth(authToken).username();
     if(username.equals(game.whiteUsername())){
@@ -310,6 +295,13 @@ public class WebSocketHandler {
     int col = endPosition.getColumn();
     String letter = getLetter(col);
     return letter + endPosition.getRow();
+  }
+
+  private void checkAuth(String authToken, Integer gameID, Session session) throws IOException{
+    connections.addSessionToGame(authToken,  gameID, session, null);
+    ErrorMessage error = new ErrorMessage("Invalid authToken");
+    connections.send(authToken,session, gameID, error);
+    session.close();
   }
 
   private String getLetter(Integer col){
